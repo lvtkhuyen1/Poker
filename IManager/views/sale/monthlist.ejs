@@ -1,0 +1,245 @@
+
+<!-- start page title -->
+<div class="row">
+    <div class="col-12">
+        <div class="page-title-box">
+            <div class="page-title-right">
+                <ol class="breadcrumb m-0">
+                    <li class="breadcrumb-item"><a href="javascript: void(0);">정산 관리</a></li>
+                    <li class="breadcrumb-item active">정산 목록</li>
+                </ol>
+            </div>
+            <h4 class="page-title">정산 현황</h4>
+        </div>
+    </div>
+</div>
+<!-- end page title -->
+<div class="row">
+    <div class="card col-12">
+        <div class="card-body">
+            <!-- 기준 시각 <label id="lastRefreshTime">00:00</label> <a href="#" id="RefreshButton" alt="새로고침"><i class="fas fa-sync-alt"></i></a> -->
+
+            <form>
+                <div class="form-row  align-items-center">
+                    <div class="col-auto">
+                        <label class="col-form-label">달별 검색</label>
+                    </div>
+                    <div class="col-auto">
+                        <label class="sr-only">월</label>
+                        <input type="text" class="form-control mb-2" id="startMonth" data-provide="datepicker" placeholder="">
+                    </div>
+                    <div class="col-auto">
+                        <button type="button" class="btn btn-primary mb-2" id="FindButton">검색</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="card col-12">
+        <div class="card-body">
+            <h5 class="card-title mb-0">
+                정산 상세 내역
+            </h5>
+            <div class="collapse pt-3 show table-responsive">
+                <table id="dataTable" class="table table-sm dt-responsive nowrap w-100">
+                    <thead>
+                        <tr>
+                            <th>날짜</th>
+                            <th>충전</th>
+                            <th>환전</th>
+                            <th>회수머니</th>
+                            <th>지급포인트</th>
+                            <th>합</th>
+                            <th>적립포인트</th>
+                            <th>잭팟</th>
+                            <th>합</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    var dataTableInstance;
+
+    $(document).ready(function () {
+
+        var counter = 0;
+        var REFRESH_INTERVAL = 2000;
+        var timerId;
+
+        $("#startMonth").datepicker({
+            format: 'yyyy-mm',
+            language: 'kr',
+            minViewMode: "months",
+            startView: "months",
+            autoclose : true
+        });
+        $("#FindButton").click(function (e) {
+            e.preventDefault();
+            dataTableInstance.ajax.reload();
+        });
+        let getTimeStamp = () => {
+            var now = new Date();
+
+            var d = new Date(now.setDate(now.getDate()));
+            var s =
+                leadingZeros(d.getFullYear(), 4) + '-' +
+                leadingZeros(d.getMonth() + 1, 2)
+            return s;
+        }
+        function leadingZeros(n, digits){
+            var zero = '';
+            n = n.toString();
+
+            if (n.length < digits) {
+                for (var i = 0; i < digits - n.length; i++)
+                    zero += '0';
+            }
+            return zero + n;
+        }
+        let month = getTimeStamp();
+        $('#startMonth').val(month);
+
+        function refreshData() {
+            dataTableInstance.ajax.reload();
+        }
+
+        function formatNumberWithColor(value) {
+            // 양수일 때는 빨간색으로, 음수일 때는 파란색으로 색상 클래스를 지정 // text-success 녹색
+            var colorClass;
+            if (value > 0) {
+                colorClass = 'text-danger'; // red color
+            } else if (value < 0) {
+                colorClass = 'text-primary'; // blue color
+            } else {
+                colorClass = 'text-black'; // black color for zero
+            }
+            // toLocaleString()을 사용하여 숫자를 천 단위로 구분
+             // Format the number with a '-' sign for positive numbers
+            var sign = value >= 0 ? '' : '-';
+            var formattedValue = sign + Math.abs(value).toLocaleString();
+            // 변환된 값을 색상 클래스와 함께 반환
+            return `<span class="${colorClass}">${formattedValue}원</span>`;
+        }
+
+        let columns = [
+                {
+                    data: "date", render: function (d) {
+                        let date = moment(d).format('YYYY-MM-DD');
+                        return date;
+                    }
+                },
+                {
+                    data: "total_input", render: function (d) {
+                        let c = parseInt(d);
+                        return `${c.toLocaleString()}원`;
+                    }
+                },
+                {
+                    data: "total_output", render: function (d) {
+                        let c = parseInt(d);
+                        return `${c.toLocaleString()}원`;
+                    }
+                },
+                {
+                    data: "total_take", render: function (d) {
+                        let c = parseInt(d);
+                        return `${c.toLocaleString()}원`;
+                    }
+                },
+                {
+                    data: "total_give", render: function (d) {
+                        let c = parseInt(d);
+                        return `${c.toLocaleString()}원`;
+                    }
+                },
+                {
+                    data: "total_amount", render: function (d) {
+                        return `${formatNumberWithColor(parseInt(d))}`;
+                    }
+                },
+                {
+                    data: "total_rolling", render: function (d) {
+                        let c = parseInt(d);
+                        return `${c.toLocaleString()}원`;
+                    }   
+                },
+                {
+                    data: "jackpot_difference", render: function (d) {
+                        return `${formatNumberWithColor(parseInt(d))}`;
+                    } 
+                },
+                {
+                    data: "total_money", render: function (d) {
+                        return `${formatNumberWithColor(parseInt(d))}`;
+                    } 
+                }
+        ];
+        dataTableInstance = $('#dataTable').DataTable({
+            "serverSide": true,
+            "searching": false,
+            paging : false,
+            responsive : false,
+            //lengthChange : false,
+		    //processing: true,
+            "ajax": {
+                url: "/inout/findmonthlist",
+                "type": "POST",
+                "data": function (d) {
+                    return $.extend({}, d, {
+                        strMonth: $('#startMonth').val()
+                        // 데이타 넘겨주기
+                    });
+                }
+            },
+            columns: columns,
+            order: [[0, "desc"]],
+            keys: true,
+            "language": {
+                "info": "현재 페이지 총 _TOTAL_ 건",
+                "emptyTable": "조건에 맞는 데이터가 없습니다",
+                "infoEmpty": "표시할 데이터 없음"
+            },
+            "sort": false,
+            "drawCallback": function () {
+                $('.dataTables_paginate > .pagination').addClass('pagination-rounded');
+            },
+            createdRow: function (row, data) {
+                $(row).attr("data-id", data.id);
+            }
+        });
+
+        $("#RefreshButton").click(function (e) {
+            e.preventDefault();
+            refreshData();
+        });
+    })
+
+
+
+    $(document).ready(function() {
+    // 화면 크기가 변경될 때 실행되는 이벤트 핸들러
+    $(window).resize(function() {
+      // 데이터테이블의 모든 열을 보이게 만듭니다.
+        $("#dataTable").find('tr').each(function() {
+             $(this).find('td').show(); // 각 행의 데이터 셀 보이게 하기
+         });
+        });
+    });
+    $(document).ready(function() {
+    // 화면 크기가 변경될 때 실행되는 이벤트 핸들러
+    $(window).resize(function() {
+      // 데이터테이블의 모든 열을 보이게 만듭니다.
+        $("#dataTable").find('tr').each(function() {
+             $(this).find('th').show(); // 각 행의 데이터 셀 보이게 하기
+         });
+        });
+    });
+</script>

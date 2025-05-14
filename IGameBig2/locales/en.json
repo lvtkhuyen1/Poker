@@ -1,0 +1,18 @@
+{
+	"Default": "English Default",
+	"Title": "Vitamin",
+	"Setting": "Setting",
+	"Full": "Full",
+	"Exit": "Exit",
+	"ExitReserve": "Reserve Exit",
+	"Menu": "Menu",
+	"Rebuyin": "Rebuyin",
+	"RebuyinPercent": "Rebuyin Setting",
+	"RebuyinMenual": "Manual Rebuyin",
+	"Modify": "Modify",
+	"Notification": "Notification",
+	"Alert1":"You don't have enough money or the Rebuyin option is turned off.",
+	"Alert2":"This isn't the maximum number of people. Still, would you like to start?",
+	"Alert3":"Are you sure you want to exit?",
+	"Alert4":"Do you want to cancel the reserved exit?"
+}

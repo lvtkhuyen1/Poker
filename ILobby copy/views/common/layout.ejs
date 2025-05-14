@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head> 
+        <%- include('head') %>
+    </head> 
+    
+    <% if ( type == 0 ) { %>
+        <body>
+            <header>
+                <div class="header">
+                    <div class="header_top_arr">
+                        <div class="user-info">
+                            <a href="/" class="logo">
+                                <img src="images/logolobby2.png" alt="">
+                            </a>
+                        </div>
+                        <div class="close-btn">X</div>
+                        <!-- <div class="menu-btn">&#9776; 메뉴</div> -->
+                        <!-- header-bottom -->
+                        <div class="header-bottom">
+                            <div class="main_nav_arr">
+                                <div class="main_nav_box">
+                                    <ul>
+                                        <li>
+                                            <a href="/subpage/notice">
+                                                <img src="images/ic-left07.png" class="lfticon" alt="">
+                                                <div class="txt">공지사항</div>
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="/subpage/message">
+                                                <img src="images/ic-left08.png" class="lfticon" alt="">
+                                                <div class="txt">쪽지(<strong></strong>)</div>
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="/subpage/mypage">
+                                                <img src="images/ic-left09.png" class="lfticon" alt="">
+                                                <div class="txt">마이페이지</div>
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="/subpage/push">
+                                                <img src="images/ic-left010.png" class="lfticon" alt="">
+                                                <div class="txt">입금</div>
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="/subpage/cashout">
+                                                <img src="images/ic-left011.png" class="lfticon" alt="">
+                                                <div class="txt">출금</div>
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="/subpage/customercenter">
+                                                <img src="images/ic-left014.png" class="lfticon" alt="">
+                                                <div class="txt">고객센터</div>
+                                            </a>
+                                        </li>
+                                        <li class="mb-logout">
+                                            <a href="/account/logout" onfocus="this.blur()" title="로그아웃">
+                                                <i class="fa-solid fa-right-from-bracket" style="margin-right:29px;"></i> 
+                                                <div class="txt">로그아웃</div>
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                            
+                        </div>
+                    </div>
+                </div>
+            </header>
+            <div class="user-info-cont">
+                <div class="noticeText">
+                    <marquee direction="left">
+                        <font color="fuchsia"> [알림]  노다지카지노 평생주소 안내  [주소.com]   ←   도메인 접속 안될시 평생주소에서 추가도메인 확인 가능합니다.   &nbsp;&nbsp;&nbsp;</font></marquee>
+                </div>
+                <div class="mb-logo">
+                    <a href="/">
+                        <img src="images/logolobby2.png" alt="">
+                    </a>
+                </div>
+                <ul class="user-info01">
+                    <li class="fir">
+                        <span class="level_icon">
+                            <img src="images/202306281923467952379567142.png" align="absmiddle">
+                        </span> 
+                        <strong id="mb_nick"><%=user.strNickname%></strong>님 
+                    </li>
+                                
+                    <li class="sec">
+                        <a href="#">
+                            <i class="fa fa-krw" aria-hidden="true">
+                            
+                            </i>
+                        </a>
+                        <span class="mb_point"> <strong><%=user.iCash.toLocaleString()%></strong></span>원
+                    </li>
+                    <li class="thi">
+                        <a href="#" onclick="iPointChange()" class="PointChange" intmp="0" style="cursor: pointer;">
+                            <strong class="mb_mileage"><%=user.iRolling.toLocaleString()%></strong>원  [전환]
+                        </a>
+                    </li>
+                    <li class="fou">
+                        <i class="fa-regular fa-envelope"></i> 
+                    </li>
+                    <!-- <li class="fou">
+                        <i class="fi fi-br-c"></i>
+                        카지노머니 :  <span id="casino_point2">-</span>
+                        <button type="button" class="getCasinoPoint" onclick="javascript:getCasinoPoint2();"> 조회 </button>						
+                        <button type="button" class="chageCasinoPoint" onclick="javascript:chageCasinoPoint2();"> 머니전환 </button>
+                    </li> -->
+                    <li class="fiv">
+                        <a href="/account/logout" onfocus="this.blur()" title="로그아웃">
+                            <i class="fa-solid fa-right-from-bracket"></i> 로그아웃
+                        </a>
+                    </li>
+                </ul>
+            </div>
+            <div class="content-page">
+                <div class="content">
+
+                    <%- body %>
+                    <div class="copyright">
+                        <a href="#" target="_blank" class="bann-te">
+                            <img src="images/teleba01.png">
+                        </a>
+                        <img src="images/logolobby2.png" class="footer-logo">    
+                        <a href="#" target="_blank" class="bann-pt">
+                            <img src="images/teleba02.png">
+                        </a> 
+                    </div>
+                    <div class="license">
+                        <span> Copyright ⓒ2024 <strong>노다지</strong> All rights reserved</span>  
+                    </div>
+            
+            
+                    <div class="clear"></div>
+            
+                    <!-- footer -->
+                    <div id="footer">
+                        <img src="images/img-ft.png" class="footer-png">
+                    </div>
+                </div> <!-- End Content -->
+                
+            </div>
+        <script type="text/javascript">
+
+            var user = JSON.parse('<%-JSON.stringify(user)%>');
+
+            // $.fn.datepicker.dates['kr'] = {
+            //     days: ["일요일", "월요일", "화요일", "수요일", "목요일", "금요일", "토요일", "일요일"],
+            //     daysShort: ["일", "월", "화", "수", "목", "금", "토", "일"],
+            //     daysMin: ["일", "월", "화", "수", "목", "금", "토", "일"],
+            //     months: ["1월", "2월", "3월", "4월", "5월", "6월", "7월", "8월", "9월", "10월", "11월", "12월"],
+            //     monthsShort: ["1월", "2월", "3월", "4월", "5월", "6월", "7월", "8월", "9월", "10월", "11월", "12월"]
+            // };
+
+            var socket = io('/');
+            var sAlert = new Audio('/sounds/alert.mp3'); // sound.mp3 대신 루프로 재생할 오디오 파일 경로를 입력하세요.
+            sAlert.loop = true; // 오디오를 루프로 재생합니다.
+            socket.on('SM_RequestLogin', ()=> {
+
+                console.log('SM_RequestLogin');
+                socket.emit('CM_Login', {strID:user.strID, strGroupID:user.strGroupID});
+
+            });
+
+            socket.on('SM_Alert', (objectData) => {
+
+                console.log('SM_Alert');
+                console.log(objectData);
+                //objectData.eType = 0 (input), objectData.eType = 1 (output), objectData.eType = 2 (letter)
+                if(objectData.eType == 2)
+                {
+                    //$('#alert_letter').show();
+                    sAlert.play();
+                }
+            });
+            
+           
+            $(document).ready(function(){
+    
+                // $('#alert_input').hide();
+                // $('#alert_output').hide();
+                // $('#alert_letter').hide();
+
+                //머니<>포인트 전환
+                $("#rollingChange").click(function (e) {
+                    e.preventDefault();
+
+                    $('#RollingDialog').modal('show');
+                });
+
+                // const sidebarToggle = document.body.querySelector('#sidebarToggle');
+                // if (sidebarToggle) {
+                //     sidebarToggle.addEventListener('click', event => {
+                //         event.preventDefault();
+                //         document.body.classList.toggle('sb-sidenav-toggled');
+                //         localStorage.setItem('sb|sidebar-toggle', document.body.classList.contains('sb-sidenav-toggled'));
+                //     });
+                // }
+               
+            });
+            let iPointChange = () => {
+                    console.log(`iPointChange`);
+                    if(user.iRolling <= 0 )
+                    {
+                        alert("보유포인트가 0원 입니다.");
+                        return;
+                    }
+                    var userResponse = confirm("포인트로 전환하시겠습니까?");
+                    
+                    if (userResponse) {
+                        $.ajax({
+                            url:"/account/request_changepoint",
+                            type:"POST",
+                            data: {},
+                            dataType: "json",
+                            success: function (ret) {
+                                if (ret.result == "OK") {
+                                alert('포인트가 정상적으로 전환되었습니다.');
+                                location.reload();
+                                }
+                                else
+                                {
+                                    alert('정보가 정확하지 않아 1:1문의 해주시기 바랍니다.');
+                                }
+                            }, error: function () {
+                                alert("조회 중 오류 발생");
+                            }
+                        });
+                    } 
+                    else {
+                        // User clicked "Cancel", Just reload the page.
+                        location.reload();
+                    }
+                }
+
+            document.addEventListener("DOMContentLoaded", function() {
+                // 현재 페이지 URL과 일치하는 li 요소에 'active' 클래스를 추가합니다.
+                var currentPage = window.location.pathname;
+                var listItems = document.querySelectorAll('.main_nav_box ul li');
+
+                listItems.forEach(function(item) {
+                    var link = item.querySelector('a');
+                    var href = link.getAttribute('href');
+
+                    if (currentPage.includes(href)) { // 부분 일치로 변경
+                        item.classList.add('active');
+                    }
+                });
+
+                // 메뉴온오프
+                const menuBtn = document.createElement('div');
+                menuBtn.className = 'menu-btn';
+                menuBtn.innerHTML = '&#9776; 메뉴';
+                document.body.appendChild(menuBtn);
+
+                const closeBtn = document.querySelector('.close-btn');
+                const header = document.querySelector('header');
+                let isMenuVisible = false;
+
+                menuBtn.addEventListener('click', function () {
+                    isMenuVisible = !isMenuVisible;
+                    header.style.left = isMenuVisible ? '0' : '-250px';
+
+                    // 메뉴가 나타날 때 토글 버튼과 클로즈 버튼 숨기기
+                    menuBtn.style.display = isMenuVisible ? 'none' : 'block';
+                    closeBtn.style.display = isMenuVisible ? 'block' : 'none';
+                });
+
+                closeBtn.addEventListener('click', function () {
+                    isMenuVisible = false;
+                    header.style.left = '-250px';
+
+                    // 클로즈 버튼 숨기기
+                    closeBtn.style.display = 'none';
+                    // 토글 버튼 보이기
+                    menuBtn.style.display = 'block';
+                });
+                // 창 크기 변경 시 이벤트 처리
+                window.addEventListener('resize', function () {
+                    if (window.innerWidth >= 801) {
+                        // 801px 이상일 때는 메뉴 보이도록 설정
+                        header.style.left = '0';
+                    } else {
+                        // 800px 이하일 때는 토글 버튼 클릭에 따라 설정되도록 변경
+                        header.style.left = isMenuVisible ? '0' : '-250px';
+                    }
+                });
+            });
+    </script>    
+        
+        <%- script %>
+    
+    <% } else if ( type == 1 ) { %>
+        <%- body %>
+
+        <%- script %>
+    <% } else if ( type == 2 ) { %>
+
+        <%- body %>
+
+        <%- script %> 
+    <% } %>
+</body>
+</html>

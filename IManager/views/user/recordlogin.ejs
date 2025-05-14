@@ -1,0 +1,214 @@
+
+<head>
+    
+</head>
+
+
+<!-- start page title -->
+<div class="row">
+    <div class="col-12">
+        <div class="page-title-box">
+            <div class="page-title-right">
+                <ol class="breadcrumb m-0">
+                    <li class="breadcrumb-item"><a href="javascript: void(0);">회원 관리</a></li>
+                    <li class="breadcrumb-item active">회원 접속 기록</li>
+                </ol>
+            </div>
+            <h4 class="page-title">회원 접속 기록</h4>
+        </div>
+    </div>
+</div>
+<!-- end page title -->
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <div class="row mb-2">
+                    
+                    <div class="col-sm-3">
+                        <div class="input-group mb-3">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text" for="searchText">
+                                    ID/이름
+                                </span>
+                            </div>
+                            <input type="text" id="searchText" name="searchText" maxlength="20" class="form-control" />
+                            <div class="input-group-append">
+                                <button class="form-control" id="SearchTextFindButton">검색</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-7">
+                        <div class="text-sm-right">
+                            <!--
+                            <button type="button" class="btn btn-success mb-2 mr-1"><i class="mdi mdi-settings"></i></button>
+                            <button type="button" class="btn btn-light mb-2">Export</button>
+                                -->
+                        </div>
+                    </div><!-- end col-->
+                </div>
+
+                <div class="table-responsive">
+                    <table id="user-datatable" class="table table-sm table-hover dt-responsive nowrap w-100">
+                        <thead>
+                            <tr>
+                                <th>색인</th>
+                                <th>아이디</th>
+                                <th>닉네임</th>
+                                <th>매장 ID</th>
+                                <th>총판 ID</th>
+                                <th>지사 ID</th>
+                                <th>본사 ID</th>
+                                <th>대본사 ID</th>
+                                <th>게임머니</th>
+                                <th>위치</th>
+                                <th>가입날짜</th>
+                                <th>아이피</th>
+                                <th>로그인 시간</th>
+                            </tr>
+                        </thead>
+                    </table>
+                </div>
+            </div> <!-- end card-body-->
+        </div> <!-- end card-->
+    </div> <!-- end col -->
+</div>
+<!-- end row -->
+
+<script type="text/javascript">
+
+    var dataTableInstance;
+
+    $(document).ready(function(){
+
+        // dataTableInstance = $('#user-datatable').DataTable({
+        //     "serverSide": true,
+        //     "searching": false,
+        //     "ajax": {
+        //         url:"/user/request_userlist",
+        //         "type": "POST",
+        //         "data": function (d) {
+        //             return $.extend({}, d, {
+        //                 "userTypeFilter": $("input[name='UserTypeFilter']:checked").val(),
+        //                 "search" : $("#searchText").val(),
+        //                 "iClass" : 1,
+        //             });
+        //         }
+        //     },
+        //     responsive : true,
+        //     order: [[ 1, 'asc' ]],
+        //     columns: [
+
+        //         {
+        //             data: "id",
+        //             render: function (d, t) {
+        //                 return d;// return "<input type='checkbox' name='chk' id='chk" + d + "' value='" + d + "' /><label for='chk" + d + "'>" + d + "</label>";
+        //             }
+        //         },
+        //         {
+        //             data: "strID",
+        //             render: function (d) {
+        //                 return "<a href='#' class='UserIdPopup' data-id='" + d + "'>" + d + "</a>";
+        //             }
+        //         },
+        //         { data:"lev5" },
+        //         { data:"lev4" },
+        //         { data:"lev3" },
+        //         { data:"lev2" },
+        //         { data:"lev1" },
+        //         { data: "strName" },
+        //         {
+        //             data: "iClass",
+        //             render: function (d, t, s, m) {
+        //                 var text = "";
+        //                 if (d == 0)
+        //                     text = "본사";
+        //                 else if (d == 1)
+        //                     text = "총판";
+        //                 else if (d == 5)
+        //                     text = "회원";
+        //                 return text;
+        //             }
+        //         },
+        //         { data: "strEMail" },
+        //         {
+        //             data: "strNickname", render: function (d, t, row) {
+        //                 var label = d;
+        //                 if (row.userType == "TEST")
+        //                     label = label + '<i class="far fa-grimace"></i>';
+        //                 else if (row.userType == "ADMIN")
+        //                     label += '<i class="fas fa-users-cog"></i>';
+        //                 return label;
+        //             }
+        //         },
+        //         {
+        //             data: "eStatus",
+        //             render: function (d, t, s, m) {
+        //                 var text = "";
+        //                 if (d == "BLOCK")
+        //                     text = "잠김";
+        //                 else if (d == "QUIT")
+        //                     text = "탈퇴";
+        //                 else
+        //                     text = "정상";
+        //                 return text;
+        //             }
+        //         },
+        //         {
+        //             data: "iPoint", render : (d)=> {
+        //                 let i = parseInt(d);
+        //                 return i.toLocaleString();
+        //             }
+        //         },
+        //         { 
+        //             data: "iCash", render : (d)=> {
+        //                 let i = parseInt(d);
+        //                 return i.toLocaleString();
+        //             }
+        //         },
+        //         { data: "strMobileNo" },
+        //         {
+        //             data: "createdAt", render: function (d) {
+        //                 let date = moment(d).format('YYYY-MM-DD HH:mm:ss');
+        //                 return date;
+        //             }
+        //         },
+        //         {
+        //             data: null,
+        //             //data:"quit",
+        //             render: function (d, t) {
+        //                 var html = "";
+        //                 if(d.eStatus != "QUIT")
+        //                 //if(d.userStatus != "QUIT")
+        //                     html += "<a href='#' class='QuitButton' title='탈퇴'>X</a>";
+        //                 return html;
+        //             }
+        //         }
+        //     ],
+        //     keys: true,
+        //     "language": {
+        //         "paginate": {
+        //             "previous": "<i class='mdi mdi-chevron-left'>",
+        //             "next": "<i class='mdi mdi-chevron-right'>"
+        //         },
+        //         "info": "현재 페이지 _PAGE_/_PAGES_, 총 _TOTAL_ 건",
+        //         "lengthMenu": "한 페이지 길이 _MENU_",
+        //         "emptyTable": "조건에 맞는 데이터가 없습니다",
+        //         "infoEmpty" : "표시할 데이터 없음"
+        //     },
+        //     "sort": false,
+        //     "drawCallback": function () {
+        //         $('.dataTables_paginate > .pagination').addClass('pagination-rounded');
+        //     },
+        //     createdRow: function (row, data) {
+        //         $(row).attr("data-id", data.id);
+        //         $(row).attr("data-loginId", data.strID);
+        //         if (data.eStatus == "QUIT")
+        //             $(row).addClass("table-dark");
+
+        //     }
+        // });
+    });
+
+</script>

@@ -1,0 +1,129 @@
+<title>고객센터</title>
+<body>
+    <!-- sub_content -->
+    <div class="sub_content_arr_bg">
+        <div class="sub_content_arr">
+            <div>
+                <div class="subTitle_customer"> 
+                    <h2>고객센터 <small>customer center</small></h2>
+                </div>                    
+                    <table width="100%" border="0" cellpadding="0" cellspacing="0" class="topth">
+                        <tbody>
+                            <tr align="center">
+                                <th style="width:10%" height="24">번호</th>
+                                <th style="width:40%">제목</th>
+                                <th style="width:30%">상태</th>
+                                <th style="width:20%">작성일시</th>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <table width="100%" border="0" cellpadding="0" cellspacing="0" class="bbs-list">
+                        <tbody id="customerlist">
+                            
+                        </tbody>
+                    </table>
+                    
+                    <!-- 페이징 시작 -->
+                    <!-- <div class="list_bottom_btn_left">
+                        <a href="javascript:void(0);" onfocus="this.blur()" class="ui_btn_gray btnChoiceDel">선택삭제</a>
+                    </div>
+                    <div class="list_bottom_btn_right"> 
+                        <a href="javascript:void(0);" class="ui_btn_blue" name="btnCustomer" id="btnCustomer" style=" color:#fff; cursor:pointer;">계좌문의</a>&nbsp;
+                        <a href="javascript:void(0);" class="ui_btn_red" name="newPop" id="newPop" style="cursor:pointer;">글쓰기</a> 
+                    </div>
+                    <div class="clear"> </div>
+                    <div class="paging_list">
+                        <div class="tf_pagination">
+                            <ul>
+                                <li><a id="pre-btn" href="javascript:void(0);"><i class="fa fa-chevron-left" aria-hidden="true"></i></a></li><li><a class="active">1</a></li>
+                                <li><a id="next-btn" href="javascript:void(0);"><i class="fa fa-chevron-right" aria-hidden="true"></i></a></li>
+                            </ul>
+                        </div>
+                    </div> -->
+            </div>
+        </div>
+    </div>
+</body>
+
+<script>
+    function showBoard(objId) {
+        console.log(objId);
+        const dis = document.getElementById(objId).style.display == "none" ? "contents" : "none";
+        document.getElementById(objId).style.display = dis;
+    }
+    $(document).on('click', '#sendConsulting', (e) => {
+        e.preventDefault();
+
+        let objectData = 
+        {
+            strTo:'admin',
+            strContents:$('#strWritingContents').val()
+        };
+
+        if ( objectData.strContents == '' )
+        {
+            alert('문의 내용을 적어주세요.');
+            return;
+        }
+
+        $.ajax({
+        url:"/announcement/request_consultingsend",
+        type:"POST",
+        data: objectData,
+        dataType: "json",
+        success: function (obj) {
+            if (obj.result == "OK") {
+
+                console.log(obj);
+
+                alert('정상적으로 완료되었습니다.');
+                location.reload();
+            } else {
+                alert(obj.reason);
+            }
+        }, error: function () {
+            alert("조회 중 오류 발생");
+        }
+        });
+    })
+    $(document).ready(function(){
+
+        $.ajax({
+            type:'post',
+            url: "/announcement/request_customerlist",
+            data:{
+            },
+            success:function(ret) {
+                console.log(ret);
+                 $('#customerlist').empty();
+                 for ( let i in ret.data )
+                 {
+                    //console.log(ret[i]);
+                        let eState = '';
+                        let strAnswer = '';
+                        if(ret.data[i].eState == 'UNREAD') {
+                            strAnswer = '내용이 없습니다. 잠시만 기다려 주세요.'
+                            eState = '답변대기';
+                        }
+                        else{
+                            strAnswer = ret.data[i].strAnswer.replace(/\n/g, '<br>');
+                            eState = '답변완료';
+                        }
+                        let strBoardId = `board_${ret.data[i].id}`;
+                        let tag = `
+                            <tr class="row">                      
+                                <td height="30" align="center" class="num">${ret.data[i].id}</td>
+                                <td class="subject" align="center"><a href="#" onclick="showBoard('${strBoardId}')">${ret.data[i].strContents}</a></td>                                                        
+                                <td align="center" class="state">${eState}</td>
+                                <td align="center" class="date">${ret.data[i].createdAt}</td>                                                 
+                            </tr>
+                            <tr class=customercenter_auto id="${strBoardId}" style="display:none">
+                                <td colspan="8">${strAnswer}</td>
+                            </tr>                            
+                        `;
+                        $('#customerlist').append(tag);
+                    }                        
+            }
+        });
+    });
+</script>

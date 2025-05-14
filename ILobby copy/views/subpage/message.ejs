@@ -1,0 +1,112 @@
+<title>쪽지함</title>
+<body>
+    <!-- sub_content -->
+    <div class="sub_content_arr_bg">
+        <div class="sub_content_arr">
+            <div class="subTitle_arr">
+                <h2><em class="ic"></em> 내쪽지함 <small>message box</small></h2>
+            </div>
+
+            <div class="sub-cont-arr">        
+                    <div class="cont_back_arr01">
+                        <table width="100%" cellpadding="0" cellspacing="0" class="bbs-list-cash topth">
+                            <tbody>
+                                <tr>
+                                    <th align="center"><strong>번호</strong></th>
+                                    <th align="center"><strong>제목</strong></th>
+                                    <th align="center"><strong>받은일시</strong></th>
+                                    <th align="center"><strong>상태</strong></th>
+                                </tr>
+                            </tbody>
+
+                            <tbody id="letterlist">
+                                
+                            </tbody>
+                        </table>
+                    </div>
+                    <div style="margin-top:10px;">
+                   
+                        <button type="button" class="ui-button_gray" onclick="letterReadAll()">전체읽기</button>
+                        <!-- <button type="button" class="ui_btn_red" id="btnDelete">선택삭제</button> -->
+                        <!-- <button type="button" class="ui_btn_red" id="btnRead">선택읽기</button> -->
+        
+                    </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+<script>
+    $(document).on('ready', ()=> {
+        this.announcementlist();
+    });
+    function announcementlist()
+    {
+        $.ajax({
+            url:"/announcement/request_letterlist",
+            type:"POST",
+            data: {},
+            dataType: "json",
+            success: function (ret) {
+                if (ret.result == "OK") {
+                    $('#letterlist').empty();
+                    console.log(ret);
+                    if(ret.data.length == 0)
+                    {
+                        let tag = `<tr>
+                                     <td class="py-2 px-1 text-sm text-white bg-stone-600" colspan="100">쪽지 내역이 없습니다.</td>
+                                   </tr>`;
+                        $('#letterlist').append(tag);
+                    }
+                    else
+                    {
+                        for ( let i in ret.data )
+                        {
+                            let eState = '';
+
+                            if(ret.data[i].eState == 'UNREAD') {
+                                eState = '안읽음';
+                            }
+                            else{
+                                eState = '읽음';
+                            }
+                            let strBoardId = `board_${ret.data[i].id}`;
+                            let tag = `
+                            <tr height="30" class="memo_view">
+                                <td align="center">${ret.data[i].id} </td>
+                                <td align="center"><a href="#" onclick="showBoardLetter('${strBoardId}','${ret.data[i].id}','${ret.data[i].eState}')">쪽지</a></td>
+                                <td align="center">${eState}</td>
+                                <td>${ret.data[i].createdAt}</td>
+                            </tr>
+                            <tr class="customerauto" id="${strBoardId}" style="display:none">
+                                <td colspan="8">${ret.data[i].strContents.replace(/\n/g, '<br>')}</td>
+                            </tr>
+                            `;
+                            $('#letterlist').append(tag);
+                        }
+                    }
+                }
+                else
+                {
+                    alert(ret.reason);
+                }
+            }, error: function () {
+                alert("조회 중 오류 발생");
+            }
+        });
+    }
+    function showBoardLetter(objId,id,eState) {
+            console.log(objId);
+            const dis = document.getElementById(objId).style.display == "none" ? "contents" : "none";
+            document.getElementById(objId).style.display = dis;
+            if(eState == 'UNREAD')
+            {
+                $.ajax({
+                    type:'post',
+                    url: "/announcement/request_letterread",
+                    data: {id:id},
+                });
+            }
+
+    }
+</script>

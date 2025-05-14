@@ -1,0 +1,394 @@
+
+<!-- start page title -->
+<div class="row">
+    <div class="col-12">
+        <div class="page-title-box">
+            <div class="page-title-right">
+                <ol class="breadcrumb m-0">
+                    <li class="breadcrumb-item"><a href="javascript: void(0);">출금 관리</a></li>
+                    <li class="breadcrumb-item active">출금 목록</li>
+                </ol>
+            </div>
+            <h4 class="page-title">출금 현황</h4>
+        </div>
+    </div>
+</div>
+<!-- end page title -->
+<div class="row">
+    <div class="card col-12">
+        <div class="card-body">
+            <!-- 기준 시각 <label id="lastRefreshTime">00:00</label> <a href="#" id="RefreshButton" alt="새로고침"><i class="fas fa-sync-alt"></i></a> -->
+            <form>
+                <div class="form-row  align-items-center">
+                    <div class="col-auto">
+                        <label class="col-form-label">검색 날짜 범위</label>
+                    </div>
+                    <div class="col-auto">
+                        <label class="sr-only">시작 날짜</label>
+                        <input type="text" class="form-control mb-2" id="startDate" data-provide="datepicker" placeholder="">
+                    </div>
+                    <div class="col-auto">
+                        <label class="sr-only">마지막 날짜</label>
+                        <input type="text" class="form-control mb-2" id="endDate" data-provide="datepicker" placeholder="">
+                    </div>
+                    <div class="col-auto">
+                        <button type="button" class="btn btn-primary mb-2" id="FindButton">검색</button>
+                    </div>
+                </div>
+            </form>
+
+        </div>
+
+        <div class="col-sm-3">
+            <div class="btn-group btn-group-toggle" data-toggle="buttons">
+                <label class="btn btn-secondary active text-nowrap">
+                    <input type="radio" name="UserTypeFilter" value="" checked />전체
+                </label>
+                <label class="btn btn-secondary text-nowrap">
+                    <input type="radio" name="UserTypeFilter" value="STANDBY" />대기
+                </label>
+                <label class="btn btn-secondary text-nowrap">
+                    <input type="radio" name="UserTypeFilter" value="COMPLETE" />완료
+                </label>
+                <label class="btn btn-secondary text-nowrap">
+                    <input type="radio" name="UserTypeFilter" value="CANCEL" />취소
+                </label>
+            </div>
+        </div>
+
+    </div>
+</div>
+<div class="row">
+    <div class="card col-12">
+        <div class="card-body">
+            <h5 class="card-title mb-0">
+                출금 상세 내역
+            </h5>
+            <div class="collapse pt-3 show table-responsive">
+                <table id="dataTable" class="table table-sm dt-responsive nowrap w-100">
+                    <thead>
+                        <tr>
+                            <th>번호</th>
+                            <th>ID</th>
+                            <th>닉네임</th>
+                            <th>신청등급</th>
+                            <th>상위ID</th>
+                            <th>출금액</th>
+                            <th>이름</th>
+                            <th>연락처</th>
+                            <th>신청시간</th>
+                            <th>처리결과</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade task-modal-content" id="OutputDialog" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" id="NewTaskModalLabel">충전 정보</h4>
+                </div>
+                <div class="modal-body">
+
+                    <div class="form-group">
+                        <label>아이디</label>
+                        <input type="text" id="OutputDBID" name="OutputDBID" maxlength="20" class="form-control" disabled/>
+                        <label>상태</label>
+                        <select class="form-control form-control-light" name="OutputStatus" id="OutputStatus">
+                            <option value="STANDBY" selected>대기</option>
+                            <option value="COMPLETE">완료</option>
+                            <option value="CANCEL">취소</option>
+                        </select>
+                    </div>
+
+                    <div class="text-right">
+                        <button type="button" class="btn btn-primary" id="ChangeOutputState">저장</button>
+                        <button type="button" class="btn btn-light" data-bs-dismiss="modal">취소</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+
+    //$("#UserFormSubmitButton").click(function (e) {
+    $(document).on('click', '#ChangeOutputState', (e) => {
+        e.preventDefault();
+
+        $.ajax({
+        url:"/inout/outputcomplete",
+        type:"POST",
+        data: {
+            id:$('#OutputDBID').val(),
+            state:$('#OutputStatus').val()
+        },
+        dataType: "json",
+        success: function (obj) {
+            if (obj.result == "OK") {
+
+                console.log(obj);
+
+                $("#OutputDialog").modal("hide");
+
+                alert(' 완료되었습니다.');
+                location.reload();
+            } else {
+                alert(obj.reason);
+            }
+        }, error: function () {
+            alert("조회 중 오류 발생");
+        }
+        });
+    })
+
+
+    $(document).on('click', '.ChangeStateButton', (e) => {
+    //$(".ChangeStateButton").click(function (e) {
+        var state = $(e.target).text();
+        if ( state != 'STANDBY' )
+        {
+            return;
+        }
+
+        var id = $(e.target).parent().parent().attr("data-id");
+        //var id = 7;
+        //console.log("id : " + id);
+
+        e.preventDefault();
+            
+            $.ajax({
+                url:"/inout/outputdetail",
+                type:"POST",
+                data: {
+                    id : id
+                },
+                dataType: "json",
+                success: function (obj) {
+                    if (obj.result == "OK") {
+                        $('#OutputDBID').val(obj.id);
+                        $('#OutputStatus').val(obj.state);
+                        
+                        $("#OutputDialog").modal("show");
+                    } else {
+                        alert(obj.reason);
+                    }
+                }, error: function () {
+                    alert("조회 중 오류 발생");
+                }
+            });
+        });
+
+    var dataTableInstance;
+
+    $(document).ready(function () {
+
+        var counter = 0;
+        var REFRESH_INTERVAL = 2000;
+        var timerId;
+
+        // $("#startDate").datepicker({
+        //     format: 'yyyy-mm',
+        //     language: 'kr',
+        //     minViewMode: "months",
+        //     startView: "months",
+        //     autoclose : true
+        // });
+        // $("#endDate").datepicker({
+        //     format: 'yyyy-mm',
+        //     language: 'kr',
+        //     minViewMode: "months",
+        //     startView: "months",
+        //     autoclose: true
+        // });
+
+        $("#startDate").datepicker({
+            format: 'yyyy-mm-dd',
+            language : 'kr'
+        });
+        $("#endDate").datepicker({
+            format: 'yyyy-mm-dd',
+            language: 'kr'
+        });
+
+        $("#FindButton").click(function (e) {
+            e.preventDefault();
+
+            dataTableInstance.ajax.reload();
+        });
+
+        $("input[name='UserTypeFilter']").change(function () {
+            dataTableInstance.ajax.reload();
+        });
+        var leadingZeros = (n, digits) => {
+            var zero = '';
+            n = n.toString();
+
+            if (n.length < digits) {
+                for (var i = 0; i < digits - n.length; i++)
+                    zero += '0';
+            }
+            return zero + n;
+        }
+        let getTimeStartStamp = ()=> {
+            var now = new Date();
+
+            var d = new Date(now.setDate(now.getDate()));
+            var s =
+                leadingZeros(d.getFullYear(), 4) + '-' +
+                leadingZeros(d.getMonth() + 1, 2) + '-' +
+                leadingZeros(d.getDate(), 2);
+
+            return s;
+        }
+        let getTimeEndStamp = ()=> {
+            var now = new Date();
+
+            var d = new Date(now.setDate(now.getDate() - 1));
+            var s =
+                leadingZeros(d.getFullYear(), 4) + '-' +
+                leadingZeros(d.getMonth() + 1, 2) + '-' +
+                leadingZeros(d.getDate(), 2);
+
+            return s;
+        }
+        let today = getTimeStartStamp();
+        let yesterday = getTimeEndStamp();
+        $('#startDate').val(yesterday);
+        $('#endDate').val(today);
+
+
+        function refreshData() {
+            dataTableInstance.ajax.reload();
+        }
+        // 리스트
+        dataTableInstance = $('#dataTable').DataTable({
+            "serverSide": true,
+            "searching": false,
+            responsive : false,
+            //paging : false,
+            //lengthChange : false,
+            "ajax": {
+                url:"/inout/outputlist",
+                "type": "POST",
+                "data": function (d) {
+                    return $.extend({}, d, {
+                        userTypeFilter: $("input[name='UserTypeFilter']:checked").val(),
+                        startDate:$('#startDate').val(),
+                        endDate:$('#endDate').val(),
+                        // extra data
+                    });
+                }
+            },
+            columns: [
+                {
+                    data: "number"
+                },
+                {
+                    data: "strID"
+                },
+                {
+                    data: "strNickname"
+                },
+                {
+                    data: "iClass",
+                    render: function (d, t, s, m) {
+                        var text = "";
+                        if (d == 0)
+                            text = "대본사";
+                        else if (d == 1)
+                            text = "본사";
+                        else if (d == 2)
+                            text = "지사";
+                        else if (d == 3)
+                            text = "총판";
+                        else if (d == 4)
+                            text = "매장";
+                        else if (d == 5)
+                            text = "일반회원";
+                        return text;
+                    }
+                }, 
+                {
+                    data: "strGroupID"
+                },
+                {
+                    data: "iAmount", render: function (d) {
+                        let c = parseInt(d);
+                        return c.toLocaleString();
+                    }
+                },
+                {
+                    data: "strDepositor"
+                },
+                {
+                    data: "strMobileNo"
+                },
+                {
+                    data: "createdAt", render: function (d) {
+                        let date = moment(d).format('YYYY-MM-DD HH:mm:ss');
+                        return date;
+                    }
+                }, 
+                {
+                    data: "eState", render: function (d, t, r) {
+                        //return "<a href='#' class='ChangeStateButton' data-id='" + d + "'>" + d + "</a>";
+                        return "<a href='#' class='ChangeStateButton' data-id='" + d + "'>" + d + "</a>";
+                    }
+                }
+            ],
+            order: [[0, "desc"]],
+            keys: true,
+            "language": {
+                "paginate": {
+                    "previous": "<i class='mdi mdi-chevron-left'>",
+                    "next": "<i class='mdi mdi-chevron-right'>"
+                },
+                "info": "현재 페이지 _PAGE_/_PAGES_, 총 _TOTAL_ 건",
+                "lengthMenu" : "한 페이지 길이 _MENU_",
+                "emptyTable": "조건에 맞는 데이터가 없습니다",
+                "infoEmpty" : "표시할 데이터 없음"
+            },
+            "sort": false,
+            "drawCallback": function () {
+                $('.dataTables_paginate > .pagination').addClass('pagination-rounded');
+            },
+            createdRow: function (row, data) {
+                $(row).attr("data-id", data.id);
+            }
+        });
+
+        $("#RefreshButton").click(function (e) {
+            e.preventDefault();
+            refreshData();
+        });
+    });
+
+
+
+    $(document).ready(function() {
+    // 화면 크기가 변경될 때 실행되는 이벤트 핸들러
+    $(window).resize(function() {
+      // 데이터테이블의 모든 열을 보이게 만듭니다.
+        $("#dataTable").find('tr').each(function() {
+             $(this).find('td').show(); // 각 행의 데이터 셀 보이게 하기
+         });
+        });
+    });
+    $(document).ready(function() {
+    // 화면 크기가 변경될 때 실행되는 이벤트 핸들러
+    $(window).resize(function() {
+      // 데이터테이블의 모든 열을 보이게 만듭니다.
+        $("#dataTable").find('tr').each(function() {
+             $(this).find('th').show(); // 각 행의 데이터 셀 보이게 하기
+         });
+        });
+    });
+</script>

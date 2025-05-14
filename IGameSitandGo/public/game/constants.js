@@ -1,0 +1,130 @@
+const EPositionIndex = Object.freeze({
+    "Sit6Player1":0,
+    "Sit6Player2":1,
+    "Sit6Player3":2,
+    "Sit6Player4":3,
+    "Sit6Player5":4,
+    "Sit6Player6":5,
+
+    "Sit3Player1":6,
+    "Sit3Player2":7,
+    "Sit3Player3":8,
+
+    "Sit6Chip1":9,
+    "Sit6Chip2":10,
+    "Sit6Chip3":11,
+    "Sit6Chip4":12,
+    "Sit6Chip5":13,
+    "Sit6Chip6":14,
+
+    "Sit3Chip1":15,
+    "Sit3Chip2":16,
+    "Sit3Chip3":17,
+
+    "Sit6Coin1":18,
+    "Sit6Coin2":19,
+    "Sit6Coin3":20,
+    "Sit6Coin4":21,
+    "Sit6Coin5":22,
+    "Sit6Coin6":23,
+
+    "Sit3Coin1":24,
+    "Sit3Coin2":25,
+    "Sit3Coin3":26,
+
+    "Dealer":27,
+
+    "TableCard1":28,
+    "TableCard2":29,
+    "TableCard3":30,
+    "TableCard4":31,
+    "TableCard5":32,
+    
+    "Sit6Type1":33,
+    "Sit6Type2":34,
+    "Sit6Type3":35,
+    "Sit6Type4":36,
+    "Sit6Type5":37,
+    "Sit6Type6":38,
+
+    "Sit3Type1":39,
+    "Sit3Type2":40,
+    "Sit3Type3":41,
+
+    "BetButtonQuater":42,
+    "BetButtonHalf":43,
+    "BetButtonFull":44,
+    "BetButtonCall":45,
+    "BetButtonCheck":46,
+    "BetButtonFold":47,
+    "BetButtonRaise":48,
+
+    "PanelCall":49,
+    "PanelTotal":50,
+    "MyInfo":51,
+    "Logo":52,
+    "DialogStandby":53,
+    "CardDeck":54,
+    "StartButton":55,
+
+    "plusButton":56,
+    "minusButton":57,
+    "sliderBar":58,
+    "MobileSliderBar":59,
+    "MobileRaiseBar":60,
+
+    "Emoticon":61,
+    "GameLog":62,
+    "Jackpot":63,
+    "ShowCard":64,
+
+    "RaiseButton1":65,
+    "RaiseButton2":66,
+    "RaiseButton3":67,
+    "RaiseButton4":68,
+
+    "RaiseActive":69,
+
+    "TotalBettingCoinLabel":70,
+    "CallCoinLabel":71,
+    "RaiseCoinLabel":72,
+
+    "WinCeremony":73,
+    "AbstentionWin":74,
+    "WinMadePanel":75,
+
+    "ResultPot":76,
+    "BlindUp":77,
+    "PrizePanel":78,
+    "WinCoinLabel":79,
+    "PrizeCoinLabel":80,
+	"EmoticonBG":81,
+
+    "Emoticon00":82,
+    "Emoticon01":83,
+    "Emoticon02":84,
+    "Emoticon03":85,
+    "Emoticon04":86,
+    "Emoticon05":87,
+    "Emoticon06":88,
+    "Emoticon07":89
+});
+
+const EImageIndex = Object.freeze({
+    "BG01":0,
+    "BG02":1,
+    "BG03":2,
+    "BG04":3,
+    "BGText01":4,
+    "BGText02":5,
+    "BGText03":6,
+    "BGText04":7,
+    "BGTableTotalPanel01":8,
+    "BGTableCallPanel01":9,
+    "BGTableTotalPanel02":10,
+    "BGTableCallPanel02":11,
+    "BGTableDeck01":12,
+    "BGTableDeck02":13,
+    "BGTableDeck03":14,
+    "BGTableDeck04":15,
+});

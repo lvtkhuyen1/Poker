@@ -1,0 +1,236 @@
+<!-- start page title -->
+<div class="row">
+    <div class="col-12">
+        <div class="page-title-box">
+            <div class="page-title-right">
+                <ol class="breadcrumb m-0">
+                    <li class="breadcrumb-item"><a href="javascript: void(0);">머니 회수 관리</a></li>
+                    <li class="breadcrumb-item active">에이전트<>회원</li>
+                </ol>
+            </div>
+            <h3 class="page-title">머니 회수 현황</h3>
+        </div>
+    </div>
+</div>
+<!-- end page title -->
+<div class="row">
+    <div class="card col-12">
+        <div class="card-body">
+            <h4 class="card-title mb-0">차감 상세 내역</h4>
+            <div class="form-row  align-items-right float-right">
+                <div class="col-auto">
+                    <label class="col-form-label">검색 날짜 범위</label>
+                </div>
+                <div class="col-auto">
+                    <label class="sr-only">시작 날짜</label>
+                    <input type="text" class="form-control mb-2" id="startDate" data-provide="datepicker"
+                        placeholder="">
+                </div>
+                <div class="col-auto">
+                    <label class="sr-only">마지막 날짜</label>
+                    <input type="text" class="form-control mb-2" id="endDate" data-provide="datepicker" placeholder="">
+                </div>
+                <div class="col-auto">
+                    <button type="button" class="btn btn-primary mb-2" id="FindButton">검색</button>
+                </div>
+            </div>
+            <div class="collapse pt-3 show table-responsive">
+                <table id="parentdataTable" class="table table-sm dt-responsive nowrap w-100">
+                    <thead>
+                        <tr>
+                            <th>고유번호</th>
+                            <th>대상 ID</th>
+                            <th>대상 닉네임</th>
+                            <th>실행 ID</th>
+                            <th>실행 닉네임</th>
+                            <th>금액</th>
+                            <th>구분</th>
+                            <th>처리시간</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    var dataTableInstance;
+
+    $(document).ready(function () {
+
+        var counter = 0;
+        var REFRESH_INTERVAL = 2000;
+        var timerId;
+
+        $("#startDate").datepicker({
+            format: 'yyyy-mm-dd',
+            language: 'kr'
+        });
+        $("#endDate").datepicker({
+            format: 'yyyy-mm-dd',
+            language: 'kr'
+        });
+        $("#FindButton").click(function (e) {
+            e.preventDefault();
+            dataTableInstance.ajax.reload();
+        });
+        var leadingZeros = (n, digits) => {
+            var zero = '';
+            n = n.toString();
+
+            if (n.length < digits) {
+                for (var i = 0; i < digits - n.length; i++)
+                    zero += '0';
+            }
+            return zero + n;
+        }
+        let getTimeStartStamp = ()=> {
+            var now = new Date();
+
+            var d = new Date(now.setDate(now.getDate()));
+            var s =
+                leadingZeros(d.getFullYear(), 4) + '-' +
+                leadingZeros(d.getMonth() + 1, 2) + '-' +
+                leadingZeros(d.getDate(), 2);
+
+            return s;
+        }
+        let getTimeEndStamp = ()=> {
+            var now = new Date();
+
+            var d = new Date(now.setDate(now.getDate() - 1));
+            var s =
+                leadingZeros(d.getFullYear(), 4) + '-' +
+                leadingZeros(d.getMonth() + 1, 2) + '-' +
+                leadingZeros(d.getDate(), 2);
+
+            return s;
+        }
+        let today = getTimeStartStamp();
+        let yesterday = getTimeEndStamp();
+        $('#startDate').val(yesterday);
+        $('#endDate').val(today);
+
+        function refreshData() {
+            dataTableInstance.ajax.reload();
+            //dataTableInstance2.ajax.reload();
+        }
+        //상위배송 리스트
+        dataTableInstance = $('#parentdataTable').DataTable({
+            "serverSide": true,
+            "searching": false,
+            paging : false,
+            responsive : false,
+            //lengthChange : false,
+		    //processing: true,
+            "ajax": {
+                url:'/inout/request_recordgt',
+                "type": "POST",
+                "data": function (d) {
+                    return $.extend({}, d, {
+                        startDate: $('#startDate').val(),
+                        endDate: $('#endDate').val(),
+                        eType:'TAKE',
+                        eUserType:'NORMAL'
+                    });
+                }
+            },
+            columns: [
+
+                {
+                    data: "id"
+                },
+                {
+                    data: "strID"
+                },
+                {
+                    data: "strNickname"
+                },
+                {
+                    data: "strDepositor"
+                },
+                {
+                    data: "strGivename"
+                },
+                {
+                    data: "iAmount", render: function (d) {
+                        let c = parseInt(d);
+                        return c.toLocaleString();
+                    }
+                },
+                {
+                    data: "eType",
+                    render: function (d, t, s, m) {
+                        var text = "";
+                        if (d == 'GIVE')
+                            text = "머니지급";
+                        else if(d == 'TAKE')
+                            text = "머니회수";
+                        else if(d == 'PGIVE')
+                            text = "포인트지급";
+                        else if(d == 'PTAKE')
+                            text = "포인트차감";
+                        else
+                            text = "지급";
+                        return text;
+                    }
+                },
+                {
+                    data: "createdAt", render: function (d) {
+                        let date = moment(d).format('YYYY-MM-DD HH:mm:ss');
+                        return date;
+                    }
+                },
+            ],
+            order: [[0, "desc"]],
+            keys: true,
+            "language": {
+                "paginate": {
+                    "previous": "<i class='mdi mdi-chevron-left'>",
+                    "next": "<i class='mdi mdi-chevron-right'>"
+                },
+                "info": "현재 페이지 _PAGE_/_PAGES_, 총 _TOTAL_ 건",
+                "lengthMenu": "한 페이지 길이 _MENU_",
+                "emptyTable": "조건에 맞는 데이터가 없습니다",
+                "infoEmpty": "표시할 데이터 없음"
+            },
+            "sort": false,
+            "drawCallback": function () {
+                $('.dataTables_paginate > .pagination').addClass('pagination-rounded');
+            },
+            createdRow: function (row, data) {
+                $(row).attr("data-id", data.id);
+            }
+        });
+
+        $("#RefreshButton").click(function (e) {
+            e.preventDefault();
+            refreshData();
+        });
+    })
+
+
+
+    $(document).ready(function() {
+    // 화면 크기가 변경될 때 실행되는 이벤트 핸들러
+    $(window).resize(function() {
+      // 데이터테이블의 모든 열을 보이게 만듭니다.
+        $("#parentdataTable").find('tr').each(function() {
+             $(this).find('td').show(); // 각 행의 데이터 셀 보이게 하기
+         });
+        });
+    });
+    $(document).ready(function() {
+    // 화면 크기가 변경될 때 실행되는 이벤트 핸들러
+    $(window).resize(function() {
+      // 데이터테이블의 모든 열을 보이게 만듭니다.
+        $("#parentdataTable").find('tr').each(function() {
+             $(this).find('th').show(); // 각 행의 데이터 셀 보이게 하기
+         });
+        });
+    });
+</script>

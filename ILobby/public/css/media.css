@@ -1,0 +1,284 @@
+@media(max-width:2500px) and (min-width:1400px){
+
+}
+
+
+@media(max-width:1399px){
+  .noticeText{
+    display:none;
+  }
+  .user-info-cont{
+    justify-content: end;
+    width:100%;
+  }
+}
+@media(max-width:1200px){
+  .section_third{
+    display:none;
+  }
+  .section_first{
+    width:30%;
+  }
+  .section_second{
+    width:70%;
+  }
+}
+@media(max-width:1000px){
+  .user-info-cont{
+    width:1000px;
+    margin-left:2%;
+    /* justify-content: flex-start; */
+  }
+  .header_roombtn{
+    display:none;
+  }
+  .header_section .header_info{
+    width:70%;
+  }
+  .main_menu{
+    width:70%;
+    left:17%;
+  }
+}
+
+
+@media screen and (max-width: 800px) {
+  .menu-btn,
+  .close-btn {
+      display: block;
+  }
+
+  .header-bottom {
+      left: -250px;
+  }
+  .sub_content_arr_bg{
+    padding-left:30px;
+  }
+  .user-info-cont{
+    margin-left:8%;
+  }
+  .popup{
+    width:80%;
+    left:10%;
+  }
+  .copyright{
+    padding:0;
+  }
+}
+
+@media screen and (max-width: 801px) {
+  /* .menu-btn,
+  .close-btn {
+      display: none;
+  } */
+  .noticeText{
+    display:none;
+  }
+  
+  .user-info-cont{
+    width:700px;
+  }
+
+  .header-bottom {
+      left: 0;
+  }
+  
+
+  /* 추가된 부분: 801px 이상일 때 모든 메뉴 보이기 */
+  .main_nav_arr {
+      display: flex;
+  }
+
+  /* 추가된 부분: 801px 이상일 때 .menu-btn 숨기기 */
+  .header_top_arr .menu-btn {
+      display: none;
+  }
+
+  
+.image-container {
+  position: relative;
+  width: 150px; /* 게이지 바의 길이 */
+  height: 5px; /* 게이지 바의 높이 */
+}
+.indicator {
+  top:-8px;
+}
+
+}
+
+@media screen and (max-width: 600px){
+  .start p,
+  .section_button_one div,
+  .section_button_two div{
+    font-size:16px;
+  }
+  .section_second .section_second_header div{
+    width:30%;
+  }
+
+  .section_first{
+    display:none;
+  }
+
+  .section_second{
+    width:100%;
+    display:none;
+  }
+
+  .section_first_mb{
+    width:100%;
+    display:block;
+  }
+  section.mb_bg{
+    background-color:transparent;
+  }
+}
+
+@media screen and (max-width: 550px){
+  .mb-logout{
+    display:block;
+  }
+  .user-info01{
+    width:100px;
+    display:block;
+  }
+  .user-info-cont{
+    justify-content: flex-end;
+    width:90%;
+    margin:15px;
+  }
+  .user-info-cont .mb-logo{
+    width:200px;
+  }
+  .user-info-cont .mb-logo img{
+    width:100%;
+  }
+  /* .user-info01 .fir, */
+  .user-info01 .thi,
+  .user-info01 .fiv,
+  .user-info01 .fou{
+    display:none;
+  }
+
+  .mb-logo{
+    display:block;
+    width:35%;
+  }
+  .menu-btn {
+    top:0;
+  }
+  .main-visual{
+    display:none;
+  }
+  .list-menugame{
+    width:100%;
+  }
+  .main_content_wrap .infoZone .info01{
+    width:100%;
+  }
+
+  .copyright{
+    padding:0;
+  }
+  .license{
+    padding:0;
+  }
+  #footer{
+    padding:0;
+  }
+
+
+  tr.hidden{
+    visibility: hidden;
+  }
+  
+  /* 고객센터 */
+.ui_btn_blue {
+    margin-bottom:10px;
+}
+
+
+
+/* 회원정보 */
+.cashzone_talbe_arr tr td{
+  font-size:12px;
+}
+}
+
+@media screen and (max-width: 500px){
+  .sound,
+  .persent,
+  .melody,
+  .table_color,
+  .rebyin,
+  .byin,
+  input
+  {
+    font-size:0.8rem;
+  }
+  .menu-button{
+    top:35px;
+  }
+  .popup{
+    width:90%;
+    left:5%;
+  }
+  .image-container{
+    width: 150px; /* 게이지 바의 길이 */
+  }
+  .main_menu{
+    width:90%;
+    left:5%;
+  }
+}
+@media screen and (max-width: 460px){
+  .user-info-cont .mb-logo{
+    width:180px;
+    margin-left:25%;
+  }
+  .user-info-cont .mb-logo img{
+    width:100%;
+  }
+
+  .section_second_header div{
+    width:33%;
+  }
+  .section_room_list table tbody tr th{
+    font-size:16px;
+  }
+  .image-container{
+    width: 120px; /* 게이지 바의 길이 */
+  }
+  .sec{
+    margin-right:-20px;
+  }
+}
+
+
+
+@media screen and (max-width: 400px){
+  .user-info-cont .mb-logo{
+    width:150px;
+    margin-left:26%;
+  }
+  .section_room_list table tbody tr th{
+    font-size:14px;
+  }
+  .section_first .start{
+    padding:10px;
+  }
+  .section_first .section_button_one, 
+  .section_first .section_button_two{
+    padding:10px;
+  }
+  .image-container{
+    width: 100px; /* 게이지 바의 길이 */
+  }
+  .percent{
+    padding:5px 10px;
+  }
+  .indicator {
+    top:-8px;
+  }
+}
+

@@ -1,0 +1,452 @@
+     <!-- sub_content -->
+    <div class="sub_content_arr_bg">
+        <div class="main-page">
+            <div class="main-visual">
+                <div class="slider slick-initialized slick-slider" role="toolbar">
+                    <div aria-live="polite" class="slick-list draggable">
+                        <div class="slider">
+                            <div class="slides">
+                                <div class="slide"><img src="images/bg_1.png" alt=""></div>
+                                <div class="slide"><img src="images/bg_2.png" alt=""></div>
+                                <div class="slide"><img src="images/bg_3.png" alt=""></div>
+                                <!-- Add more slides as needed -->
+                            </div>
+                            
+                            <!-- Navigation buttons -->
+                            <div class="prev">&#10094;</div>
+                            <div class="next">&#10095;</div>
+                            <!-- Optional: Pagination dots -->
+                            <div class="dots"></div>
+                        </div>
+                
+                    </div>
+                </div>
+            </div>
+            <!-- main contents -->
+            <div class="main-content webp">
+                <div class="main_content_wrap avoidFlicker">
+                    <div class="casinozone">
+                        <div class="content">
+                            <div class="containerInner">
+                                <div class="col-wrapper">
+                                    <div class="title">
+                                        <span class="material-symbols-outlined">
+                                            casino
+                                        </span>
+                                        <div class="txt">
+                                            <h3>HOLDEM</h3>
+                                        </div>
+                                    </div>
+                                    <div class="casino-g">
+                                        <div class="list-menugame hvr-wobble-vertical hvr-outline-in first-game" onclick="openLobby('IHoldemLobby'); return false;">
+                                            <a href="#" >
+                                                <div class="companys-title companys-title2 code1">
+                                                    
+                                                </div>
+                                            </a>
+                
+                                            <img src="images/play.png" class="play-button" alt="Play Button">
+                                        </div>
+                                        <div class="list-menugame hvr-wobble-vertical hvr-outline-in first-game" onclick="openLobby('IBig2Lobby'); return false;">
+                                            <a href="#" >
+                                                <div class="companys-title companys-title2 code8">
+                                                    
+                                                </div>
+                                            </a>
+                
+                                            <img src="images/play.png" class="play-button" alt="Play Button">
+                                        </div>
+                                        <!-- <div class="list-menugame hvr-wobble-vertical  hvr-outline-in">
+                                            <a href="#" onclick="openLobby('aaa'); return false;">
+                                                <div class="companys-title companys-title2 code8">
+                                                    
+                                                </div>
+                                            </a>
+                                        </div>
+                                        <div class="list-menugame hvr-wobble-vertical  hvr-outline-in">
+                                            <a href="#" onclick="openLobby('bbb'); return false;">
+                                                <div class="companys-title companys-title2 code12">
+                                                    
+                                                </div>
+                                            </a>
+                                        </div> -->
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- info -->
+                    <div class="infoZone">
+                        <div class="info01 wow fadeInUp    animated">
+                        <div class="title">노다지 CASINO<span>공지사항</span></div>
+                        <div class="listFrame">
+                            <div class="list" id="announcementlist">
+                               
+                            </div>
+                        </div>
+                        </div>
+                        <div class="info01 wow fadeInUp    animated">
+                        <div class="title">노다지 CASINO
+                            <span>이벤트</span>
+                        </div>
+                        <div class="listFrame">
+                            <div class="list" id="eventlist">
+                                
+                            </div>
+                        </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="clear"></div>
+    </div>
+<script src='/socket.io/socket.io.js'></script>
+<script>
+    var socket = io('/');
+
+    var user = JSON.parse('<%-JSON.stringify(user)%>');
+    console.log(user);
+    let iInspection = 0;
+    let strContents = '';
+    //const popupall = document.querySelector('.popup_all');
+
+    function IsMobile()
+    {
+        return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    }
+
+    function setCookie( name, value, expiredays )
+    {
+        var todayDate = new Date();
+        todayDate.setDate( todayDate.getDate() + expiredays );
+        document.cookie = name + "=" + escape( value ) + "; path=/; expires=" + todayDate.toGMTString() + ";"
+    }
+
+    function closePop(getId)
+    {
+        setCookie( getId, "done" , 1 );
+        $('#'+getId).hide();
+    }
+
+    // 쿠키 값 가져오기
+    function getCookieValue(cookieName) {
+        var nameOfCookie = cookieName + "=";
+        var x = 0;
+        while (x <= document.cookie.length) {
+            var y = x + nameOfCookie.length;
+            if (document.cookie.substring(x, y) == nameOfCookie) {
+                if ((endOfCookie = document.cookie.indexOf(";", y)) == -1) endOfCookie = document.cookie.length;
+                return unescape(document.cookie.substring(y, endOfCookie));
+            }
+            x = document.cookie.indexOf(" ", x) + 1;
+            if (x == 0) break;
+        }
+        return; // 해당 쿠키가 없을 경우 undefined 반환
+    }
+
+    function setPopup(popupData) {
+        let positionX = 0; // 팝업의 X 위치를 추적하는 변수
+
+        popupData.reverse().forEach((popup) => {
+            const popupIndex = popup.strSubject.split('_')[1];
+            const cookieName = `main_pop_notice_new${popupIndex}`;
+            let cookieValue = getCookieValue(cookieName);
+
+            // 쿠키와 팝업 상태를 확인하여 팝업 표시
+            if (popup.eState == "ENABLE" && cookieValue != 'done') {
+                Popup_new(cookieName, 100, positionX);
+                // 이미지 URL 업데이트
+                // 문자열을 Date 객체로 변환
+                const newImageUrl = `/images/pop/${popup.newImageName}`;
+                $(`#main_pop_notice_new${popupIndex} img`).attr('src', newImageUrl);
+                $(`#${cookieName}`).show();
+                positionX += 400; // 다음 팝업 위치를 위해 X 위치 증가
+            }
+        });
+    }
+    
+    function Popup_new(divname, topPos, mWidth) {
+        //request data for centering
+        var obj = $('#' + divname);
+        var iHeight = (document.body.clientHeight / 2) - obj.height() / 2 + document.body.scrollTop;
+        //var iWidth = (document.body.clientWidth / 2) - obj.width() / 2 + document.body.scrollLeft - mWidth;
+        var iWidth = mWidth;
+
+
+        var windowWidth = document.documentElement.clientWidth;
+        var popupWidth = $("#" + divname).width();
+        //centering
+        $("#" + divname).css({
+            "position": "absolute",
+            "z-index": "9999",
+            "top": topPos,
+            "left": iWidth
+        });
+    }
+      
+    const closeBtns = document.querySelectorAll('.popup_close');
+        closeBtns.forEach(btn => {
+        btn.addEventListener('click', function(event) {
+            // 이벤트 전파 차단
+            event.stopPropagation();
+
+            // 팝업 닫기
+            const popup = event.target.closest('.fixed');
+            popup.style.display = 'none';
+        });
+    });
+    function announcementlist()
+    {
+        
+        $.ajax({
+        url:"/announcement/request_announcementlist",
+            type:"POST",
+            data: {},
+            dataType: "json",
+            success: function (ret) {
+                if (ret.result == "OK") {
+                    $('#announcementlist').empty();
+                    console.log(ret);
+                    for ( let i in ret.data )
+                    {
+                        //let strBoardId = `board_${ret.data[i].id}`;
+                        let createdAt = new Date(ret.data[i].createdAt);
+                        let tag = `<div class="listA"> 
+                                    <a href="/subpage/notice">
+                                        <div class="message">${ret.data[i].strSubject}</div>                  
+                                        <div class="time">${createdAt.toLocaleDateString()}</div>                  
+                                    </a> 
+                                </div>`;
+                        $('#announcementlist').append(tag);
+                    }
+                }
+                else
+                {
+                    alert(ret.reason);
+                }
+            }, error: function () {
+                alert("조회 중 오류 발생");
+            }
+        });
+    }
+    function enventlist()
+    {
+        $.ajax({
+        url:"/announcement/request_eventlist",
+            type:"POST",
+            data: {},
+            dataType: "json",
+            success: function (ret) {
+                if (ret.result == "OK") {
+                    $('#eventlist').empty();
+                    console.log(ret);
+                    for ( let i in ret.data )
+                    {
+                        // let strBoardId = `board_${ret.data[i].id}`;
+                        let createdAt = new Date(ret.data[i].createdAt);
+                        let tag = ` <div class="listA">
+                                    <a href="/subpage/notice">
+                                        <div class="message">${ret.data[i].strSubject}</div> 
+                                        <div class="time">${createdAt.toLocaleDateString()}</div>                  
+                                    </a>
+                                </div>`;
+                        $('#eventlist').append(tag);
+                    }
+                }
+                else
+                {
+                    alert(ret.reason);
+                }
+            }, error: function () {
+                alert("조회 중 오류 발생");
+            }
+        });
+    }
+    function setLetter(letter)
+    {
+        if(letter.length != 0)
+        {
+            alert('새로운 쪽지가 있습니다. 확인바랍니다.');
+        }
+    }
+    $(document).on('ready', ()=> {
+        socket.emit('CM_Login', user.strID, user.strNickname ,user.strPassword, user.iCash);
+        this.announcementlist();
+        this.enventlist();
+
+        $.ajax({
+        url:"/account/request_inspection",
+            type:"POST",
+            data: {},
+            dataType: "json",
+            success: function (ret) {
+                if (ret.result == "OK") {
+                    iInspection = ret.data.iOnOff;
+                    strContents = ret.data.strContents;
+                }
+                else
+                {
+                    alert(ret.reason);
+                }
+            }, error: function () {
+                alert("조회 중 오류 발생");
+            }
+        });
+
+        $.ajax({
+        url:"/announcement/request_popuplist",
+            type:"POST",
+            data: {},
+            dataType: "json",
+            success: function (ret) {
+                if (ret.result == "OK") {
+                    setPopup(ret.data);
+                }
+                else
+                {
+                    alert(ret.reason);
+                }
+            }, error: function () {
+                alert("조회 중 오류 발생");
+            }
+        });
+
+        $.ajax({
+        url:"/announcement/request_newletterlist",
+            type:"POST",
+            data: {},
+            dataType: "json",
+            success: function (ret) {
+                if (ret.result == "OK") {
+                    setLetter(ret.data);
+                }
+                else
+                {
+                    alert(ret.reason);
+                }
+            }, error: function () {
+                alert("조회 중 오류 발생");
+            }
+        });
+
+
+        socket.on('SM_ConsultAlert', () => {
+
+            console.log('SM_ConsultAlert');
+            alert("1:1문의 답변이 완료 되었습니다. 확인 부탁드립니다.");
+        });
+    });
+
+    function openLobby(lobbyName) {
+        if(iInspection == 1)
+        {
+            $('#popup_alerttext1').text(strContents);
+            $('.button_cancelalert').hide();
+            $('#popup_alert').show();
+            return;
+        }
+
+        // if(lobbyName != 'IHoldemLobby')
+        // {
+        //     $('#popup_alerttext1').text('게임 준비 중 입니다.');
+        //     $('.button_cancelalert').hide();
+        //     $('#popup_alert').show();
+        //     return;
+        // }
+
+        // 새 창을 열고, 해당 창을 게임 로비로 설정
+        window.open('', lobbyName, 'width=1282, height=720, top=100, left=100, fullscreen=no, menubar=no, status=no, resizable=no, toolbar=no, titlebar=yes, location=no, scrollbar=no');
+
+        // 폼을 생성하고 제출하여 게임 로비를 로드
+        var $form = $('<form></form>');
+        $form.attr('action', '/lobby');
+        $form.attr('method', 'get');
+        var $input = $('<input>').attr('type', 'hidden').attr('name', 'lobbyName').val(lobbyName);
+        $form.append($input);
+        $form.attr('target', lobbyName);
+        $form.appendTo('body');
+        $form.submit();
+    }
+    $(document).on('click', '.button_hidealert', (e) => {
+        let alertText = $('#popup_alerttext1').text().trim(); // 텍스트를 가져오고 양쪽 공백을 제거
+        if(alertText === "정말로 나가시겠습니까?") {
+            window.close(); // 문자열이 일치할 경우 window.close() 호출
+        } else {
+            $('#popup_alert').hide();
+        }
+    });
+    $(document).on('click', '.button_cancelalert', (e) => {
+        $('#popup_alert').hide();
+    });
+
+    socket.on('UpdateCash', (iCash) => {
+
+        console.log("index::UpdateCash");
+        const cCash = parseInt(iCash);
+
+        $('#iUserCash').text(cCash.toLocaleString());
+        $('#m_iUserCash').text(cCash.toLocaleString());
+    });
+
+
+   
+// 슬라이드
+const slides = document.querySelector('.slides');
+const slideItems = document.querySelectorAll('.slide');
+const prevBtn = document.querySelector('.prev');
+const nextBtn = document.querySelector('.next');
+const dotsContainer = document.querySelector('.dots');
+
+let slideIndex = 0;
+let autoRotateInterval;
+
+// Initialize pagination dots
+slideItems.forEach((_, index) => {
+    const dot = document.createElement('span');
+    dot.classList.add('dot');
+    dot.setAttribute('data-index', index);
+    dotsContainer.appendChild(dot);
+});
+
+const dots = document.querySelectorAll('.dot');
+dots[slideIndex].classList.add('active');
+
+// Event listeners for navigation buttons
+prevBtn.addEventListener('click', () => showSlide(slideIndex - 1));
+nextBtn.addEventListener('click', () => showSlide(slideIndex + 1));
+
+// Function to start auto rotation
+function startAutoRotate() {
+    autoRotateInterval = setInterval(() => {
+        showSlide(slideIndex + 1);
+    }, 3000);
+}
+
+// Auto-rotate slides every 3000 milliseconds (3 seconds)
+startAutoRotate();
+
+function showSlide(index) {
+    if (index < 0) {
+        slideIndex = slideItems.length - 1;
+    } else if (index >= slideItems.length) {
+        slideIndex = 0;
+    } else {
+        slideIndex = index;
+    }
+
+    slides.style.transform = `translateX(${-slideIndex * 100}%)`;
+
+    // Update active dot
+    dots.forEach(dot => dot.classList.remove('active'));
+    dots[slideIndex].classList.add('active');
+}
+
+// Stop auto-rotation when mouse is over the slides
+slides.addEventListener('mouseover', () => clearInterval(autoRotateInterval));
+
+// Resume auto-rotation when mouse leaves the slides
+slides.addEventListener('mouseout', startAutoRotate);
+
+</script>

@@ -1,0 +1,190 @@
+<html>
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.21/lodash.min.js" integrity="sha512-WFN04846sdKMIP5LKNphMaWzU7YpMyCU245etK3g/2ARYbPK9Ub18eG+ljU96qKRCWh+quCY7yefSmlkQw1ANQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.4/gsap.min.js" integrity="sha512-f8mwTB+Bs8a5c46DEm7HQLcJuHMBaH/UFlcgyetMqqkvTcYg4g5VXsYR71b3qC82lZytjNYvBj2pf0VekA9/FQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.4/ScrollToPlugin.min.js" integrity="sha512-tQFq+nb/TSS648SDzWbSj0A67t4I1PFzR0U6Oi/yEYFyUbAIwg74SOCbr7t2X1Rn+iln7sYwfh8y+z7p0gddOw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://unpkg.com/swiper@6.8.4/swiper-bundle.min.js"></script>
+    <!-- <script src="js/youtube.js"></script> -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ScrollMagic/2.0.8/ScrollMagic.min.js" integrity="sha512-8E3KZoPoZCD+1dgfqhPbejQBnQfBXe8FuwL4z/c8sTrgeDMFEnoyTlH3obB4/fV+6Sg0a0XF+L/6xS4Xx1fUEg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://kit.fontawesome.com/510add56c8.js" crossorigin="anonymous"></script>
+    <!-- <script defer src="js/main.js"></script> -->
+    <meta name="mobile-web-app-capable" content="yes">
+    <!-- <link rel="icon" href="/img/favicon.ico"> -->
+    <!-- ios홈화면추가시 상단 주소창 제거 -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <!-- <link rel="apple-touch-icon" href="/img/favicon.ico">  -->
+    <link href="css/loginmain.css" rel="stylesheet" />
+    <link href="css/common.css" rel="stylesheet" />
+    <!-- <link href="css/main.css" rel="stylesheet" /> -->
+    <link rel="manifest" href="/manifest.json">
+    
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reset-css@5.0.1/reset.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nanum+Gothic:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons" />
+    <link rel="stylesheet" href="https://unpkg.com/swiper@6.8.4/swiper-bundle.min.css" />
+    <link rel="icon" href="./favicon.png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/fontawesome.min.css" integrity="sha512-SgaqKKxJDQ/tAUAAXzvxZz33rmn7leYDYfBP+YoMRSENhf3zJyx3SBASt/OfeQwBHA1nxMis7mM3EV/oYT6Fdw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+    <link href="/css/styles.css" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script type="text/javascript" src="http://code.jquery.com/jquery-latest.js"></script>
+    <title>pokers</title>
+</head>
+<body class=background-body>
+    <section class="w-full">
+        <!-- 로고 위치잡기 -->
+        <div class="w-11/12 mx-auto pt-[200px]">
+            
+        <!--입력박스 위치  -->
+            <div class="w-full">
+                <!-- 아이디입력 -->
+                <form action="/account/login" method="post">
+                    <div class="relative mb-1 main-box" style="text-align: center;">
+                        <input type="text" placeholder="id" id="" class="pl-2 py-4 text-black rounded input-box bg-[#212121]" name = "strID" onfocus="this.placeholder='아이디를 입력하세요'">
+                        <!-- <p class="material-icons icon_line leading-5 pr-1 text-white">done</p> -->
+                    </div>
+                    <!-- <p class="font-semibold text-sm text-white input-text">* 회원가입 시 작성했던 아이디를 입력해주세요.</p> -->
+                    <!-- 패스워드 -->
+                    <div class="relative mb-1 main-box" style="text-align: center;">
+                        <input type="password" placeholder="password" id="" class="pl-2 py-4 text-black rounded input-box bg-[#212121]" name = "strPassword" onfocus="this.placeholder='비밀번호를 입력하세요'">
+                        <!-- <p class="material-icons icon_line absolute pr-1 text-white">visibility</p> -->
+                    </div>
+                    <!-- <p class="font-semibold text-sm text-white input-text">*Click forgot password to reset it</p> -->
+                
+
+                    <% if ( messages ) { %>
+                        <p style="color:red;text-align: center;"><%=messages%></p>
+                    <% } %>
+
+                    <!-- 로그인 버튼 -->
+                    <div class="text-center login-btn mt-5">
+                        <button class="bg-red-700 rounded py-3 text-white text-sm button-box hover:bg-red-600">로그인</button>
+                    </div>
+
+
+                </form>
+                <!-- 버튼 라인 -->
+                <!-- <div class="button-top">
+                    <div class="relative my-2 text-center apple">
+                        <i class="fa-brands fa-apple text-black text-lg"></i>
+                        <button class="bg-white rounded py-2 text-black text-sm button-box" onclick="javascript:OnClickSign('apple');">Sign in with Apple</button>
+                    </div>
+                    <div class="relative text-center face-book">
+                        <i class="fa-brands fa-facebook  text-white text-lg"></i>
+                        <button class="bg-blue-600 rounded py-2 text-white text-sm button-box" onclick="javascript:OnClickSign('facebook');">Login with Facebook</button>
+                    </div>
+                </div> -->
+
+                <!-- 마지막 글자 -->
+                <div class="w-full flex justify-center my-5 text-gray-100">
+                    아직도 회원이 아닌가요?&nbsp;&nbsp;<a id="strURL" href="/account/register" style="color:yellow; font-weight:bold; text-decoration: underline;">지금 가입하세요</a>
+                    <!-- <p class="mx-4">|</p>
+                    <a href="#">Forgot Password?</a> -->
+                </div>
+
+                <!-- 카카오 -->
+                <div class="w-11/12 mx-auto text-center">
+                    <div class="mx-auto flex justify-center">
+                        <a href="#" class="text-center">
+                            <img src="images/screen.png" alt="">
+                        </a>
+                    </div>
+                    <!-- <div class="mx-auto flex justify-center mt-2">
+                        <a href="#">
+                            <img src="images/tele.png" alt="">
+                        </a>
+                    </div> -->
+                </div>
+            </div>
+        </div>
+        <div id="popup_alert" class="room-make-wrap" style="position: fixed; top:50%; left:50%; transform:translate(-50%, -50%); text-align: center; display: none;">
+            <div class="r-make-form">
+                <div class="title">알림</div>
+                <div class="form">
+                    <ul>
+                        <li style='width:300px; text-align: center;' id="popup_alerttext1"></li>
+                    </ul>
+                </div>
+                <div style="display: flex; justify-content: center;">
+                    <button class="button_hidealert">확인</button>
+                    <button class="button_cancelalert" style="display: none; margin-left: 10px;">취소</button>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <script>
+
+        let iInspection = 0;
+        let strContents = '';
+        window.addEventListener('load', function() {
+            // if ('serviceWorker' in navigator) {
+            //     navigator.serviceWorker.register('/service-worker.js')
+            //         .then((reg) => console.log('Service worker registered.', reg))
+            //         .catch((err) => console.log('Service worker not registered.', err));
+            // }
+        });
+        $(document).on('ready', () => {
+
+            $('#popup_alert').hide();
+            // $.ajax({
+            // url:"/account/request_inspection",
+            //     type:"POST",
+            //     data: {},
+            //     dataType: "json",
+            //     success: function (ret) {
+            //         if (ret.result == "OK") {
+            //             iInspection = ret.data.iOnOff;
+            //             strContents = ret.data.strContents;
+            //         }
+            //         else
+            //         {
+            //             alert(ret.reason);
+            //         }
+            //     }, error: function () {
+            //         alert("조회 중 오류 발생");
+            //     }
+            // });
+        });
+
+        let OnClickSign = (type) => {
+            console.log(type);
+            if(type == 'apple')
+            {
+                $('#popup_alerttext1').text('준비 중 입니다.');
+                $('.button_cancelalert').hide();
+                $('#popup_alert').show();
+            }
+            else if(type == 'facebook')
+            {
+                $('#popup_alerttext1').text('준비 중 입니다.');
+                $('.button_cancelalert').hide();
+                $('#popup_alert').show();
+            }
+            else
+            {
+                $('#popup_alerttext1').text('준비 중 입니다.');
+                $('.button_cancelalert').hide();
+                $('#popup_alert').show();
+            }
+        }
+
+        $(document).on('click', '.button_hidealert', (e) => {
+            let alertText = $('#popup_alerttext1').text().trim(); // 텍스트를 가져오고 양쪽 공백을 제거
+            if(alertText === "정말로 나가시겠습니까?") {
+                window.close(); // 문자열이 일치할 경우 window.close() 호출
+            } else {
+                $('#popup_alert').hide();
+            }
+        });
+        $(document).on('click', '.button_cancelalert', (e) => {
+            $('#popup_alert').hide();
+        });
+    </script>
+</body>
+</html>

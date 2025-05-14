@@ -1,0 +1,1943 @@
+
+<head>
+    
+</head>
+
+
+<!-- start page title -->
+<div class="row">
+    <div class="col-12">
+        <div class="page-title-box">
+            <div class="page-title-right">
+                <ol class="breadcrumb m-0">
+                    <li class="breadcrumb-item"><a href="javascript: void(0);">에이전트 관리</a></li>
+                    <li class="breadcrumb-item active">에이전트 리스트</li>
+                </ol>
+            </div>
+            <h4 class="page-title">에이전트 리스트</h4>
+        </div>
+    </div>
+</div>
+<!-- end page title -->
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <div class="row mb-2">
+                    <div class="col-sm-12">
+                        <% if ( user.iClass == 0 ) { %>
+                            <a href="javascript:BuildAgent(1);" class="btn btn-danger mb-2" style="color: white;"><i class="mdi mdi-plus-circle mr-2"></i> 본사 등록</a>
+                            <a href="javascript:BuildAgent(2);" class="btn btn-danger mb-2" style="color: white;"><i class="mdi mdi-plus-circle mr-2"></i> 지사 등록</a>
+                            <a href="javascript:BuildAgent(3);" class="btn btn-danger mb-2" style="color: white;"><i class="mdi mdi-plus-circle mr-2"></i> 총판 등록</a>
+                            <a href="javascript:BuildAgent(4);" class="btn btn-danger mb-2" style="color: white;"><i class="mdi mdi-plus-circle mr-2"></i> 매장 등록</a>
+                        <% } else if( user.iClass == 1 ) { %>
+                            <a href="javascript:BuildAgent(2);" class="btn btn-danger mb-2" style="color: white;"><i class="mdi mdi-plus-circle mr-2"></i> 지사 등록</a>
+                            <a href="javascript:BuildAgent(3);" class="btn btn-danger mb-2" style="color: white;"><i class="mdi mdi-plus-circle mr-2"></i> 총판 등록</a>
+                            <a href="javascript:BuildAgent(4);" class="btn btn-danger mb-2" style="color: white;"><i class="mdi mdi-plus-circle mr-2"></i> 매장 등록</a>
+                        <% } else if( user.iClass == 2 ) { %>
+                            <a href="javascript:BuildAgent(3);" class="btn btn-danger mb-2" style="color: white;"><i class="mdi mdi-plus-circle mr-2"></i> 총판 등록</a>
+                            <a href="javascript:BuildAgent(4);" class="btn btn-danger mb-2" style="color: white;"><i class="mdi mdi-plus-circle mr-2"></i> 매장 등록</a>
+                        <% } else if( user.iClass == 3 ) { %>
+                            <a href="javascript:BuildAgent(4);" class="btn btn-danger mb-2" style="color: white;"><i class="mdi mdi-plus-circle mr-2"></i> 매장 등록</a>
+                        <% } %>
+                    </div>
+                    <!-- <br/> -->
+                    <!-- <div class="col-sm-3">
+                        <div class="btn-group btn-group-toggle" data-toggle="buttons">
+                            <label class="btn btn-secondary active">
+                                <input type="radio" name="UserTypeFilter" value="" checked />전체
+                            </label>
+                            <label class="btn btn-secondary">
+                                <input type="radio" name="UserTypeFilter" value="NORMAL" />정상
+                            </label>
+                            <label class="btn btn-secondary">
+                                <input type="radio" name="UserTypeFilter" value="BLOCK" />정지
+                            </label>
+                            <label class="btn btn-secondary">
+                                <input type="radio" name="UserTypeFilter" value="QUIT" />탈퇴
+                            </label>
+                        </div>
+                    </div> -->
+                    <!-- <div class="col-sm-3">
+                        <div class="input-group mb-3">
+                            <input type="text" id="iRolling" name="iRolling" maxlength="20" class="form-control" />
+                            <div class="input-group-append">
+                                <button class="form-control btn-primary" id="rollingChange">롤링 전환</button>
+                            </div>
+                        </div>
+                    </div> -->
+                    <div class="row justify-content-between align-items-center">
+                        <div class="col-sm-3">
+                            <div class="input-group mb-3">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text" for="searchText">
+                                        ID/닉네임
+                                    </span>
+                                </div>
+                                <input type="text" id="searchText" name="searchText" maxlength="15" class="form-control" />
+                                <div class="input-group-append">
+                                    <button class="form-control" id="SearchTextFindButton">검색</button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-sm-8">
+                            <form>
+                                <div class="form-row  align-items-center justify-content-end">
+                                    <div class="col-auto">
+                                        <label class="col-form-label" style="font-size:1.1rem;">검색일자</label>
+                                    </div>
+                                    <div class="col-auto">
+                                        <label class="sr-only">시작</label>
+                                        <input type="text" class="form-control mb-2" id="dateStart" data-provide="datepicker" placeholder="시작일">
+                                    </div>
+                                    <div class="col-auto">
+                                        <label class="sr-only">종료</label>
+                                        <input type="text" class="form-control mb-2" id="dateEnd" data-provide="datepicker" placeholder="종료일">
+                                    </div>
+                                    <div class="col-auto">
+                                        <button type="button" class="btn btn-primary mb-2" id="FindButton">검색</button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                   
+                    <div class="col-sm-7">
+                        <div class="text-sm-right">
+                            <!--
+                            <button type="button" class="btn btn-success mb-2 mr-1"><i class="mdi mdi-settings"></i></button>
+                            <button type="button" class="btn btn-light mb-2">Export</button>
+                                -->
+                        </div>
+                    </div><!-- end col-->
+                </div>
+
+                <div class="table-responsive">
+                    <table id="user-datatable" class="table table-sm table-hover dt-responsive nowrap w-100">
+                        <thead>
+                            <tr>
+                                <th>색인</th>
+                                <th>분류</th>
+                                <th>아이디</th>
+                                <th>닉네임</th>
+                                <th>보유포인트</th>
+                                <th>보유머니</th>
+                                <th>입금금액</th>
+                                <th>출금금액</th>
+                                <th>하부베팅금액</th>
+                                <th>하부당첨금액</th>
+                                <th>하부보유포인트</th>
+                                <th>하부보유머니</th>
+                                <th>계좌번호</th>
+                                <th>전화번호</th>
+                                <th>최근접속IP</th>
+                                <th>접속일</th>
+                                <th>등록일</th>
+                                <th>상부보기</th>
+                                <th>하부보기</th>
+                                <th>직속하부갯수</th>
+                            </tr>
+                        </thead>
+                    </table>
+                </div>
+            </div> <!-- end card-body-->
+        </div> <!-- end card-->
+    </div> <!-- end col -->
+      <!-- Modal -->
+  <div class="modal fade" id="BuildAgentDialog" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog custom-modal-width custom-modal-main">
+      <div class="modal-content custom-modal-width">
+        <div class="modal-header">
+          <h4 class="name-text">에이전트 생성</h1>
+          <button type="button" class="btn-close"  data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body container-fluid mainfluid px-2">
+            <div id="layoutSidenav_content" >
+                <main>
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <i class="fas fa-table me-1"></i>
+                            에이전트 생성
+                        </div>
+                        <input type="hidden" name="id" id="uid" value="" />
+                                <table class="table card-body" style="margin-bottom:0;">
+                                    <tbody>
+                                        <tr style="text-align:center;">
+                                            <th style="vertical-align: middle; border:1px solid #ccc;">에이전트 등급</th>
+                                            <td style="border:1px solid #ccc; vertical-align: middle;" class="gameinfo">
+                                                <span style="vertical-align: middle;" name="BiClass" id="BiClass">지사</span>
+                                            </td>
+                                            <th style="border:1px solid #ccc; vertical-align: middle;">상위 에이전트</th>
+                                            <td style="border:1px solid #ccc; vertical-align: middle;">
+                                                <input type="text" id="BstrParentID" name="BstrParentID">
+                                                <button style="height: fit-content; margin-left: 5px;" onclick="RequestCheckRolling();">check</button>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                    <tbody id="agentbuild" style="display:none">
+                                        <tr style="text-align:center;" >
+                                            <th style="vertical-align: middle; border:1px solid #ccc;">ID</th>
+                                            <td style="border:1px solid #ccc;">
+                                            <div style="display: flex;">
+                                                <input type="text" id="BstrID" name="BstrID" maxlength="20"/>
+                                                <button style="height: fit-content; margin-left: 5px;" onclick="RequestAgentCheckID();">check</button>
+                                            </div>
+                                            </td>
+                                            <th style="vertical-align: middle; border:1px solid #ccc;">Nickname</th>
+                                            <td style="border:1px solid #ccc;">
+                                            <div style="display: flex;">
+                                                <input type="text" id="BstrNickname" name="BstrNickname" maxlength="20"/>
+                                                <button style="margin-left: 5px;" onclick="RequestAgentCheckNickname();">check</button>
+                                            </div>
+                                            </td>
+                                        </tr>
+                                            
+                                        <tr style="text-align:center;">
+                                            <th style="vertical-align: middle; border:1px solid #ccc;">PASSWORD</th>
+                                            <td style="border:1px solid #ccc;">
+                                                <input type="password" id="BstrPassword" name="BstrPassword" placeholder="password">
+                                            </td>
+                                            <th style="border:1px solid #ccc; vertical-align: middle;">비밀번호 재입력</th>
+                                            <td style="border:1px solid #ccc; vertical-align: middle;">
+                                                <input type="password" id="BstrPasswordCheck" name="BstrPasswordCheck" placeholder="password Check">
+                                            </td>
+                                        </tr>
+                                            
+                                        <tr style="text-align:center;">
+                                            <th style="vertical-align: middle; border:1px solid #ccc;">예금주명</th>
+                                            <td style="border:1px solid #ccc;">
+                                                <input type="text" id="BstrName" name="BstrName" placeholder="">
+                                            </td>
+                                            <th style="border:1px solid #ccc; vertical-align: middle;">은행명</th>
+                                            <td style="border:1px solid #ccc; vertical-align: middle;"> 
+                                                <select id="BstrBank" name="BstrBank"></select>
+                                                <!-- <input type="text" id="BstrBank" name="BstrBank" placeholder=""> -->
+                                            </td>
+                                        </tr>
+
+                                        <tr style="text-align:center;">
+                                            <th style="vertical-align: middle; border:1px solid #ccc;">계좌번호</th>
+                                            <td colspan="3" style="border:1px solid #ccc;">
+                                                <input style="width:90%" type="text" id="BstrAccount" name="BstrAccount" placeholder="">
+                                            </td>
+                                        </tr>
+
+                                        <tr>
+                                            <th style="vertical-align: middle; border:1px solid #ccc; text-align:center;">딜비-홀덤</th>
+                                            <td style="border:1px solid #ccc;">
+                                                <input type="text" id="BfHoldemR" name="BfHoldemR" placeholder="">
+                                                <small class="form-text text-muted" id = "Bholdemdeal"></small>
+                                            </td>
+                                            <th style="vertical-align: middle; border:1px solid #ccc; text-align:center;">딜비-빅투</th>
+                                            <td style="border:1px solid #ccc;">
+                                                <input type="text" id="BfBig2R" name="BfBig2R" placeholder="0">
+                                                <small class="form-text text-muted" id = "Bbig2deal"></small>
+                                            </td>
+                                        </tr>
+
+                                        <tr style="text-align:center;">
+                                            <th style="vertical-align: middle; border:1px solid #ccc; text-align:center;">딜비-싯고</th>
+                                            <td style="border:1px solid #ccc;">
+                                                <input type="text" id="BfSitgoR" name="BfSitgoR" placeholder="">
+                                                <small class="form-text text-muted" id = "Bsitgodeal"></small>
+                                            </td>
+                                            <th style="vertical-align: middle; border:1px solid #ccc; text-align:center;">딜비-바카라</th>
+                                            <td style="border:1px solid #ccc;">
+                                                <input type="text" id="BfBaccaratR" name="BfBaccaratR" placeholder="0">
+                                                <small class="form-text text-muted" id = "Bbaccaratdeal"></small>
+                                            </td>
+                                        </tr>
+
+                                        <tr style="text-align:center;">
+                                            <th style="vertical-align: middle; border:1px solid #ccc; text-align:center;">딜비-오마하</th>
+                                            <td style="border:1px solid #ccc;">
+                                                <input type="text" id="BfOmahaR" name="BfOmahaR" placeholder="0">
+                                                <small class="form-text text-muted" id = "Bomahadeal"></small>
+                                            </td>
+                                            <th style="vertical-align: middle; border:1px solid #ccc;">죽장</th>
+                                            <td style="border:1px solid #ccc; vertical-align: middle;">
+                                                <input type="text" id="BfSettle" name="BfSettle" placeholder="0">
+                                                <!-- <small class="form-text text-muted" id = "Bsettledeal"></small> -->
+                                            </td>
+                                        </tr>
+                                    </tbody>
+
+                                      <!-- <tr style="text-align:center;">
+                                        <th style="vertical-align: middle; border:1px solid #ccc;">뷰어 기능</th>
+                                        <td style="border:1px solid #ccc; vertical-align: middle;">
+                                            <input type="checkbox" style="vertical-align: middle;">
+                                        </td>
+                                        <th style="vertical-align: middle; border:1px solid #ccc;">뷰어 비밀번호</th>
+                                        <td style="border:1px solid #ccc; vertical-align: middle;">
+                                            <input type="text">
+                                        </td>
+                                      </tr> -->
+                                </table>
+                            
+                        </div>
+                        <div style="text-align:center">
+                            <button type="button" class="btn btn-warning btn-sm" onclick="RequestAgentRegister();">생성</button>
+                            <button type="button" class="btn btn-danger btn-sm" data-bs-dismiss="modal">취소</button>
+                        </div>
+                </main>
+            </div>
+        </div>
+      </div>
+    </div>
+ </div>
+ <!-- Modal End-->
+    <!-- Modal -->
+    <div class="modal fade" id="AgentDialog" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog custom-modal-width custom-modal-main">
+          <div class="modal-content custom-modal-width">
+            <div class="modal-header">
+              <h4 class="name-text">에이전트 정보</h1>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body container-fluid mainfluid px-2">
+                <div id="layoutSidenav_content" >
+                    <main>
+                        <div class="card mb-4">
+                            <div class="card-header">
+                                <i class="fas fa-table me-1"></i>
+                                에이전트 정보
+                            </div>
+                            <input type="hidden" name="id" id="uid" value="" />
+                                    <table class="table card-body" style="margin-bottom:0;">
+                                        <tbody>
+                                          <tr style="text-align:center;">
+                                            <th style="vertical-align: middle; border:1px solid #ccc;">에이전트 등급</th>
+                                            <td style="border:1px solid #ccc; vertical-align: middle;" class="gameinfo">
+                                                <span style="vertical-align: middle;" name="iClass" id="iClass">지사</span>
+                                            </td>
+                                            <th style="border:1px solid #ccc; vertical-align: middle;">상위 에이전트</th>
+                                            <td style="border:1px solid #ccc; vertical-align: middle;">
+                                                <input type="text" id="strParentID" name="strParentID">
+                                            </td>
+                                          </tr>
+                                          <tr style="text-align:center;">
+                                            <th style="vertical-align: middle; border:1px solid #ccc;">ID</th>
+                                            <td style="border:1px solid #ccc;">
+                                              <div style="display: flex;">
+                                                <input type="text" id="strID" name="strID" maxlength="20"/>
+                                                <button style="height: fit-content; margin-left: 5px;" onclick="RequestCheckID();">check</button>
+                                              </div>
+                                            </td>
+                                            <th style="vertical-align: middle; border:1px solid #ccc;">Nickname</th>
+                                            <td style="border:1px solid #ccc;">
+                                              <div style="display: flex;">
+                                                <input type="text" id="strNickname" name="strNickname" maxlength="20"/>
+                                                <button style="margin-left: 5px;" onclick="RequestCheckNickname();">check</button>
+                                              </div>
+                                            </td>
+                                          </tr>
+                                          
+                                          <tr style="text-align:center;">
+                                            <th style="vertical-align: middle; border:1px solid #ccc;">PASSWORD</th>
+                                            <td style="border:1px solid #ccc;">
+                                                <input type="password" id="strPassword" name="strPassword" placeholder="password">
+                                            </td>
+                                            <!-- <th style="border:1px solid #ccc; vertical-align: middle;">비밀번호 변경</th>
+                                            <td style="border:1px solid #ccc; vertical-align: middle;">
+                                                <input type="password" id="strPasswordCheck" name="strPasswordCheck" placeholder="password Check">
+                                            </td> -->
+                                          </tr>
+                                        
+                                          <tr style="text-align:center;">
+                                            <th style="vertical-align: middle; border:1px solid #ccc;">예금주명</th>
+                                            <td style="border:1px solid #ccc;">
+                                                <input type="text" id="strName" name="strName" placeholder="">
+                                            </td>
+                                            <th style="border:1px solid #ccc; vertical-align: middle;">은행명</th>
+                                            <td style="border:1px solid #ccc; vertical-align: middle;"> <input type="text" id="strBank" name="strBank" placeholder="">
+                                            </td>
+                                          </tr>
+    
+                                          <tr style="text-align:center;">
+                                            <th style="vertical-align: middle; border:1px solid #ccc;">계좌번호</th>
+                                            <td colspan="3" style="border:1px solid #ccc;">
+                                                <input style="width:90%" type="text" id="strAccount" name="strAccount" placeholder="">
+                                            </td>
+                                          </tr>
+    
+                                          <tr>
+                                            <th style="vertical-align: middle; border:1px solid #ccc; text-align:center;">딜비-홀덤</th>
+                                            <td style="border:1px solid #ccc;">
+                                                <input type="text" id="fHoldemR" name="fHoldemR" placeholder="">
+                                                <small class="form-text text-muted" id = "holdemdeal"></small>
+                                            </td>
+                                            <th style="vertical-align: middle; border:1px solid #ccc; text-align:center;">딜비-빅투</th>
+                                            <td style="border:1px solid #ccc;">
+                                                <input type="text" id="fBig2R" name="fBig2R" placeholder="">
+                                                <small class="form-text text-muted" id = "big2deal"></small>
+                                            </td>
+                                          </tr>
+    
+                                          <tr style="text-align:center;">
+                                            <th style="vertical-align: middle; border:1px solid #ccc; text-align:center;">딜비-싯고</th>
+                                            <td style="border:1px solid #ccc;">
+                                                <input type="text" id="fSitgoR" name="fSitgoR" placeholder="">
+                                                <small class="form-text text-muted" id = "sitgodeal"></small>
+                                            </td>
+                                            <th style="vertical-align: middle; border:1px solid #ccc; text-align:center;">딜비-바카라</th>
+                                            <td style="border:1px solid #ccc;">
+                                                <input type="text" id="fBaccaratR" name="fBaccaratR" placeholder="">
+                                                <small class="form-text text-muted" id = "baccaratdeal"></small>
+                                            </td>
+                                          </tr>
+    
+                                          <tr style="text-align:center;">
+                                            <th style="vertical-align: middle; border:1px solid #ccc; text-align:center;">딜비-오마하</th>
+                                            <td style="border:1px solid #ccc;">
+                                                <input type="text" id="fOmahaR" name="fOmahaR" placeholder="">
+                                                <small class="form-text text-muted" id = "omahadeal"></small>
+                                            </td>
+                                            <th style="vertical-align: middle; border:1px solid #ccc;">죽장</th>
+                                            <td style="border:1px solid #ccc; vertical-align: middle;">
+                                                <input type="text" id="fSettle" name="fSettle" placeholder="">
+                                                <!-- <small class="form-text text-muted" id = "Bsettledeal"></small> -->
+                                            </td>
+                                          </tr>
+
+                                          <tr style="text-align:center;">
+                                            <th style="vertical-align: middle; border:1px solid #ccc; text-align:center;">보유머니</th>
+                                            <td style="border:1px solid #ccc;">
+                                                <input type="number" id="iCash" name="iCash" placeholder="" readonly>
+                                            </td>
+                                            <th style="vertical-align: middle; border:1px solid #ccc;">보유포인트</th>
+                                            <td style="border:1px solid #ccc; vertical-align: middle;">
+                                                <input type="number" id="iPoint" name="iPoint" placeholder="" readonly>
+                                            </td>
+                                          </tr>
+                                          <!-- <tr style="text-align:center;">
+                                            <th style="vertical-align: middle; border:1px solid #ccc;">뷰어 기능</th>
+                                            <td style="border:1px solid #ccc; vertical-align: middle;">
+                                                <input type="checkbox" style="vertical-align: middle;">
+                                            </td>
+                                            <th style="vertical-align: middle; border:1px solid #ccc;">뷰어 비밀번호</th>
+                                            <td style="border:1px solid #ccc; vertical-align: middle;">
+                                                <input type="text">
+                                            </td>
+                                          </tr> -->
+                                        </tbody>
+                                    </table>
+                                
+                            </div>
+                            <div style="text-align:center">
+                                <button type="button" class="btn btn-warning btn-sm" onclick="RequestTakeMoney();">머니 회수</button>
+                                <button type="button" class="btn btn-warning btn-sm" onclick="RequsetGivePoint();">포인트 보내기</button>
+                                <button type="button" class="btn btn-warning btn-sm" onclick="RequestModify();">수정</button>
+                                <button type="button" class="btn btn-danger btn-sm" data-bs-dismiss="modal" aria-label="Close">취소</button>
+                            </div>
+                    </main>
+                </div>
+            </div>
+          </div>
+        </div>
+     </div>
+     <!-- Modal End-->
+     <!-- modal start -->
+     <div class="modal fade" id="MoneySend" tabindex="-1" role="dialog" aria-labelledby="MoneySendModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="MoneySendModalLabel">보유머니 전달</h5>
+              <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                  <label for="CashSend" id="ChildCash">보유 머니</label>
+                  <input type="number" class="form-control" id="CashSend" placeholder="회수 할 머니를 적어주세요.">
+                </div>
+                <div class="form-group">
+                  <label for="PointSend" id="ParentPoint">보유 포인트</label>
+                  <input type="number" class="form-control" id="PointSend" placeholder="전달할 포인트를 적어주세요.">
+                </div>
+                <button type="submit" class="btn btn-primary" onclick="RequestMoneySend()" id="btnSend">변경 저장</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- modal end -->
+</div>
+<!-- end row -->
+
+<script type="text/javascript" src="js/time.js"></script>
+<script type="text/javascript">    
+    // URL의 쿼리 매개변수를 읽는 함수
+    function getParameterByName(name, url = window.location.href) {
+        name = name.replace(/[\[\]]/g, '\\$&');
+        var regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)'),
+            results = regex.exec(url);
+        if (!results) return null;
+        if (!results[2]) return '';
+        return decodeURIComponent(results[2].replace(/\+/g, ' '));
+    }
+
+    // URL에서 'iclass' 매개변수를 가져옴
+    var iclass = getParameterByName('iclass');
+
+    function clearForm() {
+        $('#BstrParentID').val("");
+        $('#BstrID').val("");
+        $('#BstrPassword').val("");
+        $('#BstrNickname').val("");
+        $('#BfHoldemR').val("");
+        $('#BfSettle').val("0");
+        //$('#BstrBank').val("");
+        $('#BstrName').val("");
+        $('#BstrAccount').val("");
+        $('#agentbuild').hide();
+    }
+
+    var dataTableInstance;
+
+    $(document).ready(function(){
+
+        $("#dateStart").datepicker({
+            format: 'yyyy-mm-dd',
+            language : 'kr'
+        });
+        $("#dateEnd").datepicker({
+            format: 'yyyy-mm-dd',
+            language: 'kr'
+        });
+
+        $("#dateStart").val(getTimeStamp(0));
+        $("#dateEnd").val(getTimeStamp(0));
+
+        // 새 계정 생성
+        $(".CreateUserButton").click(function (e) {
+            e.preventDefault();
+
+            clearForm();
+            $("#UserEditDialog").modal("show");
+        });
+
+        // 테이블의 login id 컬럼 클릭 처리
+        $(document).on("click", ".UserIdPopup", function (e) {
+            e.preventDefault();
+
+            $.ajax({
+                //url: "@Url.Action("QueryUser")",
+                url:"/agent/request_agentdetail",
+                type:"POST",
+                data: {
+                    strID : $(this).attr("data-id")
+                },
+                dataType: "json",
+                success: function (obj) {
+                    if (obj.result == "OK") {
+
+                        console.log(obj.data);
+
+                        const data = obj.data;
+
+                        if(data.iClass == 1)
+                        {
+                            $('#iClass').text('본사');
+                        }
+                        else if(data.iClass == 2)
+                        {
+                            $('#iClass').text('지사');
+                        }
+                        else if(data.iClass == 3)
+                        {
+                            $('#iClass').text('총판');
+                        }
+                        else if(data.iClass == 4)
+                        {
+                            $('#iClass').text('매장');
+                        }
+
+                        $('#iClass').val(data.iClass);
+                        $('#strParentID').val(data.strParentID);
+                        $('#strID').val(data.strID);
+                        $('#strPassword').val(data.strPassword);
+                        $('#strNickname').val(data.strNickname);
+                        $('#fHoldemR').val(data.fHoldemR);
+                        $('#fBig2R').val(data.fBig2R);
+                        $('#fSitgoR').val(data.fSitgoR);
+                        $('#fOmahaR').val(data.fOmahaR);
+                        $('#fBaccaratR').val(data.fBaccaratR);
+                        $('#fSettle').val(data.fSettle);
+                        $('#iCash').val(data.iCash);
+                        $('#iPoint').val(data.iRolling);
+                        $('#strBank').val(data.strBank);
+                        $('#strName').val(data.strName);
+                        $('#strAccount').val(data.strAccount);
+                        
+                        $("#AgentDialog").modal("show");
+                    } else {
+                        alert(obj.reason);
+                    }
+                }, error: function () {
+                    alert("조회 중 오류 발생");
+                }
+            });
+        });
+
+        // 결제 내역 팝업
+        $("#user-datatable").on("click", ".PayHistoryButton", function (e) {
+            e.preventDefault();
+
+            var loginId = $(this).parent().parent().attr("data-loginId");
+
+            //window.open("@Url.Action("PaymentHistory")?loginId=" + loginId, "_blank", "width = 700, height = 500");
+
+            window.open("/account/history_cash/" + loginId, "_blank", "width = 700, height = 400");
+        });
+
+        // 포인트 내역 팝업
+        $("#user-datatable").on("click", ".PointHistoryButton", function (e) {
+            e.preventDefault();
+
+            var loginId = $(this).parent().parent().attr("data-loginId");
+
+            window.open("/account/history_point/" + loginId, "_blank", "width = 700, height = 400");
+        });
+        // EXP 내역 팝업
+        $("#user-datatable").on("click", ".ExpHistoryButton", function (e) {
+            e.preventDefault();
+
+            var loginId = $(this).parent().parent().attr("data-loginId");
+            //window.open("@Url.Action("ExpHistory")?loginId=" + loginId, "_blank", "width = 700, height = 400");
+            
+            window.open("/account/history_exp/" + loginId, "_blank", "width = 700, height = 400");
+        });
+        // 아이템 내역 팝업
+        $("#user-datatable").on("click", ".ItemHistoryButton", function (e) {
+            e.preventDefault();
+
+            var loginId = $(this).parent().parent().attr("data-loginId");
+            //window.open("@Url.Action("ItemHistory")?loginId=" + loginId, "_blank", "width = 700, height = 400");
+
+            console.log(loginId);
+            
+        });
+        // 게시글 내역 팝업
+        $("#user-datatable").on("click", ".ArticlesButton", function (e) {
+            e.preventDefault();
+
+            var loginId = $(this).parent().parent().attr("data-loginId");
+
+            console.log(loginId);
+            //location.href="@Url.Action("Index", "Bulletin")?author=" + loginId;
+            
+        });
+        // 하부보기 클릭
+        $(document).on('click', '.details-button', function() {
+            var id = $(this).data('id');  // 버튼의 data-id 속성 값을 가져옵니다.
+            var iClass = $(this).attr('data-iclass'); 
+            console.log("details-button");
+            console.log(id);
+            console.log(iClass);
+            if(iClass == 5)
+            {
+                alert("더 이상의 하부는 없습니다.");
+                return;
+            }
+
+             // Destroy the existing DataTable.
+            if ($.fn.dataTable.isDataTable('#user-datatable')) {
+                $('#user-datatable').DataTable().destroy();
+            }
+            dataTableInstance = $('#user-datatable').DataTable({
+                "serverSide": true,
+                "searching": false,
+                "ajax": {
+                    //url: "@Url.Action("UserList")",
+                    url:"/agent/request_agentlistchild",
+                    "type": "POST",
+                    "data": function (d) {
+                        return $.extend({}, d, {
+                            "id" : id,
+                            dateStart:$('#dateStart').val(),
+                            dateEnd:$('#dateEnd').val()
+                        });
+                    }
+                },
+                responsive : false,
+                order: [[ 1, 'asc' ]],
+                columns: 
+                [
+                    {
+                        data: "id",
+                        render: function (d, t) {
+                            return d;// return "<input type='checkbox' name='chk' id='chk" + d + "' value='" + d + "' /><label for='chk" + d + "'>" + d + "</label>";
+                        }
+                    },
+                    {
+                        data: "iClass",
+                        render: function (d, t, s, m) {
+                            var text = "";
+                            if (d == 0)
+                                text = "대본사";
+                            else if (d == 1)
+                                text = "본사";
+                            else if (d == 2)
+                                text = "지사";
+                            else if (d == 3)
+                                text = "총판";
+                            else if (d == 4)
+                                text = "매장";
+                            return text;
+                        }
+                    },
+                    {
+                        data: "strID",
+                        render: function (d, t, row) {
+                            if (row.iClass >= 5) {
+                                return d; 
+                            }
+                            // iClass가 5 미만일 경우, 기존 로직 수행
+                            return "<a href='#' class='UserIdPopup' data-id='" + d + "'>" + d + "</a>";
+                        }
+                    },
+                    { 
+                        data: "strNickname" 
+                    },
+                    { 
+                        data: "iMyRolling", render: function (d) {
+                            let c = parseInt(d);
+                            return c.toLocaleString();
+                        }
+                    },
+                    { 
+                        data: "iMyMoney", render: function (d) {
+                            let c = parseInt(d);
+                            return c.toLocaleString();
+                        }
+                    },
+                    { 
+                        data: "iInput", render: function (d) {
+                            let c = parseInt(d);
+                            return c.toLocaleString();
+                        }
+                    },
+                    { 
+                        data: "iOutput", render: function (d) {
+                            let c = parseInt(d);
+                            return c.toLocaleString();
+                        }
+                    },
+                    { 
+                        data: "iTotalBets", render: function (d) {
+                            let c = parseInt(d);
+                            return c.toLocaleString();
+                        }
+                    },
+                    { 
+                        data: "iTotalWins", render: function (d) {
+                            let c = parseInt(d);
+                            return c.toLocaleString();
+                        }
+                    },
+                    { 
+                        data: "iTotalPoint", render: function (d) {
+                            let c = parseInt(d);
+                            return c.toLocaleString();
+                        } 
+                    },
+                    { 
+                        data: "iTotalMoney", render: function (d) {
+                            let c = parseInt(d);
+                            return c.toLocaleString();
+                        }
+                    },
+                    { data: "strAccount" },
+                    { data: "strMobileNo" },
+                    { data: "strIPlogin" },
+                    {
+                        data: "loginedAt", render: function (d) {
+                            let date = moment(d).format('YYYY-MM-DD HH:mm:ss');
+                            return date;
+                        }
+                    },
+                    {
+                        data: "createdAt", render: function (d) {
+                            let date = moment(d).format('YYYY-MM-DD HH:mm:ss');
+                            return date;
+                        }
+                    },
+                    {
+                        data: null,
+                        render: function (d, t, s) {
+                            return '<button type="button" class="btn btn-primary parent-button" data-id="' + s.id + '" data-iclass="' + s.iClass + '">상부보기</button>';
+                        }
+                    },
+                    {
+                        data: null,
+                        render: function (d, t, s) {
+                            return '<button type="button" class="btn btn-primary details-button" data-id="' + s.id + '" data-iclass="' + s.iClass + '">하부보기</button>';
+                        }
+                    },
+                    {
+                        data: "iAgentCount", render:function(d)
+                        {
+                            return d+'명';
+                        }
+                    }
+                ],
+                keys: true,
+                "language": {
+                    "paginate": {
+                        "previous": "<i class='mdi mdi-chevron-left'>",
+                        "next": "<i class='mdi mdi-chevron-right'>"
+                    },
+                    "info": "현재 페이지 _PAGE_/_PAGES_, 총 _TOTAL_ 건",
+                    "lengthMenu": "한 페이지 길이 _MENU_",
+                    "emptyTable": "조건에 맞는 데이터가 없습니다",
+                    "infoEmpty" : "표시할 데이터 없음"
+                },
+                "sort": false,
+                "drawCallback": function () {
+                    $('.dataTables_paginate > .pagination').addClass('pagination-rounded');
+                },
+                createdRow: function (row, data) {
+                    $(row).attr("data-id", data.id);
+                    $(row).attr("data-loginId", data.strID);
+                    // if (data.eStatus == "QUIT")
+                    //     $(row).addClass("table-dark");
+
+                    if (data.iClass == 1) {
+                        $(row).css('background-color', '#a0f0f0'); // 연한 회색
+                    } else if (data.iClass == 2) {
+                        $(row).css('background-color', '#FFFFCC'); // 연한 노란색
+                    } else if (data.iClass == 3) {
+                        $(row).css('background-color', '#FFCCFF'); // 연한 자주색
+                    } else if (data.iClass == 4) {
+                        $(row).css('background-color', '#CCFFCC'); // 연한 민트색
+                    } else if (data.iClass == 5) {
+                        $(row).css('background-color', '#FFCCCC'); // 연한 분홍색
+                    }
+                }
+            });
+        });
+
+        //상부 보기 클릭
+        $(document).on('click', '.parent-button', function() {
+            var id = $(this).data('id');  // 버튼의 data-id 속성 값을 가져옵니다.
+            var iClass = $(this).attr('data-iclass'); 
+            console.log("parent-button");
+            console.log(id);
+            console.log(iClass);
+            if(iClass == 1 || iClass < user.iClass)
+            {
+                alert("상부를 조회할 수 있는 권한이 없습니다.");
+                return;
+            }
+
+             // Destroy the existing DataTable.
+            if ($.fn.dataTable.isDataTable('#user-datatable')) {
+                $('#user-datatable').DataTable().destroy();
+            }
+            dataTableInstance = $('#user-datatable').DataTable({
+                "serverSide": true,
+                "searching": false,
+                "ajax": {
+                    //url: "@Url.Action("UserList")",
+                    url:"/agent/request_agentlistparent",
+                    "type": "POST",
+                    "data": function (d) {
+                        return $.extend({}, d, {
+                            "id" : id,
+                            dateStart:$('#dateStart').val(),
+                            dateEnd:$('#dateEnd').val()
+                        });
+                    }
+                },
+                responsive : false,
+                order: [[ 1, 'asc' ]],
+                columns: [
+                {
+                        data: "id",
+                        render: function (d, t) {
+                            return d;// return "<input type='checkbox' name='chk' id='chk" + d + "' value='" + d + "' /><label for='chk" + d + "'>" + d + "</label>";
+                        }
+                    },
+                    {
+                        data: "iClass",
+                        render: function (d, t, s, m) {
+                            var text = "";
+                            if (d == 0)
+                                text = "대본사";
+                            else if (d == 1)
+                                text = "본사";
+                            else if (d == 2)
+                                text = "지사";
+                            else if (d == 3)
+                                text = "총판";
+                            else if (d == 4)
+                                text = "매장";
+                            return text;
+                        }
+                    },
+                    {
+                        data: "strID",
+                        render: function (d, t, row) {
+                            if (row.iClass >= 5) {
+                                return d; 
+                            }
+                            // iClass가 5 미만일 경우, 기존 로직 수행
+                            return "<a href='#' class='UserIdPopup' data-id='" + d + "'>" + d + "</a>";
+                        }
+                    },
+                    { 
+                        data: "strNickname" 
+                    },
+                    { 
+                        data: "iMyRolling", render: function (d) {
+                            let c = parseInt(d);
+                            return c.toLocaleString();
+                        }
+                    },
+                    { 
+                        data: "iMyMoney", render: function (d) {
+                            let c = parseInt(d);
+                            return c.toLocaleString();
+                        }
+                    },
+                    { 
+                        data: "iInput", render: function (d) {
+                            let c = parseInt(d);
+                            return c.toLocaleString();
+                        }
+                    },
+                    { 
+                        data: "iOutput", render: function (d) {
+                            let c = parseInt(d);
+                            return c.toLocaleString();
+                        }
+                    },
+                    { 
+                        data: "iTotalBets", render: function (d) {
+                            let c = parseInt(d);
+                            return c.toLocaleString();
+                        }
+                    },
+                    { 
+                        data: "iTotalWins", render: function (d) {
+                            let c = parseInt(d);
+                            return c.toLocaleString();
+                        }
+                    },
+                    { 
+                        data: "iTotalPoint", render: function (d) {
+                            let c = parseInt(d);
+                            return c.toLocaleString();
+                        } 
+                    },
+                    { 
+                        data: "iTotalMoney", render: function (d) {
+                            let c = parseInt(d);
+                            return c.toLocaleString();
+                        }
+                    },
+                    { data: "strAccount" },
+                    { data: "strMobileNo" },
+                    { data: "strIPlogin" },
+                    {
+                        data: "loginedAt", render: function (d) {
+                            let date = moment(d).format('YYYY-MM-DD HH:mm:ss');
+                            return date;
+                        }
+                    },
+                    {
+                        data: "createdAt", render: function (d) {
+                            let date = moment(d).format('YYYY-MM-DD HH:mm:ss');
+                            return date;
+                        }
+                    },
+                    {
+                        data: null,
+                        render: function (d, t, s) {
+                            return '<button type="button" class="btn btn-primary parent-button" data-id="' + s.id + '" data-iclass="' + s.iClass + '">상부보기</button>';
+                        }
+                    },
+                    {
+                        data: null,
+                        render: function (d, t, s) {
+                            return '<button type="button" class="btn btn-primary details-button" data-id="' + s.id + '" data-iclass="' + s.iClass + '">하부보기</button>';
+                        }
+                    },
+                    {
+                        data: "iAgentCount", render:function(d)
+                        {
+                            return d+'명';
+                        }
+                    }
+                ],
+                keys: true,
+                "language": {
+                    "paginate": {
+                        "previous": "<i class='mdi mdi-chevron-left'>",
+                        "next": "<i class='mdi mdi-chevron-right'>"
+                    },
+                    "info": "현재 페이지 _PAGE_/_PAGES_, 총 _TOTAL_ 건",
+                    "lengthMenu": "한 페이지 길이 _MENU_",
+                    "emptyTable": "조건에 맞는 데이터가 없습니다",
+                    "infoEmpty" : "표시할 데이터 없음"
+                },
+                "sort": false,
+                "drawCallback": function () {
+                    $('.dataTables_paginate > .pagination').addClass('pagination-rounded');
+                },
+                createdRow: function (row, data) {
+                    $(row).attr("data-id", data.id);
+                    $(row).attr("data-loginId", data.strID);
+                    // if (data.eStatus == "QUIT")
+                    //     $(row).addClass("table-dark");
+
+                    if (data.iClass == 1) {
+                        $(row).css('background-color', '#a0f0f0'); // 연한 회색
+                    } else if (data.iClass == 2) {
+                        $(row).css('background-color', '#FFFFCC'); // 연한 노란색
+                    } else if (data.iClass == 3) {
+                        $(row).css('background-color', '#FFCCFF'); // 연한 자주색
+                    } else if (data.iClass == 4) {
+                        $(row).css('background-color', '#CCFFCC'); // 연한 민트색
+                    } else if (data.iClass == 5) {
+                        $(row).css('background-color', '#FFCCCC'); // 연한 분홍색
+                    }
+                }
+            });
+        });
+
+        // 탈퇴 버튼 클릭
+        $("#user-datatable").on("click", ".QuitButton", function (e) {
+            e.preventDefault();
+
+            var id = $(this).parent().parent().attr("data-id");
+            var strID = $(this).parent().parent().attr("data-loginId");
+
+            console.log(strID);
+            // var id = $(this).parent().attr("data-id");
+            // var loginId = $(this).parent().attr("data-loginId");
+
+            // console.log($(this).parent().parent());
+
+            // //alert(id);
+
+            //if (!confirm(loginId + "계정을 탈퇴 처리 하시겠습니까?"))
+            if (!confirm(strID + "계정을 탈퇴 처리 하시겠습니까?"))
+                return;
+
+            $.ajax({
+                //url: "@Url.Action("QuitUser")",
+                type:"POST",
+                url:"/agent/request_userleave",
+                data: {
+                    "id": id,
+                    "strID": strID
+                },
+                dataType: "json",
+                type: "POST",
+                success: function (obj) {
+                    if (obj.result == "OK") {
+                        alert("탈퇴 처리되었습니다");
+                        dataTableInstance.ajax.reload();
+                        return;
+                    } else {
+                        alert(obj.reason);
+                    }
+                },
+                error: function () {
+                    alert("탈퇴 처리 요청 중 오류");
+                }
+            });
+            
+        });
+
+        // 사용자 구분
+        $("input[name='UserTypeFilter']").change(function () {
+            dataTableInstance.ajax.reload();
+        });
+
+        $("#SearchTextFindButton").click(function (e) {
+            e.preventDefault();
+
+            dataTableInstance.ajax.reload();
+        });
+        // 날짜 검색
+        $("#FindButton").click(function (e) {
+            e.preventDefault();
+
+            dataTableInstance.ajax.reload();
+        });
+
+        // 정보 수정 완료
+        $("#UserFormSubmitButton").click(function (e) {
+            e.preventDefault();
+
+            $("#UserForm").ajaxSubmit({
+                //url:"/account/user",
+                dataType: "json",
+                type : "POST",
+                beforeSubmit: function () {
+
+                },
+                success: function (obj) {
+                    if (obj.result == "OK") {
+                        $("#UserEditDialog").modal("hide");
+                        dataTableInstance.ajax.reload();
+                        return;
+                    }
+                    alert(obj.reason);
+                },
+                error: function () {
+                    alert("서버 오류");
+                }
+            });
+        });
+
+        dataTableInstance = $('#user-datatable').DataTable({
+            "serverSide": true,
+            "searching": false,
+            "ajax": {
+                url:"/agent/request_agentlist",
+                "type": "POST",
+                "data": function (d) {
+                    return $.extend({}, d, {
+                        //"userTypeFilter": $("input[name='UserTypeFilter']:checked").val(),
+                        "search" : $("#searchText").val(),
+                        "iClass" : iclass,
+                        dateStart:$('#dateStart').val(),
+                        dateEnd:$('#dateEnd').val()
+                    });
+                }
+            },
+            responsive : false,
+            order: [[ 1, 'asc' ]],
+            columns: [
+
+                {
+                    data: "id",
+                    render: function (d, t) {
+                        return d;// return "<input type='checkbox' name='chk' id='chk" + d + "' value='" + d + "' /><label for='chk" + d + "'>" + d + "</label>";
+                    }
+                },
+                {
+                    data: "iClass",
+                    render: function (d, t, s, m) {
+                        var text = "";
+                        if (d == 0)
+                            text = "대본사";
+                        else if (d == 1)
+                            text = "본사";
+                        else if (d == 2)
+                            text = "지사";
+                        else if (d == 3)
+                            text = "총판";
+                        else if (d == 4)
+                            text = "매장";
+                        return text;
+                    }
+                },
+                {
+                    data: "strID",
+                    render: function (d) {
+                        return "<a href='#' class='UserIdPopup' data-id='" + d + "'>" + d + "</a>";
+                    }
+                },
+                { 
+                    data: "strNickname" 
+                },
+                { 
+                    data: "iMyRolling", render: function (d) {
+                        let c = parseInt(d);
+                        return c.toLocaleString();
+                    }
+                },
+                { 
+                    data: "iMyMoney", render: function (d) {
+                        let c = parseInt(d);
+                        return c.toLocaleString();
+                    }
+                },
+                { 
+                    data: "iInput", render: function (d) {
+                        let c = parseInt(d);
+                        return c.toLocaleString();
+                    }
+                },
+                { 
+                    data: "iOutput", render: function (d) {
+                        let c = parseInt(d);
+                        return c.toLocaleString();
+                    }
+                },
+                { 
+                    data: "iTotalBets", render: function (d) {
+                        let c = parseInt(d);
+                        return c.toLocaleString();
+                    }
+                },
+                { 
+                    data: "iTotalWins", render: function (d) {
+                        let c = parseInt(d);
+                        return c.toLocaleString();
+                    }
+                },
+                { 
+                    data: "iTotalPoint", render: function (d) {
+                        let c = parseInt(d);
+                        return c.toLocaleString();
+                    } 
+                },
+                { 
+                    data: "iTotalMoney", render: function (d) {
+                        let c = parseInt(d);
+                        return c.toLocaleString();
+                    }
+                },
+                { data: "strAccount" },
+                { data: "strMobileNo" },
+                { data: "strIPlogin" },
+                {
+                    data: "loginedAt", render: function (d) {
+                        let date = moment(d).format('YYYY-MM-DD HH:mm:ss');
+                        return date;
+                    }
+                },
+                {
+                    data: "createdAt", render: function (d) {
+                        let date = moment(d).format('YYYY-MM-DD HH:mm:ss');
+                        return date;
+                    }
+                },
+                {
+                    data: null,
+                    render: function (d, t, s) {
+                        return '<button type="button" class="btn btn-primary parent-button" data-id="' + s.id + '" data-iclass="' + s.iClass + '">상부보기</button>';
+                    }
+                },
+                {
+                    data: null,
+                    render: function (d, t, s) {
+                        return '<button type="button" class="btn btn-primary details-button" data-id="' + s.id + '" data-iclass="' + s.iClass + '">하부보기</button>';
+                    }
+                },
+                {
+                    data: "iAgentCount", render:function(d)
+                    {
+                        return d+'명';
+                    }
+                }
+            ],
+            keys: true,
+            "language": {
+                "paginate": {
+                    "previous": "<i class='mdi mdi-chevron-left'>",
+                    "next": "<i class='mdi mdi-chevron-right'>"
+                },
+                "info": "현재 페이지 _PAGE_/_PAGES_, 총 _TOTAL_ 건",
+                "lengthMenu": "한 페이지 길이 _MENU_",
+                "emptyTable": "조건에 맞는 데이터가 없습니다",
+                "infoEmpty" : "표시할 데이터 없음"
+            },
+            "sort": false,
+            "drawCallback": function () {
+                $('.dataTables_paginate > .pagination').addClass('pagination-rounded');
+            },
+            createdRow: function (row, data) {
+                $(row).attr("data-id", data.id);
+                $(row).attr("data-loginId", data.strID);
+                // if (data.eStatus == "QUIT")
+                //     $(row).addClass("table-dark");
+
+                if (data.iClass == 1) {
+                    $(row).css('background-color', '#a0f0f0'); // 연한 회색
+                } else if (data.iClass == 2) {
+                    $(row).css('background-color', '#FFFFCC'); // 연한 노란색
+                } else if (data.iClass == 3) {
+                    $(row).css('background-color', '#FFCCFF'); // 연한 자주색
+                } else if (data.iClass == 4) {
+                    $(row).css('background-color', '#CCFFCC'); // 연한 민트색
+                } else if (data.iClass == 5) {
+                    $(row).css('background-color', '#FFCCCC'); // 연한 분홍색
+                }
+            }
+        });
+    });
+
+    let BuildAgent = (iClass) => {
+
+        console.log(iClass);
+        clearForm();
+        // $('#BuildAgentDialog').modal('show');
+        $('#Bholdemdeal').empty();
+        $('#Bbig2deal').empty();
+        $('#Bsitgodeal').empty();
+        $('#Bomahadeal').empty();
+        $('#Bbaccaratdeal').empty();
+        if(iClass == 1)
+        {
+            $('#BiClass').text('본사');
+            $('#BstrParentID').val(user.strID);
+        }
+        else if(iClass == 2)
+        {
+            $('#BiClass').text('지사');
+            if(user.iClass == 1)
+            {
+                $('#BstrParentID').val(user.strID);
+            }
+        }
+        else if(iClass == 3)
+        {
+            $('#BiClass').text('총판');
+            if(user.iClass == 2)
+            {
+                $('#BstrParentID').val(user.strID);
+            }
+        }
+        else if(iClass == 4)
+        {
+            $('#BiClass').text('매장');
+            if(user.iClass == 3)
+            {
+                $('#BstrParentID').val(user.strID);
+            }
+        }
+        $('#BiClass').val(iClass);
+        $.ajax({
+                url:"/etc/request_bankenablelist",
+                type:"POST",
+                data: {},
+                dataType: "json",
+                success: function (obj) {
+                    if (obj.result == "OK") {
+                        //console.log(obj.data);
+                        const bankSelect = $("#BstrBank");
+                        bankSelect.empty(); // Clear existing options
+                        obj.data.forEach(function (bank) {
+                            bankSelect.append($('<option>', {
+                                value: bank.strBankName,
+                                text: `${bank.iBankCode} : ${bank.strBankName}`
+                            }));
+                        });
+                        $("#BuildAgentDialog").modal("show");
+                    } else {
+                        alert(obj.reason);
+                    }
+                }, error: function () {
+                    alert("조회 중 오류 발생");
+                }
+            });
+    }
+    
+    let RequestCheckRolling = () => {
+
+        //console.log(RequestCheckRolling);
+        const strParentID = $('#BstrParentID').val();
+        const iClass = $('#BiClass').val();
+
+        $.ajax({
+            url:"/agent/request_checkrolling",
+            type:"POST",
+            data: {
+                strParentID:strParentID,
+                iClass:iClass
+            },
+            dataType: "json",
+            success: function (obj) {
+                console.log(obj);
+                if ( obj.result == 'OK' )
+                {
+                    $('#agentbuild').show();
+                    $('#Bholdemdeal').empty();
+                    $('#Bbig2deal').empty();
+                    $('#Bsitgodeal').empty();
+                    $('#Bomahadeal').empty();
+                    $('#Bbaccaratdeal').empty();
+                    let tag = `${obj.data.fHoldemRMax}% ~ ${obj.data.fHoldemRMin}%까지만 조절 가능합니다.`;
+                    $('#Bholdemdeal').append(tag);
+                    let tag2 = `${obj.data.fBig2RMax}% ~ ${obj.data.fBig2RMin}%까지만 조절 가능합니다.`;
+                    $('#Bbig2deal').append(tag2);
+                    let tag3 = `${obj.data.fSitgoRMax}% ~ ${obj.data.fSitgoRMin}%까지만 조절 가능합니다.`;
+                    $('#Bsitgodeal').append(tag3);
+                    let tag4 = `${obj.data.fOmahaRMax}% ~ ${obj.data.fOmahaRMin}%까지만 조절 가능합니다.`;
+                    $('#Bomahadeal').append(tag4);
+                    let tag5 = `${obj.data.fBaccaratRMax}% ~ ${obj.data.fBaccaratRMin}%까지만 조절 가능합니다.`;
+                    $('#Bbaccaratdeal').append(tag5);
+                }
+                else
+                {
+                    alert('해당 상위 에이전트 ID를 다시 확인해주세요.');
+                }
+            }, 
+            error: function () {
+                alert("조회 중 오류 발생");
+            }
+        });
+    }
+
+    let RequestCheckID = () => {
+
+        const strID = $('#strID').val();
+        // 정규 표현식을 사용하여 검사
+        let idRegex = /^[A-Za-z0-9]{3,10}$/;
+
+        // 닉네임 길이와 사용 가능한 문자를 체크
+        if (!idRegex.test(strID)) {
+            alert('아이디는  3자리에서 10자리 사이이며, 영어, 숫자만 포함할 수 있습니다.');
+            return;
+        }
+
+        $.ajax({
+            url:"/agent/request_checkid",
+            type:"POST",
+            data: {
+                strID :strID
+            },
+            dataType: "json",
+            success: function (obj) {
+                if ( obj.result == 'OK' )
+                {
+                    alert('사용 가능한 아이디 입니다.');
+                }
+                else
+                {
+                    alert('이미 사용중인 아이디 입니다.');
+                }
+            }, 
+            error: function () {
+                alert("조회 중 오류 발생");
+            }
+        });
+    }
+
+    let RequestAgentCheckID = () => {
+
+    const strID = $('#BstrID').val();
+    var re = /^[a-zA-Z0-9]{5,12}$/;  // 정규 표현식: 5자 이상의 알파벳 대소문자와 숫자만 허용
+        if (!re.test(strID)) {  // 입력된 값이 정규 표현식에 맞지 않으면
+            alert('5~12 자리로 설정해주시고 특수문자는 사용할 수 없습니다.');
+            $('#BstrID').val('');
+            return;
+        }
+
+    $.ajax({
+        url:"/agent/request_checkid",
+        type:"POST",
+        data: {
+            strID :strID
+        },
+        dataType: "json",
+        success: function (obj) {
+            if ( obj.result == 'OK' )
+            {
+                alert('사용 가능한 아이디 입니다.');
+            }
+            else
+            {
+                alert('이미 사용중인 아이디 입니다.');
+            }
+        }, 
+        error: function () {
+            alert("조회 중 오류 발생");
+        }
+    });
+    }
+
+    let RequestCheckNickname = () => {
+        let strNickname = $('#strNickname').val();
+
+        // 정규 표현식을 사용하여 검사
+        let nicknameRegex = /^[A-Za-z가-힣0-9]{2,5}$/;
+
+        // 닉네임 길이와 사용 가능한 문자를 체크
+        if (!nicknameRegex.test(strNickname)) {
+            alert('닉네임은 2자리에서 5자리 사이이며, 영어, 한글, 숫자만 포함할 수 있습니다.');
+            $('#strNickname').val('');
+            return; // 조건에 맞지 않으면 여기서 함수 실행을 중단한다.
+        }
+
+        $.ajax({
+            url:"/agent/request_checknickname",
+            type:"POST",
+            data: {
+                strNickname :strNickname
+            },
+            dataType: "json",
+            success: function (obj) {
+                if ( obj.result == 'OK' )
+                {
+                    alert('사용 가능한 닉네임 입니다.');
+                }
+                else
+                {
+                    alert('이미 사용중인 닉네임 입니다.');
+                }
+            }, 
+            error: function () {
+                alert("조회 중 오류 발생");
+            }
+        });
+    }
+
+    let RequsetGivePoint = () => {
+        console.log("RequsetGivePoint");
+
+        $("#MoneySendModalLabel").text('포인트 보내기');
+        $("#CashSend").parent().hide(); // 머니 입력 필드 숨기기
+        $("#ParentPoint").text(`보유포인트 : ${user.iRolling}`);
+        $("#PointSend").parent().show(); // 포인트 입력 필드 표시
+        $("#btnSend").text('보내기');
+        $("#MoneySend").modal('show');
+    }
+
+    let RequestTakeMoney = () => {
+        console.log("RequestTakeMoney");
+        let strID = $("#strID").val();
+        
+        $.ajax({
+            url:"/agent/request_agentdetail",
+            type:"POST",
+            data: {
+                strID :strID
+            },
+            dataType: "json",
+            success: function (obj) {
+                if ( obj.result == 'OK' )
+                {
+                    console.log(obj.data);
+                    $("#MoneySendModalLabel").text('머니 회수');
+                    $("#PointSend").parent().hide(); // 포인트 입력 필드 숨기기
+                    $("#ChildCash").text(`보유머니 : ${obj.data.iCash}`);
+                    $("#CashSend").parent().show(); // 머니 입력 필드 표시
+                    $("#btnSend").text('회수');
+                    $("#MoneySend").modal('show');
+                }
+                else
+                {
+                    alert('조회 중 오류 발생 다시 확인해주세요.');
+                }
+            }, 
+            error: function () {
+                alert("조회 중 오류 발생");
+            }
+        });
+    }
+
+    let RequestAgentCheckNickname = () => {
+        let strNickname = $('#BstrNickname').val();
+
+        // 정규 표현식을 사용하여 검사
+        let nicknameRegex = /^[A-Za-z가-힣0-9]{2,5}$/;
+
+        // 닉네임 길이와 사용 가능한 문자를 체크
+        if (!nicknameRegex.test(strNickname)) {
+            alert('닉네임은 2자리에서 5자리 사이이며, 영어, 한글, 숫자만 포함할 수 있습니다.');
+            $('#BstrNickname').val('');
+            return; // 조건에 맞지 않으면 여기서 함수 실행을 중단한다.
+        }
+
+        $.ajax({
+            url:"/agent/request_checknickname",
+            type:"POST",
+            data: {
+                strNickname :strNickname
+            },
+            dataType: "json",
+            success: function (obj) {
+                if ( obj.result == 'OK' )
+                {
+                    alert('사용 가능한 닉네임 입니다.');
+                }
+                else
+                {
+                    alert('이미 사용중인 닉네임 입니다.');
+                }
+            }, 
+            error: function () {
+                alert("조회 중 오류 발생");
+            }
+        });
+    }
+
+    let RequestModify = () => {
+        event.preventDefault();
+        const strID = $('#strID').val();
+        const strNickname = $('#strNickname').val();
+        const iClass = $('#iClass').val();
+        const strParentID = $('#strParentID').val();
+        const strPassword = $('#strPassword').val();
+        //const strPasswordCheck = $('#strPasswordCheck').val();
+        const fSettle = $('#fSettle').val();
+        const fHoldemR = $('#fHoldemR').val();
+        const fBig2R = $('#fBig2R').val();
+        const fSitgoR = $('#fSitgoR').val();
+        const fOmahaR = $('#fOmahaR').val();
+        const fBaccaratR = $('#fBaccaratR').val();
+        const strBank = $('#strBank').val();
+        const strName = $('#strName').val();
+        const strAccount = $('#strAccount').val();
+
+        // 정규 표현식을 사용하여 검사
+        let nicknameRegex = /^[A-Za-z가-힣0-9]{2,5}$/;
+        let idRegex = /^[A-Za-z0-9]{3,10}$/;
+
+        // 닉네임 길이와 사용 가능한 문자를 체크
+        if (!nicknameRegex.test(strNickname)) {
+            alert('닉네임은 2자리에서 5자리 사이이며, 영어, 한글, 숫자만 포함할 수 있습니다.');
+            return;
+        }
+        
+        // 닉네임 길이와 사용 가능한 문자를 체크
+        if (!idRegex.test(strID)) {
+            alert('아이디는  3자리에서 10자리 사이이며, 영어, 숫자만 포함할 수 있습니다.');
+            return;
+        }
+
+        if ( strID == '' )
+        {
+            alert('아이디를 입력해주세요.');
+            return;
+        }
+        if ( strNickname == '' )
+        {
+            alert('닉네임을 입력해주세요.');
+            return;
+        }
+        if(strPassword == '')
+        {
+            alert('비밀번호를 입력해주세요.');
+            return;
+        }
+        if(fHoldemR == '')
+        {
+            alert('홀덤딜비를 입력해주세요.');
+            return;
+        }
+        if(fSitgoR == '')
+        {
+            alert('싯고딜비를 입력해주세요.');
+            return;
+        }
+        if(fOmahaR == '')
+        {
+            alert('오마하딜비를 입력해주세요.');
+            return;
+        }
+        if(fBig2R == '')
+        {
+            alert('빅투딜비를 입력해주세요.');
+            return;
+        }
+        if(fBaccaratR == '')
+        {
+            alert('바카라딜비를 입력해주세요.');
+            return;
+        }
+
+        $.ajax({
+            url:"/agent/request_register",
+            type:"POST",
+            data: {
+                strID:strID,
+                iClass:iClass,
+                strNickname :strNickname,
+                strParentID:strParentID,
+                strPassword:strPassword,
+                fSettle:fSettle,
+                fHoldemR:fHoldemR,
+                fBig2R:fBig2R,
+                fSitgoR:fSitgoR,
+                fOmahaR:fOmahaR,
+                fBaccaratR:fBaccaratR,
+                strBank:strBank,
+                strName:strName,
+                strAccount:strAccount,
+            },
+            dataType: "json",
+            success: function (obj) {
+                console.log(obj);
+
+                if ( obj.result == 'OK' )
+                {
+                    alert('완료 되었습니다.');
+                    location.reload();
+                }
+                else
+                {
+                    if ( obj.error == 'NotExistParent' )
+                    {
+                        alert('상위 에이전트가 존재 하지 않습니다.');
+                    }
+                    else if ( obj.error == 'ExistNickname' )
+                    {
+                        alert('이미 사용중인 닉네임 입니다.');
+                    }
+                    else if ( obj.error == 'ExistHoldemR' )
+                    {
+                        alert(`홀덤 딜비를 최대 ${obj.fHoldemRMax} ~ 최소 ${obj.fHoldemRMin} 사이에서 입력해주세요.`);
+                    }
+                    else if ( obj.error == 'ExistBig2R' )
+                    {
+                        alert(`빅투 딜비를 최대 ${obj.fBig2RMax} ~ 최소 ${obj.fBig2RMin} 사이에서 입력해주세요.`);
+                    }
+                    else if ( obj.error == 'ExistSitgoR' )
+                    {
+                        alert(`싯고 딜비를 최대 ${obj.fSitgoRMax} ~ 최소 ${obj.fSitgoRMin} 사이에서 입력해주세요.`);
+                    }
+                    else if ( obj.error == 'ExistOmahaR' )
+                    {
+                        alert(`오마하 딜비를 최대 ${obj.fOmahaRMax} ~ 최소 ${obj.fOmahaRMin} 사이에서 입력해주세요.`);
+                    }
+                    else if ( obj.error == 'ExistBaccaratR' )
+                    {
+                        alert(`바카라 딜비를 최대 ${obj.fBaccaratRMax} ~ 최소 ${obj.fBaccaratRMin} 사이에서 입력해주세요.`);
+                    }
+                }
+            }, 
+            error: function () {
+                alert("조회 중 오류 발생");
+            }
+        });
+    }
+
+    let RequestMoneySend = () => {
+        event.preventDefault();
+        const strID = $('#strID').val();
+
+        if ($("#PointSend").parent().is(":visible")) {
+            // 포인트 보내기 처리
+            let pointAmount = $("#PointSend").val();
+            console.log("Sending Points: " + pointAmount);
+            // 포인트 전송 로직
+            if(pointAmount > user.iRolling)
+            {
+                alert('보유 포인트가 부족 합니다.');
+                return;
+            }
+            $.ajax({
+                url:"/agent/request_pointsend",
+                type:"POST",
+                data: {
+                    strID:strID,
+                    iRolling:pointAmount,
+                },
+                dataType: "json",
+                success: function (obj) {
+                    console.log(obj);
+
+                    if ( obj.result == 'OK' )
+                    {
+                        alert('완료 되었습니다.');
+                        location.reload();
+                    }
+                    else
+                    {
+                        if ( obj.error == 'NotExistParent' )
+                        {
+                            alert('상위 에이전트가 존재 하지 않습니다.');
+                        }
+                        else if ( obj.error == 'Over Point' )
+                        {
+                            alert(`해당 에이전트에 포인트가 부족합니다.`);
+                        }
+                    }
+                }, 
+                error: function () {
+                    alert("조회 중 오류 발생");
+                }
+            });
+        } else if ($("#CashSend").parent().is(":visible")) {
+            // 머니 회수 처리
+            let cashAmount = $("#CashSend").val();
+            console.log("Taking Money: " + cashAmount);
+            // 머니 회수 로직
+            $.ajax({
+                url:"/agent/request_cashtake",
+                type:"POST",
+                data: {
+                    strID:strID,
+                    iCash:cashAmount,
+                },
+                dataType: "json",
+                success: function (obj) {
+                    console.log(obj);
+
+                    if ( obj.result == 'OK' )
+                    {
+                        alert('완료 되었습니다.');
+                        location.reload();
+                    }
+                    else
+                    {
+                        if ( obj.error == 'NotExistParent' )
+                        {
+                            alert('상위 에이전트가 존재 하지 않습니다.');
+                        }
+                        else if ( obj.error == 'OverCash' )
+                        {
+                            alert(`해당 에이전트에 보유머니가 부족합니다.`);
+                        }
+                    }
+                }, 
+                error: function () {
+                    alert("조회 중 오류 발생");
+                }
+            });
+        }
+    }
+
+    let RequestAgentRegister = () => {
+        event.preventDefault();
+        const strID = $('#BstrID').val();
+        const strNickname = $('#BstrNickname').val();
+        const iClass = $('#BiClass').val();
+        const strParentID = $('#BstrParentID').val();
+        const strPassword = $('#BstrPassword').val();
+        const fSettle = $('#BfSettle').val();
+        const fHoldemR = $('#BfHoldemR').val();
+        const fBig2R = $('#BfBig2R').val();
+        const fSitgoR = $('#BfSitgoR').val();
+        const fOmahaR = $('#BfOmahaR').val();
+        const fBaccaratR = $('#BfBaccaratR').val();
+        const strBank = $('#BstrBank').val();
+        const strName = $('#BstrName').val();
+        const strAccount = $('#BstrAccount').val();
+        console.log(iClass);
+        // 정규 표현식을 사용하여 검사
+        let nicknameRegex = /^[A-Za-z가-힣0-9]{2,5}$/;
+        let idRegex = /^[A-Za-z0-9]{3,10}$/;
+
+        if(strParentID == '')
+        {
+            alert('상위에이전트를 입력해주세요.');
+            return;
+        }
+
+        // 닉네임 길이와 사용 가능한 문자를 체크
+        if (!nicknameRegex.test(strNickname)) {
+            alert('닉네임은 2자리에서 5자리 사이이며, 영어, 한글, 숫자만 포함할 수 있습니다.');
+            return;
+        }
+        
+        // 닉네임 길이와 사용 가능한 문자를 체크
+        if (!idRegex.test(strID)) {
+            alert('아이디는  3자리에서 10자리 사이이며, 영어, 숫자만 포함할 수 있습니다.');
+            return;
+        }
+
+        if ( strID == '' )
+        {
+            alert('아이디를 입력해주세요.');
+            return;
+        }
+        if ( strNickname == '' )
+        {
+            alert('닉네임을 입력해주세요.');
+            return;
+        }
+        if(strPassword == '')
+        {
+            alert('비밀번호를 입력해주세요.');
+            return;
+        }
+        if(fHoldemR == '')
+        {
+            alert('홀덤딜비를 입력해주세요.');
+            return;
+        }
+        if(fSitgoR == '')
+        {
+            alert('싯고딜비를 입력해주세요.');
+            return;
+        }
+        if(fOmahaR == '')
+        {
+            alert('오마하딜비를 입력해주세요.');
+            return;
+        }
+        if(fBig2R == '')
+        {
+            alert('빅투딜비를 입력해주세요.');
+            return;
+        }
+        if(fBaccaratR == '')
+        {
+            alert('바카라딜비를 입력해주세요.');
+            return;
+        }
+        $.ajax({
+            url:"/agent/request_register",
+            type:"POST",
+            data: {
+                strID:strID,
+                iClass:iClass,
+                strNickname :strNickname,
+                strParentID:strParentID,
+                strPassword:strPassword,
+                fSettle:fSettle,
+                fHoldemR:fHoldemR,
+                fBig2R:fBig2R,
+                fSitgoR:fSitgoR,
+                fOmahaR:fOmahaR,
+                fBaccaratR:fBaccaratR,
+                strBank:strBank,
+                strName:strName,
+                strAccount:strAccount,
+            },
+            dataType: "json",
+            success: function (obj) {
+                console.log(obj);
+
+                if ( obj.result == 'OK' )
+                {
+                    alert('완료 되었습니다.');
+                    location.reload();
+                }
+                else
+                {
+                    if ( obj.error == 'NotExistParent' )
+                    {
+                        alert('상위 에이전트가 존재 하지 않습니다.');
+                    }
+                    else if ( obj.error == 'ExistNickname' )
+                    {
+                        alert('이미 사용중인 닉네임 입니다.');
+                    }
+                    else if ( obj.error == 'ExistHoldemR' )
+                    {
+                        alert(`홀덤 딜비를 최대 ${obj.fHoldemRMax} ~ 최소 ${obj.fHoldemRMin} 사이에서 입력해주세요.`);
+                    }
+                    else if ( obj.error == 'ExistBig2R' )
+                    {
+                        alert(`빅투 딜비를 최대 ${obj.fBig2RMax} ~ 최소 ${obj.fBig2RMin} 사이에서 입력해주세요.`);
+                    }
+                    else if ( obj.error == 'ExistSitgoR' )
+                    {
+                        alert(`싯고 딜비를 최대 ${obj.fSitgoRMax} ~ 최소 ${obj.fSitgoRMin} 사이에서 입력해주세요.`);
+                    }
+                    else if ( obj.error == 'ExistOmahaR' )
+                    {
+                        alert(`오마하 딜비를 최대 ${obj.fOmahaRMax} ~ 최소 ${obj.fOmahaRMin} 사이에서 입력해주세요.`);
+                    }
+                    else if ( obj.error == 'ExistBaccaratR' )
+                    {
+                        alert(`바카라 딜비를 최대 ${obj.fBaccaratRMax} ~ 최소 ${obj.fBaccaratRMin} 사이에서 입력해주세요.`);
+                    }
+                }
+            }, 
+            error: function () {
+                alert("조회 중 오류 발생");
+            }
+        });
+    }
+    // 페이지가 새로 고침된 후에, 로컬 스토리지에서 URL을 가져와 페이지를 다시 로드
+    window.onload = function() {
+        let previousUrl = localStorage.getItem('previousUrl');
+        if (previousUrl) {
+            window.location.href = previousUrl;
+            localStorage.removeItem('previousUrl'); // 필요에 따라 사용했던 정보를 지웁니다.
+        }
+    };
+</script>

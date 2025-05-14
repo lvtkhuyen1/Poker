@@ -1,0 +1,662 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="no">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <!-- 안드로이드 홈화면추가시 상단 주소창 제거 -->
+    <meta name="mobile-web-app-capable" content="yes">
+    <!-- <link rel="manifest" href="/manifest.json"> -->
+    <link rel="icon" href="/img/favicon.ico">
+    <!-- ios홈화면추가시 상단 주소창 제거 -->
+    <!-- <link rel="apple-touch-icon" href="/img/favicon.ico">  -->
+    
+	<title>☆Poker Hold'em Classic</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@500&display=swap" rel="stylesheet">
+    <!-- <link href='http://fonts.googleapis.com/css?family=Press+Start+2P' rel='stylesheet' type='text/css'> -->
+    <!-- <script src="https://cdn.tailwindcss.com"></script> -->
+    <link href="/css/styles.css" rel="stylesheet">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Rowdies:wght@700&display=swap" rel="stylesheet">
+	<link href='//spoqa.github.io/spoqa-han-sans/css/SpoqaHanSansNeo.css' rel='stylesheet' type='text/css'>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Hahmlet:wght@400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@800;900&display=swap" rel="stylesheet">
+
+	<link href="css/common.css" rel="stylesheet" />
+
+    <script src="game/resource.js"></script>
+	<script src="game/constants.js"></script>
+
+	<script src="game/IUIEventGame.js"></script>
+
+    <script type="module" src="js/button.js"></script>
+	<script type="module" src="js/label.js"></script>
+    <!-- <script type="module" src="js/screenconfig.js"></script> -->
+    <!-- <script type="module" src="js/resourcemanager.js"></script> -->
+	
+	<script type="module" src="game/IGameMain.js"></script>
+	<script type="module" src="game/Instance.js"></script>
+    
+</head>
+ <body oncontextmenu="return false" id = "body">
+    <div id="loading-screen">
+        <img src = "img/loading.gif">
+    </div>
+    <div id = "image-container">
+        <img src = "img/game/landscape.png">
+    </div>
+    <div id="stage" style="z-index: 9; position:relative;">
+        
+    </div>
+    <div>
+        <!-- <section id="chatting" class="w-full bg-[#070419] h-2/4 fixed top-[50%] bg-opacity-90" style="z-index: 10">
+            <div class="flex pt-3 pb-5">
+                <div class="w-1/20 mr-1 ml-2">
+                    <a href="javascript:OnClickChat();"><img src="img/chat.png" alt="" class="cursor-pointer " width = "80" height = "36"></a>
+                </div>
+                <div class="w-1/20 relative">
+                    <a href="javascript:OnClickLog();"><img src="img/gamelog.png" alt="" class="cursor-pointer" width = "80" height = "36"></a>
+                    <p class="absolute top-0 right-2 text-white font-bold" ></p>
+                </div>
+                    <a href="javascript:OnClickChatClose();" class="close-button"></a>
+            </div>
+            <div class="w-11/12 mx-auto pb-10 relative">
+                <input id="inputChat" type="text" class="rounded px-3 py-2 w-full bg-neutral-700 text-white">
+                <button class="absolute top-0 right-0 leading-9 bg-rose-600 px-5 text-white font-semibold rounded" onclick="OnClickChatSend();">Send</button>
+            </div>
+            <div class="w-11/12 mx-auto h-screen">
+                <div id="chat" class="text-white text-xl overflow-y-scroll h-1/4 bg-opacity-75 bg-[#222222] px-3 py-2" >
+                </div>
+            </div>
+        </section> -->
+        <section id="game_log" class="w-full bg-[#070419] h-2/4 fixed top-[50%] bg-opacity-90" style="z-index: 10">
+            <div class="flex pt-3 pb-5">
+                <!-- <div class="w-1/20 mr-1 ml-2">
+                    <a href="javascript:OnClickChat();"><img src="img/chat.png" alt="" class="cursor-pointer " width = "80" height = "36"></a>
+                </div> -->
+                <div class="w-1/20 relative">
+                    <a href="#"><img src="img/gamelogbutton.jpg" alt="" class="cursor-pointer" width = "80" height = "36"></a>
+                    <p class="absolute top-0 right-2 text-white font-bold" ></p>
+                </div>
+                    <a href="javascript:OnClickLogClose();" class="close-button"></a>
+            </div>
+            <div class="w-11/12 mx-auto h-screen">
+                <div id="output_log" class="text-white text-xl overflow-y-scroll h-2/6 bg-opacity-75 bg-[#222222] px-3 py-2" >
+                </div>
+            </div>
+        </section>
+    </div>
+    <script src='/socket.io/socket.io.js'></script>
+	<script type="text/javascript">
+		var account = JSON.parse('<%-JSON.stringify(account)%>');
+        var strLobby = JSON.parse('<%-JSON.stringify(strLobbyAddress)%>');
+        var strLobbyAddress = `${strLobby}/lobby`;
+        //console.log(account);
+        let bManualRebuyin = false;
+        let bStart = false;
+        var initialRadioValue = null;
+        var initialDropdownValue = null;
+        // 이미지 요소 선택
+        const body = document.querySelector('#body');
+        const imageContainer = document.querySelector('#image-container');
+        const image = imageContainer.querySelector('img');
+        const stage = document.querySelector('#stage');
+        //const inputChat = document.querySelector('#inputChat');
+        const isIOS = /iPad|iPhone|iPod/i.test(navigator.userAgent);
+        const isAndroid = /Android|webOS|BlackBerry|IEMobile|Opera Mini/.test(navigator.userAgent);
+
+		var socket = io('/game');
+        
+        function IsMobile()
+        {
+            return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+        }
+
+		$(document).on('ready', () => {
+            //$('#chatting').hide();
+            $('#game_log').hide();
+            initialRadioValue = $('input[name="radioRebuyin"]:checked').val();
+            initialDropdownValue = $('#selectRebuyIn').val();
+
+            // 라디오 버튼 그룹에 대한 이벤트 리스너 추가
+            document.querySelectorAll('input[name="radioRebuyin"]').forEach(function(radioButton) {
+                radioButton.addEventListener('change', function() {
+                    if (this.checked) {
+                        OnClickModifySetting();
+                    }
+                });
+            });
+
+            // 드롭다운 메뉴에 이벤트 리스너 추가
+            document.getElementById('selectRebuyIn').addEventListener('change', function() {
+                OnClickModifySetting();
+            });
+
+            socket.emit('CM_Login', account.strID, account.strNickname, account.strPassword, account.iAvatar, account.eUserType);
+
+            socket.on('SM_CloseCheck', (data) => {
+
+                console.log(`Game.ejs :: SM_CloseCheck`);
+
+                $('#popup_yesorno').show();
+                $('#yesButton').attr("data-action", "exit");
+                $('#noButton').attr("data-action", "exit");
+
+                let exitElement = $('#exit').text();
+
+                let tag = '';
+                let title = '나가기';
+
+                if (exitElement === '나가기') {
+                    tag = '나가기 예약을 하시겠습니까?';
+                } else {
+                    tag = '나가기 예약을 취소 하시겠습니까?';
+                }
+
+                $('#popup_title').empty();
+                $('#popup_title').append(title);
+
+                $('#message_yesorno').empty();
+                $('#message_yesorno').append(tag);
+            });
+		});
+
+		let OnClickSettingClose = () => {
+			$('#popup_setting').hide();
+		}
+
+        let OnClickSetting = () => {
+            if(!$('#game_log').is(':hidden')) {
+                    return;
+            }
+			$('#popup_setting').show();
+		}
+        
+        // let OnClickChatSend = () => {
+        //     console.log("OnClickChatSend!!!");
+		// 	let strChat = $('#inputChat').val();
+        //     if(strChat == '')
+        //         return;
+        //     let tag = `<p>${account.strID} : ${strChat}</p>`;
+        //     console.log(tag);
+        //     socket.emit('CM_ChatSend',{tag:tag});
+        //     $('#inputChat').val('');
+
+        //     soundClick.play();
+		// }
+
+        // Add event listener for keydown event
+        // inputChat.addEventListener("keydown", function(event) {
+        //     if(event.key === 'Enter') {
+        //         event.preventDefault();  // prevent the default action (form submission or line break)
+        //         OnClickChatSend();
+        //     }
+        // });
+
+        // let OnClickChatClose = () => {
+        //     socket.emit('CM_ChatClose');
+        //     $('#chatting').hide();
+        //     if(isIOS)
+        //     {
+        //         checkAddressBar();
+        //     }
+        //     soundClick.play();
+        // }
+        
+        let OnClickLogClose = () => {
+            socket.emit('CM_ChatClose');//공용 채팅방이랑 같이 쓰는 flag
+			$('#game_log').hide();
+            if(isIOS)
+            {
+                checkAddressBar();
+            }
+            soundClick.play();
+		}
+
+        // let OnClickChat = () => {
+        //     $('#chatting').show();
+        //     $('#game_log').hide();
+        //     socket.emit('CM_ChatOpen');
+        //     $('#inputChat').focus();
+        //     if(isIOS)
+        //     {
+        //         checkAddressBar();
+        //     }
+        //     soundClick.play();
+        // }
+
+        let OnClickLog = () => {
+            //$('#chatting').hide();
+            $('#game_log').show();
+            socket.emit('CM_ChatOpen');//공용 채팅방이랑 같이 쓰는 flag
+            if(isIOS)
+            {
+                checkAddressBar();
+            }
+            soundClick.play();
+        }
+
+        let OnClickMessageYes = () => {
+			$('#popup_message').hide();
+
+            //socket.emit('CM_LeaveGame',socket.strID);
+            window.close();
+            soundClick.play();
+		}
+        let OnClickMessageNo = () =>
+        {
+            $('#popup_message').hide();
+            //bStart = false;
+            //game.kMainUser.bStart = false;
+            //socket.emit('CM_StartGame', {bStart:bStart});
+
+            soundClick.play();
+        }
+        let OnClickClose = () => {
+            if(!$('#game_log').is(':hidden')) {
+                return;
+            }
+            socket.emit('CM_CloseCheck',{strID:account.strID});
+
+            soundClick.play();
+        }
+
+        let OnClickYes = (button) => {
+            var action = button.getAttribute('data-action');
+            $('#popup_yesorno').hide();
+            if(action == "exit")
+            {
+                let exitElement = $('#exit');
+
+                if(exitElement.text() == '나가기') {
+                    exitElement.text('나가기 예약');
+                    socket.emit('CM_Exit',{strID:account.strID, bReserveExit:true});
+                }
+                else {
+                    exitElement.text('나가기');
+                    socket.emit('CM_Exit',{strID:account.strID, bReserveExit:false});
+                }
+            }
+            else if(action == "setting")
+            {
+                let bOff = $('#radioRebuyInOff').prop('checked');
+                let bOn = $('#radioRebuyInOn').prop('checked');
+                let iBuyIn = $('#selectRebuyIn').val();
+
+                let strOptionCode = account.strOptionCode;
+
+                let strOption = '';
+                if ( bOff == true )
+                {
+                    strOption = '0';
+                }
+                else
+                    strOption = '1';
+
+                strOption += (parseInt(iBuyIn) / 100).toString();
+
+                strOptionCode = strOptionCode.substring(2);
+                console.log(iBuyIn);
+                console.log(strOptionCode);
+                
+                strOptionCode = strOption + strOptionCode;
+
+                console.log(`Off : ${bOff}, On : ${bOn}, iBuyIn : ${iBuyIn},strOptionCode : ${strOptionCode}`);
+                OnClickSettingClose();
+                $.ajax({
+                    type:'post',
+                    url: "/account/request_modifysetting",
+                    data: {
+                        strID:account.strID,
+                        strOptionCode:strOptionCode
+                    },
+                    success:function(ret) {
+                        console.log(ret);
+
+                        if ( ret.result == 'OK' )
+                        {
+                            //alert('수정이 완료 되었습니다.');
+                            account.strOptionCode = strOptionCode;
+                            //초기 상태 저장
+                            if(bOff == true)
+                            {
+                                initialRadioValue = 'off';
+                            }
+                            else
+                            {
+                                initialRadioValue = 'on';
+                            }
+                            initialDropdownValue = $('#selectRebuyIn').val();
+                            socket.emit('CM_ChangeOptionCode',{strID:account.strID, strOptionCode:strOptionCode});
+                        }
+                        else
+                        {
+                            alert('수정을 완료 하지 못했습니다.');
+                        }
+                    }
+                });
+            }
+
+            soundClick.play();
+		}
+        let OnClickNo = (button) =>
+        {
+            var action = button.getAttribute('data-action');
+            $('#popup_yesorno').hide();
+
+            if(action == "setting" )
+            {
+                $('#popup_setting').show();
+                $('#selectRebuyIn').val(initialDropdownValue);
+                if (initialRadioValue == 'on') {
+                    $('#radioRebuyInOn').prop('checked', true);
+                } else {
+                    $('#radioRebuyInOff').prop('checked', true);
+                }
+            }
+            else if(action == "rebuyin")
+            {
+                $('#popup_setting').show();
+            }
+
+            soundClick.play();
+        }
+
+		let OnClickModifySetting = () => {
+            $('#popup_yesorno').show();
+            $('#popup_setting').hide();
+
+            $('#yesButton').attr("data-action", "setting");
+            $('#noButton').attr("data-action", "setting");
+
+            let tag = '정말로 수정을 하시겠습니까?';
+            let title = '셋팅';
+
+            $('#popup_title').empty();
+            $('#popup_title').append(title);
+            $('#message_yesorno').empty();
+            $('#message_yesorno').append(tag);
+        }
+
+        // Add event listeners for focus and blur events
+        //inputChat.addEventListener("focus", fixScreen, false);
+        //inputChat.addEventListener("blur", unfixScreen, false);
+
+        function fixScreen() {
+            // Save the scroll position
+            let scrollPosition = window.pageYOffset || document.documentElement.scrollTop;
+
+            // Add a class to the body
+            document.body.classList.add("fixed");
+
+            // Set the top position to the negative of the current scroll position
+            document.body.style.top = `-${scrollPosition}px`;
+        }
+
+        // Function to unfix the screen when input field is blurred
+        function unfixScreen() {
+            // Find the scroll position from the body's style
+            let scrollY = document.body.style.top;
+
+            // Remove the class from the body
+            document.body.classList.remove("fixed");
+
+            // Scroll to the original position
+            window.scrollTo(0, parseInt(scrollY || '0') * -1);
+        }
+        function doNotReload()
+        {
+            if(    (event.ctrlKey == true && (event.keyCode == 78 || event.keyCode == 82))
+                || (event.keyCode == 116) )
+            {
+                event.keyCode = 0;
+                event.cancelBubble = true;
+                event.returnValue = false;
+            }
+        }
+        document.onkeydown = doNotReload;
+            
+            if (isIOS) {
+            document.onreadystatechange = function () {
+                if (document.readyState === "complete") {
+                    // 모든 리소스가 로드된 후에 실행될 코드
+                    var loadingScreen = document.getElementById('loading-screen');
+                    loadingScreen.style.display = 'none';
+                    // 페이지 로드 시 초기 체크
+                    checkAddressBar();
+                    // 초기 로드 시 이미지 설정
+                    setImage();
+                }
+            }
+            // window.addEventListener('DOMContentLoaded', function() {
+            //     // 문서가 로드되었을 때 실행할 코드 작성
+            //     var loadingScreen = document.getElementById('loading-screen');
+            //     loadingScreen.style.display = 'none';
+            //     //checkAddressBar();
+            // });
+            function setImage(){
+                if(!$('#game_log').is(':hidden')) {
+                    return;
+                }
+                if(window.innerWidth > window.innerHeight)
+                {
+                    image.src = landscapeImg.src;
+                    stage.style.display = 'block';
+                }
+                else 
+                {
+                    //imageContainer.style.display = 'block';
+                    image.src = verticalImg.src;
+                    stage.style.display = 'block';
+                }
+            }
+            function checkAddressBar() {
+                //imageContainer.style.display = 'none';
+                // 뷰포트 높이와 주소창 높이 계산
+                if( !$('#game_log').is(':hidden')) {
+                    return;
+                }
+                const viewportHeight = window.outerHeight;
+                const documentHeight = window.innerHeight;
+                const addressBarHeight = viewportHeight - documentHeight;
+                //<input id="test" style="color: black; font-size: 30;" value="">
+                //test.value = `${viewportHeight} - ${documentHeight} = ${addressBarHeight}`;
+                // 주소창 높이와 뷰포트 높이 비교
+                if (addressBarHeight > 140) {
+                        imageContainer.style.display = 'block';
+                        //stage.style.display = 'none';
+                        //stage.style.overflow = ''; // overflow 삭제
+                        // body 요소의 padding-top 값 복원
+                        document.body.style.paddingTop = '200px';// 주소 표시줄 높이에 맞게 수정
+                        //window.scrollTo(0,0);
+                        document.body.scrollTop = 0;
+                } else {
+                        // 이미지 숨기기
+                        imageContainer.style.display = 'none';
+                        //stage.style.display = 'block';
+                        //stage.style.overflow = 'hidden'; // overflow 추가
+                        document.body.style.paddingTop = 0;
+                }
+            }
+            
+            // 스크롤 이벤트 감지
+            window.addEventListener('scroll', function() {
+            // 현재 스크롤 위치 가져오기
+            const currentScroll = window.pageYOffset;
+            // 주소창 크기 체크
+            if(window.innerWidth < window.innerHeight)
+            {
+                checkAddressBar();
+            }
+            });
+            //클릭 이벤트 감지
+            window.addEventListener('click', function() {
+
+            // 주소창 크기 체크
+            stage.scrollTop = 0;
+            if(window.innerWidth < window.innerHeight)
+            {
+                checkAddressBar();
+            }
+            });
+            // 화면 크기 변경 시 주소창 크기 체크
+            window.addEventListener('resize', function() {
+            stage.scrollTop = 0;
+            var isKeyboardVisible = window.innerHeight < initialInnerHeight;
+            if(isKeyboardVisible)
+            {
+            }
+            else 
+            {
+                if(window.innerWidth < window.innerHeight)
+                {
+                    checkAddressBar();
+                    //stage.style.display = 'block';
+                }
+            }
+           
+            setImage();
+            });
+            // 스크롤 이벤트 캡처
+            stage.addEventListener('touchmove', function(event) {
+                //스크롤 맨밑 맨위로 했을경우 스크롤 튕기는 현상 막는거. 이벤트 금지.
+                if((window.innerHeight + window.scrollY)>= document.body.offsetHeight || window.scrollY === 0)
+                {
+                    // 스크롤 위치를 맨 위로 설정
+                    stage.scrollTop = 0;
+                    // 이벤트를 막아서 스크롤 튕기는 현상 방지
+                    event.preventDefault();
+                }
+            // 이미지가 숨겨진 경우에만 스크롤을 막음
+            if (imageContainer.style.display === 'none') {
+                stage.scrollTop = 0;
+                event.preventDefault();
+            }
+            }, { passive: false });
+        }
+        else if(isAndroid)
+        { 
+            window.addEventListener('load', function() {
+                var loadingScreen = document.getElementById('loading-screen');
+                loadingScreen.style.display = 'none';
+                //imageContainer.style.overflow = "hidden";
+                if(window.innerWidth > window.innerHeight)
+                {
+                    imageContainer.style.display = "block";
+                    image.src = AndroidlandscapeImg.src;
+                    //stage.style.display = 'block';
+                }
+                else 
+                {
+                    //imageContainer.style.display = 'block';
+                    imageContainer.style.display = "block";
+                    image.src = AndroidverticalImg.src;
+                    //stage.style.display = 'none';
+                }
+            });
+            window.addEventListener('resize', function() {
+                if (document.fullscreenElement || document.webkitFullscreenElement) {
+                    if (window.orientation === 90 || window.orientation === -90) {
+                    screen.orientation.lock("portrait");
+                }
+                } else {// 전체화면이 아닐 때의 동작
+                
+                    if(window.innerWidth > window.innerHeight)
+                    {
+                        imageContainer.style.display = "block";
+                        image.src = AndroidlandscapeImg.src;
+                        //stage.style.display = 'block';
+                    }
+                    else 
+                    {
+                        //imageContainer.style.display = 'block';
+                        imageContainer.style.display = "block";
+                        image.src = AndroidverticalImg.src;
+                        //stage.style.display = 'none';
+                    }
+                }
+            });
+            image.addEventListener('click',function(event)
+            {
+                var elem = document.documentElement;
+                if (elem.requestFullscreen) {
+                    elem.requestFullscreen();
+                } else if (elem.webkitRequestFullscreen) { // iOS Safari
+                    elem.webkitRequestFullscreen();
+                } else if (elem.msRequestFullscreen) { // IE11
+                    elem.msRequestFullscreen();
+                } else if (elem.mozRequestFullScreen) { // Firefox
+                    elem.mozRequestFullScreen();
+                } else if (elem.webkitEnterFullScreen) { // Older versions of Safari
+                    elem.webkitEnterFullScreen();
+                }
+                // // 화면 방향이 세로 방향일 경우 가로 방향으로 변경
+                // if (window.orientation === 0 || window.orientation === 180) {
+                //     screen.orientation.lock("landscape");
+                // }
+                // 화면 방향이 가로 방향일 경우 세로 방향으로 변경
+                if (window.orientation === 90 || window.orientation === -90) {
+                    screen.orientation.lock("portrait");
+                }
+                imageContainer.style.display = "none";
+            });
+        }
+        else
+        {
+            imageContainer.style.display = 'none';
+            body.style.overflow = 'hidden';
+            window.onload = function(){
+                var resizeEvent = 'onorientationchange' in window ? 'orientationchange' : 'resize';
+                var loadingScreen = document.getElementById('loading-screen');
+                loadingScreen.style.display = 'none';
+                $(document).on('click', '.openFullscreen', (e) => {
+                    var elem = document.documentElement;
+                    if (document.fullscreenElement || document.webkitFullscreenElement || document.msFullscreenElement) {
+                        if (document.exitFullscreen) {
+                            document.exitFullscreen();
+                        } else if (document.webkitExitFullscreen) { /* Safari */
+                            document.webkitExitFullscreen();
+                        } else if (document.msExitFullscreen) { /* IE11 */
+                            document.msExitFullscreen();
+                        }
+                    } else {
+                        if (elem.requestFullscreen) {
+                            elem.requestFullscreen();
+                        } else if (elem.webkitRequestFullscreen) { /* Safari */
+                            elem.webkitRequestFullscreen();
+                        } else if (elem.msRequestFullscreen) { /* IE11 */
+                            elem.msRequestFullscreen();
+                        }
+                    }
+                });
+
+                function toggleFullscreen() {
+                    var isFullscreen = document.fullscreenElement || document.webkitFullscreenElement || document.msFullscreenElement;
+                    if (isFullscreen) {
+                        $('.openFullscreen img').attr('src', 'images/small_size.svg');
+                        $('.openFullscreen li:nth-child(2)').text('축소화면');
+                    } else {
+                        $('.openFullscreen img').attr('src', 'images/full_size.svg');
+                        $('.openFullscreen li:nth-child(2)').text('전체화면');
+                    }
+                }
+                // 전체 화면 상태 변경 이벤트 리스너
+                $(document).on('fullscreenchange webkitfullscreenchange msfullscreenchange', toggleFullscreen);
+                //전체화면 모드가 아닐 때는 팝업창 크기를 고정합니다.
+                window.addEventListener(resizeEvent, function() {
+                    if (!window.document.fullscreenElement) {
+                        window.resizeTo(1280, 768);
+                    }
+                });
+            }
+        }
+	</script>
+</body>
+</html>

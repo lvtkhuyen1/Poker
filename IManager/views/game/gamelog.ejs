@@ -1,0 +1,468 @@
+
+<!-- start page title -->
+<div class="row">
+    <div class="col-12">
+        <div class="page-title-box">
+            <div class="page-title-right">
+                <ol class="breadcrumb m-0">
+                    <li class="breadcrumb-item"><a href="javascript: void(0);">게임 관리</a></li>
+                    <li class="breadcrumb-item active">게임 로그</li>
+                </ol>
+            </div>
+            <h4 class="page-title">게임 로그</h4>
+        </div>
+    </div>
+</div>
+<!-- end page title -->
+<div class="row">
+    <div class="card col-12">
+        <div class="card-body">
+            <!-- 기준 시각 <label id="lastRefreshTime">00:00</label> <a href="#" id="RefreshButton" alt="새로고침"><i class="fas fa-sync-alt"></i></a> -->
+            <form>
+                <div class="form-row  align-items-center">
+                    <div class="col-auto">
+                        <label class="col-form-label">검색 날짜 범위</label>
+                    </div>
+                    <div class="col-auto">
+                        <label class="sr-only">시작 날짜</label>
+                        <input type="text" class="form-control mb-2" id="startDate" data-provide="datepicker" placeholder="">
+                    </div>
+                    <div class="col-auto">
+                        <label class="sr-only">마지막 날짜</label>
+                        <input type="text" class="form-control mb-2" id="endDate" data-provide="datepicker" placeholder="">
+                    </div>
+                </div>
+            
+                <div class="mt-1 form-group form-inline">
+                    <label for="accountId" class="col-form-label font-weight-bold mr-2">회원ID</label>
+                    <input type="text" class="col-auto form-control" id="accountId" name="accountId" required/>
+                    <button type="button" id="FindButton" class="btn btn-primary font-weight-bold">검색</button>
+                    <div class="btn-group ml-auto" role="group">
+                        <button type="button" id="HoldemButton" class="btn btn-danger active">홀덤</button>
+                        <button type="button" id="SitnGoButton" class="btn btn-secondary">싯앤고</button>
+                    </div>
+                </div>
+        </form>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="card col-12">
+        <div class="card-body">
+            <h5 class="card-title mb-0">
+                게임 결과
+            </h5>
+            <div class="collapse pt-3 show table-responsive">
+                <table id="dataTable" class="table table-sm dt-responsive nowrap w-100">
+                    <thead>
+                        <tr>
+                            <th>날짜</th>
+                            <th>고유 번호</th>
+                            <th>방번호</th>
+                            <th>판돈</th>
+                            <th>회원ID</th>
+                            <th>닉네임</th>
+                            <th>결과</th>
+                            <th>베팅금액</th>
+                            <th>시작전보유머니</th>
+                            <th>승패후보유머니</th>
+                            <th>변동머니</th>
+                            <th>총 게임딜비</th>
+                            <th>총 잭팟딜비</th>
+                            <th>잭팟 여부</th>
+                            <th>상세 내역</th>
+                        </tr>
+                    <tbody>
+                    </tbody>
+                </thead>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="popup-overlay" id="gameResultModalBG" style="display:none;"></div>
+<div class="popup-content w-5/12" id="gameResultModal" style="display:none;">
+    <section class="w-full mx-auto main_section_body">
+        <div>
+                <div class="w-full top-name">
+                    <span>게임 로그</span>
+                    <span class="float-right">
+                        <i class="xi-close-circle"></i>
+                    </span>
+                </div>
+                <div class="section_body">
+                    <div>
+                        <div class="text-center py-4 bg-[#e1e1e1]" style="font-size:2em; font-weight:bold">게임 결과</div>
+                        <table id = "gameresult">
+                            
+                        </table>
+                    </div>
+                </div>
+            </div>
+    </section>
+</div>
+
+<script type="text/javascript">
+
+function openPopup() {
+    // 배경과 팝업을 보여주는 함수
+    var overlay = document.getElementById('gameResultModal');
+    var content = document.getElementById('gameResultModalBG');
+    overlay.style.display = 'block';
+    content.style.display = 'block';
+}
+
+function closePopup() {
+    // 배경과 팝업을 숨기는 함수
+    var overlay = document.getElementById('gameResultModal');
+    var content = document.getElementById('gameResultModalBG');
+    overlay.style.display = 'none';
+    content.style.display = 'none';
+}
+
+function showDetail(gameID) 
+{
+    console.log(gameID);
+
+    $.ajax({
+        url:"/game/gamedetail",
+        type:"POST",
+        data: {
+            gameID:gameID,
+        },
+        dataType: "json",
+        success: function (obj) {
+            if (obj.result == "OK") {
+
+                //console.log(obj);
+
+                let data = participantData(obj.data);
+                //console.log(data);
+
+                // 게임 결과 테이블에 데이터 추가
+                let table = document.getElementById('gameresult');
+                table.innerHTML = '';  // 테이블 비우기
+
+                // 데이터를 HTML로 변환
+                let imagePrefix = "img/cards/card";
+                let imageSuffix = ".png";
+
+                let tableCardsHtml = data.tableCards.map(card => {
+                    if (card === "not") return '';
+                    let cardNumber = ('' + card).padStart(2, '0');
+                    return `<img src="${imagePrefix}${cardNumber}${imageSuffix}" alt="Card ${card}" style="width:50px; height:70px;"/>`;
+                }).join(' ');
+
+                let descDataById = {};
+                data.descData.forEach(desc => descDataById[desc.id] = desc);
+
+                let handDataHtml = data.handData.map(hand => {
+                    let card1Html = hand.card1 !== "not" ? `<img src="${imagePrefix}${('' + hand.card1).padStart(2, '0')}${imageSuffix}" alt="Card ${hand.card1}" style="width:50px; height:70px;"/>` : '';
+                    let card2Html = hand.card2 !== "not" ? `<img src="${imagePrefix}${('' + hand.card2).padStart(2, '0')}${imageSuffix}" alt="Card ${hand.card2}" style="width:50px; height:70px;"/>` : '';
+                    return `<div>${hand.id} ( 베팅금액 : ${descDataById[hand.id].bet.toLocaleString()}원 ): ${card1Html}${card2Html}</div>`;
+                }).join('');
+
+                let winType = data.isDefaultWin ? "기권승" : "일반승"; // 기권인지 일반승인지 구분.
+
+                // 테이블에 데이터 추가
+                table.innerHTML = `
+                    <tr>
+                        <th>게임 고유번호</th>
+                        <td>${gameID}</td>
+                        <th>방 번호</th>
+                        <td>${obj.data.lUnique}</td>
+                    </tr>
+                    <tr>
+                        <th>승리 종류</th>
+                        <td>${winType}</td>
+                        <th>종료시간</th>
+                        <td>${obj.data.updatedAt}</td>
+                    </tr>
+                    <tr>
+                        <th>승리</th>
+                        <td>${data.winnerId} : ${data.winningAmount.toLocaleString()}원</td>
+                        <th>잭팟</th>
+                        <td>${obj.data.iJackpot.toLocaleString()}원</td>
+                    </tr>
+                    <tr>
+                        <td colspan="4">
+                            <div>테이블 카드: ${tableCardsHtml}</div>
+                            <br>
+                            <div>핸드 카드: ${handDataHtml}</div>
+                        </td>
+                    </tr>
+                `;
+
+                openPopup();
+            } else {
+                alert(obj.reason);
+            }
+        }, error: function () {
+            alert("조회 중 오류 발생");
+        }
+    });
+}
+
+function participantData(result)
+{
+    console.log(result);
+    let descData = result.strDesc.split(',').map(player => {
+        let [id, bet] = player.split(':');
+        return { id, bet: parseInt(bet) };
+    });
+
+    let handData = result.strHand.split(',').map(player => {
+        let [id, cards] = player.split(':');
+        let [card1, card2] = cards.split('/');
+        return { id, card1, card2 };
+    });
+
+    let tableCards = result.strTablecard.split(',');
+
+    let isDefaultWin = tableCards.length < 5;
+
+    let [winnerId, winningAmount] = result.strWinner.split(':');
+    winningAmount = parseInt(winningAmount);
+
+    return { descData, handData, tableCards, isDefaultWin, winnerId, winningAmount };
+}
+    var dataTableInstance;
+
+    $(document).ready(function () {
+        var counter = 0;
+        var REFRESH_INTERVAL = 2000;
+        var timerId;
+        let eGameType = 'HOLDEM';
+
+        $("#startDate").datepicker({
+            format: 'yyyy-mm-dd',
+            language : 'kr'
+        });
+        $("#endDate").datepicker({
+            format: 'yyyy-mm-dd',
+            language: 'kr'
+        });
+
+        $("#FindButton").click(function (e) {
+            e.preventDefault();
+            dataTableInstance.ajax.reload();
+        });
+
+        function leadingZeros(n, digits){
+            var zero = '';
+            n = n.toString();
+
+            if (n.length < digits) {
+                for (var i = 0; i < digits - n.length; i++)
+                    zero += '0';
+            }
+            return zero + n;
+        }
+        let getTimeStartStamp = ()=> {
+            var now = new Date();
+
+            var d = new Date(now.setDate(now.getDate()));
+            var s =
+                leadingZeros(d.getFullYear(), 4) + '-' +
+                leadingZeros(d.getMonth() + 1, 2) + '-' +
+                leadingZeros(d.getDate(), 2);
+
+            return s;
+        }
+        let getTimeEndStamp = ()=> {
+            var now = new Date();
+
+            var d = new Date(now.setDate(now.getDate() - 1));
+            var s =
+                leadingZeros(d.getFullYear(), 4) + '-' +
+                leadingZeros(d.getMonth() + 1, 2) + '-' +
+                leadingZeros(d.getDate(), 2);
+
+            return s;
+        }
+        let today = getTimeStartStamp();
+        let yesterday = getTimeEndStamp();
+        $('#startDate').val(yesterday);
+        $('#endDate').val(today);
+
+        function refreshData() {
+            dataTableInstance.ajax.reload();
+        }
+        //리스트
+        dataTableInstance = $('#dataTable').DataTable({
+            "serverSide": true,
+            "searching": false,
+            paging : true,
+            processing:true,
+            lengthChange : true,
+            responsive : false,
+            "ajax": {
+                url:"/game/gamelogresult",
+                "type": "POST",
+                "data": function (d) {
+                    return $.extend({}, d, {
+                        accountId:$('#accountId').val(),
+                        eGameType:eGameType,
+                        startDate:$('#startDate').val(),
+                        endDate:$('#endDate').val(),
+                        // extra data
+                    });
+                },
+                "dataSrc": function(json) {
+                    if (json.result === 'NOID') {
+                        // 에러 메시지 처리
+                        alert(json.reason);
+                        // 데이터 테이블에 빈 데이터를 설정
+                        return [];
+                    }
+                    else if(json.result === 'NOGROUP'){
+                        // 에러 메시지 처리
+                        alert(json.reason);
+                        // 데이터 테이블에 빈 데이터를 설정
+                        return [];
+                    } 
+                    else {
+                        // 원래대로 테이블 데이터를 반환
+                        return json.data;
+                    }
+                }
+            },
+            columns: [
+                {
+                    data: "createdAt", render: function (d) {
+                        let date = moment(d).format('YYYY-MM-DD HH:mm:ss');
+                        return date;
+                    }
+                }, 
+                {
+                    data: "roomId"
+                },
+                {
+                    data: "lUnique"
+                }, 
+                {
+                    data: "iBlind"
+                }, 
+                {
+                    data: "strID"
+                }, 
+                {
+                    data: "strNickname"
+                }, 
+                {
+                    data: "strResult"
+                },
+                {
+                    data: "iBettingCoin", render:formatCurrency
+                },
+                {
+                    data: "iStartCoin", render:formatCurrency
+                },
+                {
+                    data: "iResultCoin", render:formatCurrency
+                },
+                {
+                    data: null,
+                    render: function(data, type, row) {
+                        let resultCoin = parseInt(row.iResultCoin);
+                        let startCoin = parseInt(row.iStartCoin);
+                        let difference = resultCoin - startCoin;
+                        return formatCurrency(difference);
+                    }
+                },
+                {
+                    data: "iFeeAmount", render:formatCurrency
+                },
+                {
+                    data: "iJackpotfee", render:formatCurrency
+                },
+                {
+                    data: "bJackpot", render:function(d)
+                    {
+                        let bJackpot = 'O';
+                        if(d == true)
+                           bJackpot = 'O';
+                        else if(d == false)
+                           bJackpot = 'X';
+                        else 
+                           bJackpot = 'O';
+                        return bJackpot;
+                    }
+                },
+            ],
+            columnDefs: [{
+                // '상세내역' 버튼이 들어갈 열 번호 첫번째 열이 0번시작
+                targets: 14,
+                // 해당 열의 값이 바뀔때마다 호출되는 함수
+                render: function(data, type, row, meta) {
+                    return '<button class="btn btn-sm btn-outline-primary" onclick="showDetail(' + row.roomId + ')">상세내역</button>';
+                },
+                // 해당 열의 검색 기능을 비활성화
+                searchable: false
+            }],
+            order: [[0, "desc"]],
+            keys: true,
+            "language": {
+                "paginate": {
+                    "previous": "<i class='mdi mdi-chevron-left'>",
+                    "next": "<i class='mdi mdi-chevron-right'>"
+                },
+                "info": "현재 페이지 _PAGE_/_PAGES_, 총 _TOTAL_ 건",
+                "lengthMenu": "한 페이지 길이 _MENU_",
+                "emptyTable": "조건에 맞는 데이터가 없습니다",
+                "infoEmpty" : "표시할 데이터 없음"
+            },
+            "sort": false,
+            "drawCallback": function () {
+                $('.dataTables_paginate > .pagination').addClass('pagination-rounded');
+            },
+            createdRow: function (row, data) {
+                $(row).attr("data-id", data.id);
+            }
+        });
+        function formatCurrency(data, type, row) {
+            return (parseInt(data) || 0).toLocaleString() + '원';
+        }
+        // 배경 클릭 시 팝업 닫기
+        var overlay = document.getElementById('gameResultModalBG');
+        overlay.addEventListener('click', closePopup);
+        $("#RefreshButton").click(function (e) {
+            e.preventDefault();
+            refreshData();
+        });
+
+        $('#HoldemButton').click(function() {
+            $(this).addClass('active btn-danger').removeClass('btn-secondary');
+            $('#SitnGoButton').removeClass('active btn-danger').addClass('btn-secondary');
+            eGameType = 'HOLDEM';
+        });
+
+        $('#SitnGoButton').click(function() {
+            $(this).addClass('active btn-danger').removeClass('btn-secondary');
+            $('#HoldemButton').removeClass('active btn-danger').addClass('btn-secondary');
+            eGameType = 'SITGO';
+        });
+    });
+
+
+
+
+    $(document).ready(function() {
+    // 화면 크기가 변경될 때 실행되는 이벤트 핸들러
+    $(window).resize(function() {
+      // 데이터테이블의 모든 열을 보이게 만듭니다.
+        $("#dataTable").find('tr').each(function() {
+             $(this).find('td').show(); // 각 행의 데이터 셀 보이게 하기
+         });
+        });
+    });
+    $(document).ready(function() {
+    // 화면 크기가 변경될 때 실행되는 이벤트 핸들러
+    $(window).resize(function() {
+      // 데이터테이블의 모든 열을 보이게 만듭니다.
+        $("#dataTable").find('tr').each(function() {
+             $(this).find('th').show(); // 각 행의 데이터 셀 보이게 하기
+         });
+        });
+    });
+</script>

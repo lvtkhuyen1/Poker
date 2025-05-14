@@ -1,0 +1,138 @@
+<title>고객센터</title>
+<body>
+    <header class="w-screen">
+        <div class="inner w-3/5 mx-auto">
+            <div class="logo mt-20">
+                <img src="images/logo_big.png" alt="logo" class="mx-auto">
+            </div>
+            <div class="mt-10 text-white text-center">
+                <h1 class="font-bold text-4xl mb-2">고객센터</h1>
+                <p>문의 내용을 남겨주세요.</p>
+            </div>
+        </div>
+    </header>
+
+    <section class="mt-20">
+        <div class="relative p-5 w-4/5 mx-auto text-white border-solid border-white border-2 rounded-lg box-border bg-[#2d2d2d]">
+            <div class="head absolute top-[-25px] w-1/4 text-center text-2xl bg-[#a11f30] px-3 py-2 box-border rounded-full text-white">1:1 문의</div>
+            <div class="w-11/12 mx-auto">
+                <form action="">
+                    <textarea id="strWritingContents" class="outline-none text-black mt-8 p-2 w-full bg-white h-52"></textarea>
+                </form>
+            </div>
+            <div class="flex justify-center text-white mt-10 text-center">
+                <a href="#" id ="sendConsulting">
+                    <div  class="left-btn mr-5 px-10 py-5 bg-[#a11f30] rounded-full font-bold text-xl cursor-pointer">문의하기</div> 
+                </a>
+                <div class="right-btn p-5 px-10 py-5 bg-[#383c4b] rounded-full font-bold text-xl cursor-pointer">계좌문의</div>
+            </div>
+
+        <table class="mx-auto mt-8 w-full border-solid border-white border-2 rounded-lg box-border">
+            <thead>
+                <tr>
+                    <th class="one bg-zinc-900 w-7/12 p-3 text-left border-solid border-white border-2 font-bold">제목</th>
+                    <th class="two bg-zinc-900 p-3 border-solid border-white border-2 font-bold">상태</th>
+                    <th class="three bg-zinc-900 p-3 border-solid border-white border-2 font-bold">작성일</th>
+                    <th class="four bg-zinc-900 border-solid border-white border-2 p-3 font-bold">삭제</th>
+                </tr>
+            </thead>
+            <tbody id = "customerlist">
+                
+            </tbody>
+        </table>    
+        </div>
+    </section>
+</body>
+<script type="text/javascript">  
+    function showBoard(objId) {
+        console.log(objId);
+        const dis = document.getElementById(objId).style.display == "none" ? "block" : "none";
+        document.getElementById(objId).style.display = dis;
+    }
+    $(document).on('click', '#sendConsulting', (e) => {
+        e.preventDefault();
+
+        let objectData = 
+        {
+            strTo:'admin',
+            strContents:$('#strWritingContents').val()
+        };
+
+        if ( objectData.strContents == '' )
+        {
+            alert('문의 내용을 적어주세요.');
+            return;
+        }
+
+        $.ajax({
+        url:"/announcement/request_consultingsend",
+        type:"POST",
+        data: objectData,
+        dataType: "json",
+        success: function (obj) {
+            if (obj.result == "OK") {
+
+                console.log(obj);
+
+                alert('정상적으로 완료되었습니다.');
+                location.reload();
+            } else {
+                alert(obj.reason);
+            }
+        }, error: function () {
+            alert("조회 중 오류 발생");
+        }
+        });
+    })
+    $(document).ready(function(){
+
+    var counter = 0;
+    var REFRESH_INTERVAL = 2000;
+    var timerId;
+
+    $.ajax({
+            type:'post',
+            url: "/announcement/request_customerlist",
+            data:{
+            },
+            success:function(ret) {
+                console.log(ret);
+                 $('#customerlist').empty();
+                 for ( let i in ret.data )
+                 {
+                    //console.log(ret[i]);
+                        let eState = '';
+                        let strAnswer = '';
+                        if(ret.data[i].eState == 'UNREAD') {
+                            strAnswer = '내용이 없습니다. 잠시만 기다려 주세요.'
+                            eState = '답변대기';
+                        }
+                        else{
+                            strAnswer = ret.data[i].strAnswer.replace(/\n/g, '<br>');
+                            eState = '답변완료';
+                        }
+                        let strBoardId = `board_${ret.data[i].id}`;
+                        let tag = `
+                        <tr>
+                        <td class="font border-solid border-white border-2 p-3 text-left">
+                            <a href="#" onclick="showBoard('${strBoardId}')">${ret.data[i].strContents}</a>
+                        </td>
+                        <td class="font border-solid border-white border-2 p-3">${eState}</td>
+                        <td class="font border-solid border-white border-2 p-3">${ret.data[i].createdAt}</td>
+                        <td class="font w-1/12">
+                            <button class="bg-rose-600 rounded-lg px-2 py-1 box-border">삭제</button>
+                        </td>
+                        </tr> 
+                        <tr>
+                        <td colspan="4">
+                        <div id="${strBoardId}" class="bg-stone-500 overflow-scroll py-10 px-40 w-11/12 mx-auto border-solid border-2 border-white border-t-0 scroll-auto font-semibold text-base" style="display:none;">${strAnswer}
+                        </div>
+                        </td>
+                        </tr>                                       
+                        `;
+                        $('#customerlist').append(tag);
+                    }                        
+            }
+        });
+    });
+</script>

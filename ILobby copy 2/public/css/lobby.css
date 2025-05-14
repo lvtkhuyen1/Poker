@@ -1,0 +1,886 @@
+/* section */
+h1,h2,h3,h4,h5,h6,ol,ul,li,form,fieldset,input,textarea,p,th,td,dt,dd,dl {margin:0;padding:0;}
+h1,h2,h3,h4,h5,h6 {font-size:12px;}
+li {list-style:none;}
+img,fieldset {border:0;vertical-align:top;}
+em {font-style:normal;}
+input.radio {width:13px; height:13px; vertical-align:middle;}
+address,em,i {font-style:normal;}
+.hdn, legend,table caption{font-size:0; height:0; overflow:hidden; position:absolute;visibility:hidden; width:0; line-height:0;}
+table caption{font-size:0; height:0; overflow:hidden; position:static;visibility:hidden; width:0; line-height:0;}
+a {text-decoration:none; color:inherit;}
+div, a, p, section, header, footer{
+    box-sizing: border-box;
+}
+html{
+    user-select: none;
+}
+table{
+    width:100%;
+    border-collapse: collapse;
+}
+th, td {
+    padding: 8px;
+}
+body{
+    position:relative;
+}
+.lobby_page{
+    width:100%;
+    height:100vh;
+    background-image:url("../images/171.jpg");
+    background-repeat:no-repeat;
+    background-position: center;
+    background-size:cover;
+    margin:0;
+    box-sizing: border-box;
+}
+
+
+header{
+    margin:35px 0;
+}
+.header_section{
+    width:95%;
+    display: flex;
+    margin:0 auto;
+    padding:20px 10px;
+    position:relative;
+}
+.header_profile{
+    width:100px;
+    border-radius:100%;
+    border:2px solid silver;
+    float:left;
+    position:absolute;
+    top:10px;
+    /* order:-1; */
+    left:1px;
+    /* flex-grow:1; */
+}
+.header_profile img{
+    width:100%;
+}
+
+.header_section .header_info{
+    width:50%;
+    background-color:#181a1d;
+    height:60px;
+    margin-top:10px;
+    margin-left:55px;
+    vertical-align: middle;
+    border-radius:50px;
+    border:2px solid silver;
+    /* flex-grow:2; */
+}
+
+.header_section .header_info .header_name{
+    color:aqua;
+    margin-left:40px;
+    font-size:18px;
+    line-height:52px;
+    display:inline-block;
+}
+.header_section .header_info .header_point{
+    float:right;
+    line-height:52px;
+    margin-right:3%;
+    font-size:18px;
+    color:aqua;
+    font-weight:bold;
+}
+.header_section .header_roombtn{
+    width:200px;
+    /* flex-grow:1; */
+    position:absolute;
+    right:85px;
+    top:23px;
+    cursor: pointer;
+}
+
+.header_section .header_roombtn div{
+    width:100%;
+    padding:20px 10px;
+    height:100%;
+    font-size:24px;
+    font-weight:bold;
+    color:#fff;
+    font-family: Arial, Helvetica, sans-serif;
+    background: linear-gradient(180deg, rgba(25,25,26,.8), rgba(48,48,48, .8), rgba(25,25,26,.8));
+    box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.3);
+    text-align:center;
+    border-radius: 8px;
+    /* margin-left:25px; */
+    border:1px solid #686868;
+}
+.header_section .header_roombtn div:hover{
+    background: linear-gradient(180deg, rgba(46,46,46,.8), rgba(95,95,95,.8), rgba(46,46,46,.8));
+}
+.header_section .header_roombtn div:active{
+    background: linear-gradient(180deg, rgba(31, 31, 31, 0.8), rgba(51, 51, 51, 0.8), rgba(31, 31, 31, 0.8));
+}
+
+
+
+/* menu button */
+
+.menu-button {
+    width: 40px;
+    height: 40px;
+    float:right;
+    /* background-color: #fff; */
+    cursor: pointer;
+    position:absolute;
+    right:10px;
+    top:35px;
+    /* flex-grow:1; */
+}
+
+.menu-button div {
+    height: 6px;
+    background-color: darkgray;
+    margin: 6px 0;
+}
+
+/* section */
+section{
+    width:100%;
+    background-color:#2e2d2b;
+    padding:10px;
+    overflow:hidden;
+}
+.section_body{
+    display:flex;
+    transition: .5s ease;
+}
+
+
+/* section1 */
+.section_first{
+    background-color:#1d1d1f;
+    width:20%;
+    /* height:100vh; */
+    border-radius:10px;
+}
+.section_first .start{
+    width:90%;
+    margin:0 auto;
+    text-align:center;
+    color:aquamarine;
+    padding:20px;
+    font-size:24px;
+    font-weight:bold;
+}
+.section_first .section_button_one,
+.section_first .section_button_two,
+.section_first .section_button_three
+{
+    width:90%;
+    margin:0 auto;
+    padding:20px;
+    font-size:24px;
+    font-weight:bold;
+}
+.section_first .section_button_one div,
+.section_first .section_button_two div,
+.section_first .section_button_three div
+{
+    width:100%;
+    padding:15px 10px;
+    background: linear-gradient(180deg, #19191a, #313030, #19191a);
+    box-shadow: 3px 3px 10px rgba(0, 0, 0, 0.3);
+    text-align:center;
+    color:#fff;
+    border-radius: 8px;
+    /* margin-left:25px; */
+    border:1px solid #686868;
+    cursor: pointer;
+}
+.section_first .section_button_one div:hover,
+.section_first .section_button_two div:hover,
+.section_first .section_button_three div:hover
+{
+    background: linear-gradient(180deg, #2e2e30, #615f5f, #2e2e30);
+}
+.section_first .section_button_one div:active,
+.section_first .section_button_two div:active,
+.section_first .section_button_three div:active
+{
+    background: linear-gradient(180deg, #141416, #313131, #141416);
+}
+
+
+
+
+
+/* section1 _ mobile */
+.section_first_mb{
+    width:20%;
+    /* height:100vh; */
+    border-radius:10px;
+    display:none;
+}
+
+.section_first_mb .section_button_one_mb,
+.section_first_mb .section_button_two_mb,
+.section_first_mb .section_button_three_mb{
+    width:90%;
+    margin:0 auto;
+    padding:10px;
+    font-size:24px;
+    font-weight:bold;
+}
+.section_first_mb .section_button_one_mb .mb-list,
+.section_first_mb .section_button_two_mb .mb-list,
+.section_first_mb .section_button_three_mb .mb-list{
+    color:aquamarine;
+    font-size:1rem;
+    vertical-align: middle;
+    line-height:1.8;
+}
+.section_first_mb .section_button_one_mb div,
+.section_first_mb .section_button_two_mb div,
+.section_first_mb .section_button_three_mb div
+{
+    width:100%;
+    display:flex;
+    justify-content: space-around;
+    padding:25px 5px;
+    background: linear-gradient(180deg, #19191a, #313030, #19191a);
+    box-shadow: 3px 3px 10px rgba(0, 0, 0, 0.3);
+    text-align:center;
+    color:#fff;
+    border-radius: 8px;
+    /* margin-left:25px; */
+    border:1px solid #686868;
+    font-size:1.4rem;
+    cursor: pointer;
+}
+.section_first_mb .section_button_one_mb div:hover,
+.section_first_mb .section_button_two_mb div:hover,
+.section_first_mb .section_button_three_mb div:hover{
+    background: linear-gradient(180deg, #2e2e30, #615f5f, #2e2e30);
+}
+.section_first_mb .section_button_one_mb div:active,
+.section_first_mb .section_button_two_mb div:active,
+.section_first_mb .section_button_three_mb div:active{
+    background: linear-gradient(180deg, #141416, #313131, #141416);
+}
+
+
+
+/* section2 */
+.section_second{
+    width:60%;
+    margin:0 1%;
+}
+.section_second .section_second_header{
+    display:flex;
+    padding:20px 10px;
+}
+.section_second .section_second_header .header_button div{
+    width:100%;
+    box-sizing: border-box;
+    padding:15px 10px;
+    background: linear-gradient(180deg, #212124, #3d3d3d, #212124);
+    border:1px solid #686868;
+    box-shadow: 3px 3px 10px rgba(0, 0, 0, 0.3);
+    text-align:center;
+    color:#fff;
+    font-size:20px;
+    font-weight:bold;
+    border-radius: 4px;
+    cursor: pointer;
+}
+.section_second .section_second_header .header_button div:hover{
+    background: linear-gradient(180deg, #2a2a2e, #4e4e4e, #2a2a2e);
+}
+.section_second .section_second_header .header_button div:active{
+    background: linear-gradient(180deg, #141416, #313131, #141416);
+}
+.section_second .section_second_header div{
+    width:20%;
+    margin-right:5px;
+}
+.section_second_body{
+    width:100%;
+    background-color:#1d1d1f;
+    height:100vh;
+    border-radius:10px;
+    padding:15px;
+}
+.section_second_body .section_room_list table{
+    width:90%;
+    margin:0 auto;
+    cursor: pointer;
+    margin-bottom:10px;
+    background: linear-gradient(180deg, #25292c, #5a6269, #25292c);
+    padding:0 10px 0 10px;
+    border-radius:9px;
+    box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.3);
+    border:1px solid #9fafb6;
+}
+.section_second_body .section_room_list table:active{
+    background: linear-gradient(180deg, #131516, #292d30, #131516);
+    border:1px solid #7a868b;
+}
+.section_second_body .section_room_list .column1{
+    width:30%;
+    text-align: center;
+}
+.section_second_body .section_room_list .column2{
+    width:50%;
+}
+.section_second_body .section_room_list .column3{
+    width:20%;
+}
+.top_list{
+    font-size:20px;
+    color:#fff;
+}
+.bottom_list{
+    font-size:22px;
+    color:#fff;
+    font-weight:bold;
+}
+
+
+/* section3 */
+.section_third{
+    width:20%;
+    background-color:#1d1d1f;
+    /* height:100vh; */
+    border-radius:10px;
+    padding:10px;
+}
+.section_thi_head{
+    display:flex;
+    justify-content:space-between;
+    padding:10px 20px;
+    background-color:#0f0f0f;
+    width:90%;
+    margin:0 auto;
+    border-radius:6px;
+    color:aquamarine;
+}
+
+
+/* menu */
+.main_menu{
+    width:50%;
+    margin:0 auto;
+    background-color:#25292c;
+    border-radius: 6px;
+    box-sizing: border-box;
+    padding:20px 15px;
+    height:550px;
+    box-shadow: 3px 3px 25px rgba(0, 0, 0, 0.9);
+    position:absolute;
+    top:10px;
+    left:25%;
+    z-index: 999;
+    display:none;
+}
+.menu_nav{
+    width:90%;
+    margin:0 auto;
+    
+}
+.menu_nav div{
+    padding:25px 10px;
+    margin:10px 0;
+    border-radius: 8px;
+    background: linear-gradient(180deg, #282c30, #4c5257, #282c30);
+    box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.3);
+    border:1px solid #5c5853;
+}
+.menu_nav div:active{
+    background: linear-gradient(180deg, #131516, #292d30, #131516);
+}
+
+.menu_nav a{
+    box-sizing: border-box;
+    text-align:center;
+    color:#fff;
+    font-size:30px;
+    font-weight:bold;
+    display:block;
+}
+/* 배경 스타일 */
+.overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); /* 반투명 배경색 */
+    z-index: 998;
+}
+
+
+
+/* setting */
+/* 새로운 배경 오버레이 */
+.popup-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); /* 반투명한 검은색 배경 */
+    z-index: 2; /* 다른 콘텐츠 위에 나타나도록 설정 (기존 오버레이보다 위에) */
+    display: none; /* 초기에는 숨김 */
+}
+
+.popup{
+    width:60%;
+    display:none;
+    margin:0 auto;
+    background-color:#25292c;
+    border-radius: 6px;
+    box-sizing: border-box;
+    padding:20px 15px;
+    box-shadow: 3px 3px 25px rgba(0, 0, 0, 0.9);
+    position:absolute;
+    top:10px;
+    left:20%;
+    z-index: 999;
+}
+
+.popup_fixed{
+    width:90%;
+    margin:0 auto;
+}
+
+.setting_head{
+    width:100%;
+    background: linear-gradient(180deg, #1d1e1f, #3d4144);
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5);
+    border:1px solid #6d6d6d;
+    padding:15px 0;
+    border-radius:6px;
+    color:#fff;
+    font-size:30px;
+    font-weight:bold;
+    text-align:center;
+    margin-bottom:15px;
+}
+.setting_body{
+    margin-top:30px;
+    width:100%;
+    padding:10px 0;
+    background-color: rgba(0, 0, 0, 0.3); /* 투명한 배경 */
+    box-shadow: 2px 2px 25px rgba(0, 0, 0, 0.5);
+    border-radius:6px;
+}
+
+.sound{
+    width:90%;
+    margin:0 auto;
+    display:flex;
+    background-color:#333333;
+    border-radius:8px;
+    justify-content: space-between;
+    padding:15px 20px;
+    color:#fff;
+    font-size:20px;
+    font-weight:bold;
+    align-items: center;
+}
+
+
+
+
+
+.percent-container {
+    display: flex;
+    align-items: center;
+    position: relative; /* 부모 요소로부터 절대 위치를 설정하기 위해 필요 */
+}
+
+
+.container_top{
+    position:relative;
+}
+
+.image-container {
+    position: relative;
+    width: 200px; /* 게이지 바의 길이 */
+    height: 10px; /* 게이지 바의 높이 */
+    background-color: #ddd; /* 게이지 바의 배경색 */
+    border-radius: 5px; /* 게이지 바의 모서리를 둥글게 함 */
+    cursor: pointer; /* 마우스 커서를 손가락 모양으로 변경 */
+}
+
+
+.image-container::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 0;
+    height: 100%;
+    background-color: #4CAF50; /* 게이지 바의 색상 */
+    border-radius: 5px; /* 게이지 바의 모서리를 둥글게 함 */
+    transition: width 0.3s ease; /* 게이지 바가 채워지는 애니메이션 */
+}
+
+
+.indicator {
+    position: absolute; /* absolute로 변경 */
+    top: -5px; /* 표시기를 게이지 바의 윗쪽에 위치 */
+    left: 0; /* 왼쪽에 위치하도록 설정 */
+    width: 20px; /* 표시기의 너비 */
+    height: 20px; /* 표시기의 높이 */
+    background-color: rgb(80, 75, 75); /* 표시기의 색상 */
+    border-radius: 50%; /* 표시기를 원형으로 만듦 */
+}
+
+
+.percent{
+    padding:5px 15px;
+    background-color:#7c7269;
+    border-radius:6px;
+}
+.melody{
+    width:90%;
+    margin:0 auto;
+    display:flex;
+    background-color:#333333;
+    border-radius:8px;
+    justify-content: space-between;
+    padding:15px 20px;
+    color:#fff;
+    font-size:20px;
+    font-weight:bold;
+    margin-top:10px;
+    margin-bottom:10px;
+    align-items: center;
+}
+.table_color{
+    width:90%;
+    margin:0 auto;
+    display:flex;
+    background-color:#333333;
+    border-radius:8px;
+    justify-content: space-between;
+    padding:15px 20px;
+    color:#fff;
+    font-size:20px;
+    font-weight:bold;
+    margin-top:10px;
+    margin-bottom:10px;
+    align-items: center;
+}
+
+input[id="selectBg0"] + label {
+	display: inline-block;
+	width: 13px;
+	height: 13px;
+	border: 2px solid #bcbcbc;
+	cursor: pointer;
+    margin-right:2px;
+}
+input[id="selectBg1"] + label {
+	display: inline-block;
+	width: 13px;
+	height: 13px;
+	border: 2px solid #bcbcbc;
+	cursor: pointer;
+}
+input[id="selectBg0"]:checked + label {
+	background-color: #001adf;
+}
+input[id="selectBg1"]:checked + label {
+	background-color: #e60000;
+}
+
+input[type="radio"] {
+    display: none;
+}
+
+.rebyin{
+    width:90%;
+    margin:0 auto;
+    display:flex;
+    background-color:#333333;
+    border-radius:8px;
+    justify-content: space-between;
+    padding:15px 20px;
+    color:#fff;
+    font-size:20px;
+    font-weight:bold;
+    margin-top:10px;
+    margin-bottom:10px;
+    align-items: center;
+}
+
+
+.rebyin {
+    display: flex;
+    align-items: center;
+}
+
+.toggle-button {
+    cursor: pointer;
+    margin-left: 10px; /* 적절한 간격으로 조정하세요 */
+    padding: 5px 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.toggle-button.on {
+    background-color: green;
+    color: white;
+}
+
+.toggle-button.off {
+    background-color: red;
+    color: white;
+}
+
+
+.byin{
+    width:90%;
+    margin:0 auto;
+    display:flex;
+    background-color:#333333;
+    border-radius:8px;
+    justify-content: space-between;
+    padding:15px 20px;
+    color:#fff;
+    font-size:20px;
+    font-weight:bold;
+    margin-top:10px;
+    margin-bottom:10px;
+    align-items: center;
+}
+.setting_button{
+    display:flex;
+    width:90%;
+    justify-content: center;
+    margin:0 auto;
+    flex-wrap:wrap;
+    /* margin-top:20px; */
+}
+
+.setting_button div{
+    width:200px;
+    text-align: center;
+    color:#fff;
+    font-size:20px;
+    font-weight:bold;
+    background: linear-gradient(180deg,#3d4144, #1d1e1f);
+    cursor:pointer;
+    border-radius:6px;
+    padding:15px 10px;
+    margin: 15px 15px 0 15px;
+}
+.setting_button div:hover{
+    background: linear-gradient(180deg,#5f6569, #2e3031);
+}
+.setting_button div:active{
+    background: linear-gradient(180deg,#303335, #161718);
+}
+
+
+
+/* 방만들기 */
+.room_make{
+    width:100%;
+    background: linear-gradient(180deg, #1d1e1f, #3d4144);
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5);
+    border:1px solid #6d6d6d;
+    padding:15px 0;
+    border-radius:6px;
+    color:#fff;
+    font-size:30px;
+    font-weight:bold;
+    text-align:center;
+    margin-bottom:15px;
+}
+.room_header{
+    width:95%;
+    margin:0 auto;
+    padding:15px;
+    text-align:center;
+    background: linear-gradient(180deg, #1d1e1f, #3d4144);
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5);
+    margin-bottom:15px;
+}
+.room_header p{
+    color:#fff;
+    font-size:26px;
+    vertical-align: middle;
+    font-weight:bold;
+}
+
+
+
+
+.room_btn{
+    width:100%;
+    text-align: center;
+    margin-top:15px;
+}
+.room_btn button{
+    padding:10px 30px;
+    border-radius: 6px;
+    font-size:20px;
+    background: linear-gradient(180deg, #1d1e1f, #3d4144);
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5);
+    border:1px solid #6d6d6d;
+    color:#fff;
+    cursor: pointer;
+}
+.room_btn button:first-child{
+    margin-right:5px;
+}
+.room_btn button:hover{
+    background: linear-gradient(180deg, #3e4042, #62686d);
+}
+.room_btn button:active{
+    background: linear-gradient(180deg, #0d0d0e, #26292b);
+}
+
+
+.room_popup{
+    width:60%;
+    /* display:none; */
+    margin:0 auto;
+    background-color:#25292c;
+    border-radius: 6px;
+    box-sizing: border-box;
+    padding:35px 15px;
+    box-shadow: 3px 3px 25px rgba(0, 0, 0, 0.9);
+    position:absolute;
+    top:10px;
+    left:20%;
+    z-index: 999;
+}
+.room_popup .close{
+    width:30px;
+    position:absolute;
+    top:5px;
+    right:5px;
+}
+
+
+/* 게임 */
+.room_game{
+    margin-bottom:10px;
+}
+.room_game li{
+    color:#fff;
+    font-size:20px;
+}
+.room_game li input{    
+    padding:3px 0;
+    width:30%;
+}
+
+
+/* 방제목 */
+.room_list{
+    margin-bottom:10px;
+}
+.room_list li{
+    color:#fff;
+    font-size:20px;
+}
+.room_list li input{    
+    padding:3px 0;
+    width:30%;
+    background-color:#4e4e4e;
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5);
+    color:rgb(255, 240, 211);
+    border:none;
+    box-sizing: border-box;
+    padding:5px;
+    border-radius: 4px;
+}
+
+
+/* 블라인드 */
+.room_blind{
+    margin-bottom:10px;
+}
+.room_blind li{
+    color:#fff;
+    font-size:20px;
+}
+.room_blind li select{    
+    padding:3px 0;
+    width:30%;
+    background-color:#4e4e4e;
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5);
+    color:rgb(255, 240, 211);
+    border:none;
+    box-sizing: border-box;
+    padding:5px;
+    border-radius: 4px;
+}
+
+
+/* 배팅시간 */
+.room_betting{
+    margin-bottom:10px;
+}
+.room_betting li{
+    color:#fff;
+    font-size:20px;
+}
+.room_betting li select{    
+    padding:3px 0;
+    width:30%;
+    background-color:#4e4e4e;
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5);
+    color:rgb(255, 240, 211);
+    border:none;
+    box-sizing: border-box;
+    padding:5px;
+    border-radius: 4px;
+}
+
+/* 인원수 */
+.room_player{
+    margin-bottom:10px;
+}
+.room_player li{
+    color:#fff;
+    font-size:20px;
+}
+.room_player li select{    
+    padding:3px 0;
+    width:30%;
+    background-color:#4e4e4e;
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5);
+    color:rgb(255, 240, 211);
+    border:none;
+    box-sizing: border-box;
+    padding:5px;
+    border-radius: 4px;
+}
+
+
+
+/* 비밀번호 */
+.room_pw{
+    margin-bottom:10px;
+}
+.room_pw li{
+    color:#fff;
+    font-size:20px;
+}
+.room_pw li input{    
+    padding:3px 0;
+    width:30%;
+    background-color:#4e4e4e;
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5);
+    color:rgb(255, 240, 211);
+    border:none;
+    box-sizing: border-box;
+    padding:5px;
+    border-radius: 4px;
+}

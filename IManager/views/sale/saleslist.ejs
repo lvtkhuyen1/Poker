@@ -1,0 +1,837 @@
+
+<!-- start page title -->
+<div class="row">
+    <div class="col-12">
+        <div class="page-title-box">
+            <div class="page-title-right">
+                <ol class="breadcrumb m-0">
+                    <li class="breadcrumb-item"><a href="javascript: void(0);">정산 통계</a></li>
+                    <li class="breadcrumb-item active">정산 목록</li>
+                </ol>
+            </div>
+            <h4 class="page-title">정산 통계</h4>
+        </div>
+    </div>
+</div>
+<!-- end page title -->
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <div class="row justify-content-between align-items-center">
+                    <div class="col-sm-3">
+                        <div class="input-group mb-3">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text" for="searchText">
+                                    ID/닉네임
+                                </span>
+                            </div>
+                            <input type="text" id="searchText" name="searchText" maxlength="15" class="form-control" />
+                            <div class="input-group-append">
+                                <button class="form-control" id="SearchTextFindButton">검색</button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-sm-8">
+                        <form>
+                            <div class="form-row  align-items-center justify-content-end">
+                                <div class="col-auto">
+                                    <label class="col-form-label" style="font-size:1.1rem;">검색일자</label>
+                                </div>
+                                <div class="col-auto">
+                                    <label class="sr-only">시작</label>
+                                    <input type="text" class="form-control mb-2" id="dateStart" data-provide="datepicker" placeholder="시작일">
+                                </div>
+                                <div class="col-auto">
+                                    <label class="sr-only">종료</label>
+                                    <input type="text" class="form-control mb-2" id="dateEnd" data-provide="datepicker" placeholder="종료일">
+                                </div>
+                                <div class="col-auto">
+                                    <button type="button" class="btn btn-primary mb-2" id="FindButton">검색</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <div class="table-responsive">
+                    <table id="user-datatable" class="table table-sm table-hover dt-responsive nowrap w-100">
+                        <thead>
+                            <tr>
+                                <th>색인</th>
+                                <th>분류</th>
+                                <th>아이디</th>
+                                <th>닉네임</th>
+                                <th>입금</th>
+                                <th>출금</th>
+                                <th>종목</th>
+                                <th>베팅머니</th>
+                                <th>승리머니</th>
+                                <th>베팅머니-승리머니</th>
+                                <th>생성포인트</th>
+                                <th>하부생성포인트</th>
+                                <th>보유머니</th>
+                                <th>하부보유머니</th>
+                                <th>보유포인트</th>
+                                <th>하부보유포인트</th>
+                                <th>총보유머니</th>
+                                <th>총보유포인트</th>
+                                <th>상부보기</th>
+                                <th>하부보기</th>
+                                <th>직속하부갯수</th>
+                            </tr>
+                        </thead>
+                    </table>
+                </div>
+            </div> <!-- end card-body-->
+        </div> <!-- end card-->
+    </div> <!-- end col -->
+</div>
+
+<script type="text/javascript">
+    $("#dateStart").datepicker({
+        format: 'yyyy-mm-dd',
+        language : 'kr'
+    });
+    $("#dateEnd").datepicker({
+        format: 'yyyy-mm-dd',
+        language: 'kr'
+    });
+
+    var leadingZeros = (n, digits) => {
+        var zero = '';
+        n = n.toString();
+
+        if (n.length < digits) {
+            for (var i = 0; i < digits - n.length; i++)
+                zero += '0';
+        }
+        return zero + n;
+    }
+    let getTimeStartStamp = ()=> {
+        var now = new Date();
+
+        var d = new Date(now.setDate(now.getDate()));
+        var s =
+            leadingZeros(d.getFullYear(), 4) + '-' +
+            leadingZeros(d.getMonth() + 1, 2) + '-' +
+            leadingZeros(d.getDate(), 2);
+        return s;
+    }
+    let getTimeEndStamp = ()=> {
+        var now = new Date();
+
+        var d = new Date(now.setDate(now.getDate() - 1));
+        var s =
+            leadingZeros(d.getFullYear(), 4) + '-' +
+            leadingZeros(d.getMonth() + 1, 2) + '-' +
+            leadingZeros(d.getDate(), 2);
+            return s;
+        }
+        let today = getTimeStartStamp();
+        let yesterday = getTimeEndStamp();
+        $('#dateStart').val(yesterday);
+        $('#dateEnd').val(today);
+
+        // 숫자 값을 입력으로 받아서 양수일 때는 녹색, 음수일 때는 빨간색으로 변환하고 toLocaleString()을 적용하는 함수
+        function formatNumberWithColor(value) {
+            // 양수일 때는 빨간색으로, 음수일 때는 파란색으로 색상 클래스를 지정 // text-success 녹색
+            var colorClass = value >= 0 ? 'text-danger' : 'text-primary';
+            // toLocaleString()을 사용하여 숫자를 천 단위로 구분
+             // Format the number with a '-' sign for positive numbers
+            var sign = value >= 0 ? '' : '-';
+            var formattedValue = sign + Math.abs(value).toLocaleString();
+            // 변환된 값을 색상 클래스와 함께 반환
+            return `<span class="${colorClass}">${formattedValue}원</span>`;
+        }
+
+        // 하부보기 클릭
+        $(document).on('click', '.details-button', function() {
+            var id = $(this).data('id');  // 버튼의 data-id 속성 값을 가져옵니다.
+            var iClass = $(this).attr('data-iclass'); 
+            console.log("details-button");
+            console.log(id);
+            console.log(iClass);
+            if(iClass == 5)
+            {
+                alert("더 이상의 하부는 없습니다.");
+                return;
+            }
+
+             // Destroy the existing DataTable.
+            if ($.fn.dataTable.isDataTable('#user-datatable')) {
+                $('#user-datatable').DataTable().destroy();
+            }
+            dataTableInstance = $('#user-datatable').DataTable({
+                "serverSide": true,
+                "searching": false,
+                "ajax": {
+                    //url: "@Url.Action("UserList")",
+                    url:"/inout/request_saleslistchild",
+                    "type": "POST",
+                    "data": function (d) {
+                        return $.extend({}, d, {
+                            "id" : id,
+                            dateStart:$('#dateStart').val(),
+                            dateEnd:$('#dateEnd').val()
+                        });
+                    }
+                },
+                responsive : false,
+                order: [[ 1, 'asc' ]],
+                columns: [
+
+                    {
+                        data: "id",
+                        render: function (d, t) {
+                            return d;// return "<input type='checkbox' name='chk' id='chk" + d + "' value='" + d + "' /><label for='chk" + d + "'>" + d + "</label>";
+                        }
+                    },
+                    {
+                        data: "iClass",
+                        render: function (d, t, s, m) {
+                            var text = "";
+                            if (d == 0)
+                                text = "대본사";
+                            else if (d == 1)
+                                text = "본사";
+                            else if (d == 2)
+                                text = "지사";
+                            else if (d == 3)
+                                text = "총판";
+                            else if (d == 4)
+                                text = "매장";
+                            return text;
+                        }
+                    },
+                    {
+                        data: "strID"
+                    },
+                    { 
+                        data: "strNickname" 
+                    },
+                    { 
+                        data: "iInput", render: function (d) {
+                            let c = parseInt(d);
+                            return `${c.toLocaleString()}원`;
+                        }
+                    },
+                    { 
+                        data: "iOutput", render: function (d) {
+                            let c = parseInt(d);
+                            return `${c.toLocaleString()}원`;
+                        }
+                    },
+                    { 
+                        data: null,
+                        render: function (data, type, row) {
+                            // 위아래로 표시할 HTML을 생성합니다.
+                            var html = `<div>홀덤(${data.fHoldemR}):</div><div>싯앤고(${data.fSitgoR}):</div>`;
+
+                            return html;
+                        }
+                    },
+                    { 
+                        data: null,
+                        render: function (data, type, row) {
+                            // data 객체에서 iTotalBetsHoldem 및 iTotalBetsSitgo 값을 가져와서 줄 바꿈으로 표시
+                            return `${formatNumberWithColor(data.iTotalBetsHoldem)}<br>${formatNumberWithColor(data.iTotalBetsSitgo)}`;
+                        }
+                    },
+                    { 
+                        data: null,
+                        render: function (data, type, row) {
+                            // data 객체에서 iTotalWinsHoldem 및 iTotalWinsSitgo 값을 가져와서 줄 바꿈으로 표시
+                            return `${formatNumberWithColor(data.iTotalWinsHoldem)}<br>${formatNumberWithColor(data.iTotalWinsSitgo)}`;
+                        }
+                    },
+                    {
+                        data: null,
+                        render: function (data, type, row) {
+                            // totalbets와 wins의 차이를 계산합니다.
+                            var totalBetsH = parseInt(data.iTotalBetsHoldem);
+                            var totalBetsS = parseInt(data.iTotalBetsSitgo);
+                            var totalWinsH = parseInt(data.iTotalWinsHoldem);
+                            var totalWinsS = parseInt(data.iTotalWinsSitgo);
+                            var differenceH = totalBetsH - totalWinsH;
+                            var differenceS = totalBetsS - totalWinsS;
+                            // 차이값을 반환합니다.
+                            return `${formatNumberWithColor(differenceH)}<br>${formatNumberWithColor(differenceS)}`;
+                        }
+                    },
+                    { 
+                        data: null,
+                        render: function (data, type, row) {
+                            // data 객체에서 iTotalRollingHoldem 및 iTotalRollingSitgo 값을 가져와서 줄 바꿈으로 표시
+                            return `${formatNumberWithColor(data.iTotalRollingHoldem)}<br>${formatNumberWithColor(data.iTotalRollingSitgo)}`;
+                        }
+                    },
+                    { 
+                        data: null,
+                        render: function (data, type, row) {
+                            // data 객체에서 iTotalRollingChildHoldem 및 iTotalRollingChildSitgo 값을 가져와서 줄 바꿈으로 표시
+                            return `${formatNumberWithColor(data.iTotalRollingChildHoldem)}<br>${formatNumberWithColor(data.iTotalRollingChildSitgo)}`;
+                        }
+                    },
+                    { 
+                        data: "iMyMoney", render: function (d) {
+                            let c = parseInt(d);
+                            return `${c.toLocaleString()}원`;
+                        } 
+                    },
+                    { 
+                        data: "iTotalMoney", render: function (d) {
+                            let c = parseInt(d);
+                            return `${c.toLocaleString()}원`;
+                        } 
+                    },
+                    { 
+                        data: "iMyRolling", render: function (d) {
+                            let c = parseInt(d);
+                            return `${c.toLocaleString()}원`;
+                        }
+                    },
+                    { 
+                        data: "iTotalPoint", render: function (d) {
+                            let c = parseInt(d);
+                            return `${c.toLocaleString()}원`;
+                        }
+                    },
+                    { 
+                        data: null,
+                        render: function (data, type, row) {
+                            // imymoney itotalmoney 합을 계산합니다.
+                            var imymoney = parseInt(data.iMyMoney);
+                            var itotalmoney = parseInt(data.iTotalMoney);
+                            var summoney = imymoney + itotalmoney;
+                           
+                            return `${summoney.toLocaleString()}원`;
+                        }
+                    },
+                    { 
+                        data: null,
+                        render: function (data, type, row) {
+                            // imypoint itotalpoint 합을 계산합니다.
+                            var imypoint = parseInt(data.iMyRolling);
+                            var itotalpoint = parseInt(data.iTotalPoint);
+                            var sumpoint = imypoint + itotalpoint;
+                           
+                            return `${sumpoint.toLocaleString()}원`;
+                        }
+                    },
+                    {
+                        data: null,
+                        render: function (d, t, s) {
+                            return '<button type="button" class="btn btn-primary parent-button" data-id="' + s.id + '" data-iclass="' + s.iClass + '">상부보기</button>';
+                        }
+                    },
+                    {
+                        data: null,
+                        render: function (d, t, s) {
+                            return '<button type="button" class="btn btn-primary details-button" data-id="' + s.id + '" data-iclass="' + s.iClass + '">하부보기</button>';
+                        }
+                    },
+                    {
+                        data: "iAgentCount", render:function(d)
+                        {
+                            return d+'명';
+                        }
+                    }
+                ],
+                keys: true,
+                "language": {
+                    "paginate": {
+                        "previous": "<i class='mdi mdi-chevron-left'>",
+                        "next": "<i class='mdi mdi-chevron-right'>"
+                    },
+                    "info": "현재 페이지 _PAGE_/_PAGES_, 총 _TOTAL_ 건",
+                    "lengthMenu": "한 페이지 길이 _MENU_",
+                    "emptyTable": "조건에 맞는 데이터가 없습니다",
+                    "infoEmpty" : "표시할 데이터 없음"
+                },
+                "sort": false,
+                "drawCallback": function () {
+                    $('.dataTables_paginate > .pagination').addClass('pagination-rounded');
+                },
+                createdRow: function (row, data) {
+                    $(row).attr("data-id", data.id);
+                    $(row).attr("data-loginId", data.strID);
+                    // if (data.eStatus == "QUIT")
+                    //     $(row).addClass("table-dark");
+
+                    if (data.iClass == 1) {
+                        $(row).css('background-color', '#a0f0f0'); // 연한 회색
+                    } else if (data.iClass == 2) {
+                        $(row).css('background-color', '#FFFFCC'); // 연한 노란색
+                    } else if (data.iClass == 3) {
+                        $(row).css('background-color', '#FFCCFF'); // 연한 자주색
+                    } else if (data.iClass == 4) {
+                        $(row).css('background-color', '#CCFFCC'); // 연한 민트색
+                    } else if (data.iClass == 5) {
+                        $(row).css('background-color', '#FFCCCC'); // 연한 분홍색
+                    }
+                }
+            });
+        });
+
+        //상부 보기 클릭
+        $(document).on('click', '.parent-button', function() {
+            var id = $(this).data('id');  // 버튼의 data-id 속성 값을 가져옵니다.
+            var iClass = $(this).attr('data-iclass'); 
+            console.log("parent-button");
+            console.log(id);
+            console.log(iClass);
+            if( iClass <= user.iClass )
+            {
+                alert("상부를 조회할 수 있는 권한이 없습니다.");
+                return;
+            }
+
+             // Destroy the existing DataTable.
+            if ($.fn.dataTable.isDataTable('#user-datatable')) {
+                $('#user-datatable').DataTable().destroy();
+            }
+    
+            dataTableInstance = $('#user-datatable').DataTable({
+                "serverSide": true,
+                "searching": false,
+                "ajax": {
+                    //url: "@Url.Action("UserList")",
+                    url:"/inout/request_saleslistparent",
+                    "type": "POST",
+                    "data": function (d) {
+                        return $.extend({}, d, {
+                            "id" : id,
+                            dateStart:$('#dateStart').val(),
+                            dateEnd:$('#dateEnd').val()
+                        });
+                    }
+                },
+                responsive : false,
+                order: [[ 1, 'asc' ]],
+                columns: [
+                {
+                        data: "id",
+                        render: function (d, t) {
+                            return d;// return "<input type='checkbox' name='chk' id='chk" + d + "' value='" + d + "' /><label for='chk" + d + "'>" + d + "</label>";
+                        }
+                    },
+                    {
+                        data: "iClass",
+                        render: function (d, t, s, m) {
+                            var text = "";
+                            if (d == 0)
+                                text = "대본사";
+                            else if (d == 1)
+                                text = "본사";
+                            else if (d == 2)
+                                text = "지사";
+                            else if (d == 3)
+                                text = "총판";
+                            else if (d == 4)
+                                text = "매장";
+                            return text;
+                        }
+                    },
+                    {
+                        data: "strID"
+                    },
+                    { 
+                        data: "strNickname" 
+                    },
+                    { 
+                        data: "iInput", render: function (d) {
+                            let c = parseInt(d);
+                            return `${c.toLocaleString()}원`;
+                        }
+                    },
+                    { 
+                        data: "iOutput", render: function (d) {
+                            let c = parseInt(d);
+                            return `${c.toLocaleString()}원`;
+                        }
+                    },
+                    { 
+                        data: null,
+                        render: function (data, type, row) {
+                            // 위아래로 표시할 HTML을 생성합니다.
+                            var html = `<div>홀덤(${data.fHoldemR}):</div><div>싯앤고(${data.fSitgoR}):</div>`;
+
+                            return html;
+                        }
+                    },
+                    { 
+                        data: null,
+                        render: function (data, type, row) {
+                            // data 객체에서 iTotalBetsHoldem 및 iTotalBetsSitgo 값을 가져와서 줄 바꿈으로 표시
+                            return `${formatNumberWithColor(data.iTotalBetsHoldem)}<br>${formatNumberWithColor(data.iTotalBetsSitgo)}`;
+                        }
+                    },
+                    { 
+                        data: null,
+                        render: function (data, type, row) {
+                            // data 객체에서 iTotalWinsHoldem 및 iTotalWinsSitgo 값을 가져와서 줄 바꿈으로 표시
+                            return `${formatNumberWithColor(data.iTotalWinsHoldem)}<br>${formatNumberWithColor(data.iTotalWinsSitgo)}`;
+                        }
+                    },
+                    {
+                        data: null,
+                        render: function (data, type, row) {
+                            // totalbets와 wins의 차이를 계산합니다.
+                            var totalBetsH = parseInt(data.iTotalBetsHoldem);
+                            var totalBetsS = parseInt(data.iTotalBetsSitgo);
+                            var totalWinsH = parseInt(data.iTotalWinsHoldem);
+                            var totalWinsS = parseInt(data.iTotalWinsSitgo);
+                            var differenceH = totalBetsH - totalWinsH;
+                            var differenceS = totalBetsS - totalWinsS;
+                            // 차이값을 반환합니다.
+                            return `${formatNumberWithColor(differenceH)}<br>${formatNumberWithColor(differenceS)}`;
+                        }
+                    },
+                    { 
+                        data: null,
+                        render: function (data, type, row) {
+                            // data 객체에서 iTotalRollingHoldem 및 iTotalRollingSitgo 값을 가져와서 줄 바꿈으로 표시
+                            return `${formatNumberWithColor(data.iTotalRollingHoldem)}<br>${formatNumberWithColor(data.iTotalRollingSitgo)}`;
+                        }
+                    },
+                    { 
+                        data: null,
+                        render: function (data, type, row) {
+                            // data 객체에서 iTotalRollingChildHoldem 및 iTotalRollingChildSitgo 값을 가져와서 줄 바꿈으로 표시
+                            return `${formatNumberWithColor(data.iTotalRollingChildHoldem)}<br>${formatNumberWithColor(data.iTotalRollingChildSitgo)}`;
+                        }
+                    },
+                    { 
+                        data: "iMyMoney", render: function (d) {
+                            let c = parseInt(d);
+                            return `${c.toLocaleString()}원`;
+                        } 
+                    },
+                    { 
+                        data: "iTotalMoney", render: function (d) {
+                            let c = parseInt(d);
+                            return `${c.toLocaleString()}원`;
+                        } 
+                    },
+                    { 
+                        data: "iMyRolling", render: function (d) {
+                            let c = parseInt(d);
+                            return `${c.toLocaleString()}원`;
+                        }
+                    },
+                    { 
+                        data: "iTotalPoint", render: function (d) {
+                            let c = parseInt(d);
+                            return `${c.toLocaleString()}원`;
+                        }
+                    },
+                    { 
+                        data: null,
+                        render: function (data, type, row) {
+                            // imymoney itotalmoney 합을 계산합니다.
+                            var imymoney = parseInt(data.iMyMoney);
+                            var itotalmoney = parseInt(data.iTotalMoney);
+                            var summoney = imymoney + itotalmoney;
+                           
+                            return `${summoney.toLocaleString()}원`;
+                        }
+                    },
+                    { 
+                        data: null,
+                        render: function (data, type, row) {
+                            // imypoint itotalpoint 합을 계산합니다.
+                            var imypoint = parseInt(data.iMyRolling);
+                            var itotalpoint = parseInt(data.iTotalPoint);
+                            var sumpoint = imypoint + itotalpoint;
+                           
+                            return `${sumpoint.toLocaleString()}원`;
+                        }
+                    },
+                    {
+                        data: null,
+                        render: function (d, t, s) {
+                            return '<button type="button" class="btn btn-primary parent-button" data-id="' + s.id + '" data-iclass="' + s.iClass + '">상부보기</button>';
+                        }
+                    },
+                    {
+                        data: null,
+                        render: function (d, t, s) {
+                            return '<button type="button" class="btn btn-primary details-button" data-id="' + s.id + '" data-iclass="' + s.iClass + '">하부보기</button>';
+                        }
+                    },
+                    {
+                        data: "iAgentCount", render:function(d)
+                        {
+                            return d+'명';
+                        }
+                    }
+                ],
+                keys: true,
+                "language": {
+                    "paginate": {
+                        "previous": "<i class='mdi mdi-chevron-left'>",
+                        "next": "<i class='mdi mdi-chevron-right'>"
+                    },
+                    "info": "현재 페이지 _PAGE_/_PAGES_, 총 _TOTAL_ 건",
+                    "lengthMenu": "한 페이지 길이 _MENU_",
+                    "emptyTable": "조건에 맞는 데이터가 없습니다",
+                    "infoEmpty" : "표시할 데이터 없음"
+                },
+                "sort": false,
+                "drawCallback": function () {
+                    $('.dataTables_paginate > .pagination').addClass('pagination-rounded');
+                },
+                createdRow: function (row, data) {
+                    $(row).attr("data-id", data.id);
+                    $(row).attr("data-loginId", data.strID);
+                    // if (data.eStatus == "QUIT")
+                    //     $(row).addClass("table-dark");
+
+                    if (data.iClass == 1) {
+                        $(row).css('background-color', '#a0f0f0'); // 연한 회색
+                    } else if (data.iClass == 2) {
+                        $(row).css('background-color', '#FFFFCC'); // 연한 노란색
+                    } else if (data.iClass == 3) {
+                        $(row).css('background-color', '#FFCCFF'); // 연한 자주색
+                    } else if (data.iClass == 4) {
+                        $(row).css('background-color', '#CCFFCC'); // 연한 민트색
+                    } else if (data.iClass == 5) {
+                        $(row).css('background-color', '#FFCCCC'); // 연한 분홍색
+                    }
+                }
+            });
+        });
+
+        $("#SearchTextFindButton").click(function (e) {
+            e.preventDefault();
+
+            dataTableInstance.ajax.reload();
+        });
+    
+        $("#FindButton").click(function (e) {
+            e.preventDefault();
+
+            dataTableInstance.ajax.reload();
+        });
+        var dataTableInstance;
+
+        $(document).ready(function () {        
+            function refreshData() {
+                dataTableInstance.ajax.reload();
+            }
+            dataTableInstance = $('#user-datatable').DataTable({
+                "serverSide": true,
+                "searching": false,
+                "ajax": {
+                    url:"/inout/request_saleslist",
+                    "type": "POST",
+                    "data": function (d) {
+                        return $.extend({}, d, {
+                            //"userTypeFilter": $("input[name='UserTypeFilter']:checked").val(),
+                            "search" : $("#searchText").val(),
+                            dateStart:$('#dateStart').val(),
+                            dateEnd:$('#dateEnd').val()
+                        });
+                    }
+                },
+                responsive : false,
+                order: [[ 1, 'asc' ]],
+                columns: [
+                {
+                        data: "id",
+                        render: function (d, t) {
+                            return d;// return "<input type='checkbox' name='chk' id='chk" + d + "' value='" + d + "' /><label for='chk" + d + "'>" + d + "</label>";
+                        }
+                    },
+                    {
+                        data: "iClass",
+                        render: function (d, t, s, m) {
+                            var text = "";
+                            if (d == 0)
+                                text = "대본사";
+                            else if (d == 1)
+                                text = "본사";
+                            else if (d == 2)
+                                text = "지사";
+                            else if (d == 3)
+                                text = "총판";
+                            else if (d == 4)
+                                text = "매장";
+                            return text;
+                        }
+                    },
+                    {
+                        data: "strID"
+                        // render: function (d) {
+                        //     return "<a href='#' class='UserIdPopup' data-id='" + d + "'>" + d + "</a>";
+                        // }
+                    },
+                    { 
+                        data: "strNickname" 
+                    },
+                    { 
+                        data: "iInput", render: function (d) {
+                            let c = parseInt(d);
+                            return `${c.toLocaleString()}원`;
+                        }
+                    },
+                    { 
+                        data: "iOutput", render: function (d) {
+                            let c = parseInt(d);
+                            return `${c.toLocaleString()}원`;
+                        }
+                    },
+                    { 
+                        data: null,
+                        render: function (data, type, row) {
+                            // 위아래로 표시할 HTML을 생성합니다.
+                            var html = `<div>홀덤(${data.fHoldemR}):</div><div>싯앤고(${data.fSitgoR}):</div>`;
+
+                            return html;
+                        }
+                    },
+                    { 
+                        data: null,
+                        render: function (data, type, row) {
+                            // data 객체에서 iTotalBetsHoldem 및 iTotalBetsSitgo 값을 가져와서 줄 바꿈으로 표시
+                            return `${formatNumberWithColor(data.iTotalBetsHoldem)}<br>${formatNumberWithColor(data.iTotalBetsSitgo)}`;
+                        }
+                    },
+                    { 
+                        data: null,
+                        render: function (data, type, row) {
+                            // data 객체에서 iTotalWinsHoldem 및 iTotalWinsSitgo 값을 가져와서 줄 바꿈으로 표시
+                            return `${formatNumberWithColor(data.iTotalWinsHoldem)}<br>${formatNumberWithColor(data.iTotalWinsSitgo)}`;
+                        }
+                    },
+                    {
+                        data: null,
+                        render: function (data, type, row) {
+                            // totalbets와 wins의 차이를 계산합니다.
+                            var totalBetsH = parseInt(data.iTotalBetsHoldem);
+                            var totalBetsS = parseInt(data.iTotalBetsSitgo);
+                            var totalWinsH = parseInt(data.iTotalWinsHoldem);
+                            var totalWinsS = parseInt(data.iTotalWinsSitgo);
+                            var differenceH = totalBetsH - totalWinsH;
+                            var differenceS = totalBetsS - totalWinsS;
+                            // 차이값을 반환합니다.
+                            return `${formatNumberWithColor(differenceH)}<br>${formatNumberWithColor(differenceS)}`;
+                        }
+                    },
+                    { 
+                        data: null,
+                        render: function (data, type, row) {
+                            // data 객체에서 iTotalRollingHoldem 및 iTotalRollingSitgo 값을 가져와서 줄 바꿈으로 표시
+                            return `${formatNumberWithColor(data.iTotalRollingHoldem)}<br>${formatNumberWithColor(data.iTotalRollingSitgo)}`;
+                        }
+                    },
+                    { 
+                        data: null,
+                        render: function (data, type, row) {
+                            // data 객체에서 iTotalRollingChildHoldem 및 iTotalRollingChildSitgo 값을 가져와서 줄 바꿈으로 표시
+                            return `${formatNumberWithColor(data.iTotalRollingChildHoldem)}<br>${formatNumberWithColor(data.iTotalRollingChildSitgo)}`;
+                        }
+                    },
+                    { 
+                        data: "iMyMoney", render: function (d) {
+                            let c = parseInt(d);
+                            return `${c.toLocaleString()}원`;
+                        } 
+                    },
+                    { 
+                        data: "iTotalMoney", render: function (d) {
+                            let c = parseInt(d);
+                            return `${c.toLocaleString()}원`;
+                        } 
+                    },
+                    { 
+                        data: "iMyRolling", render: function (d) {
+                            let c = parseInt(d);
+                            return `${c.toLocaleString()}원`;
+                        }
+                    },
+                    { 
+                        data: "iTotalPoint", render: function (d) {
+                            let c = parseInt(d);
+                            return `${c.toLocaleString()}원`;
+                        }
+                    },
+                    { 
+                        data: null,
+                        render: function (data, type, row) {
+                            // imymoney itotalmoney 합을 계산합니다.
+                            var imymoney = parseInt(data.iMyMoney);
+                            var itotalmoney = parseInt(data.iTotalMoney);
+                            var summoney = imymoney + itotalmoney;
+                           
+                            return `${summoney.toLocaleString()}원`;
+                        }
+                    },
+                    { 
+                        data: null,
+                        render: function (data, type, row) {
+                            // imypoint itotalpoint 합을 계산합니다.
+                            var imypoint = parseInt(data.iMyRolling);
+                            var itotalpoint = parseInt(data.iTotalPoint);
+                            var sumpoint = imypoint + itotalpoint;
+                           
+                            return `${sumpoint.toLocaleString()}원`;
+                        }
+                    },
+                    {
+                        data: null,
+                        render: function (d, t, s) {
+                            return '<button type="button" class="btn btn-primary parent-button" data-id="' + s.id + '" data-iclass="' + s.iClass + '">상부보기</button>';
+                        }
+                    },
+                    {
+                        data: null,
+                        render: function (d, t, s) {
+                            return '<button type="button" class="btn btn-primary details-button" data-id="' + s.id + '" data-iclass="' + s.iClass + '">하부보기</button>';
+                        }
+                    },
+                    {
+                        data: "iAgentCount", render:function(d)
+                        {
+                            return d+'명';
+                        }
+                    }
+                ],
+                keys: true,
+                "language": {
+                    "paginate": {
+                        "previous": "<i class='mdi mdi-chevron-left'>",
+                        "next": "<i class='mdi mdi-chevron-right'>"
+                    },
+                    "info": "현재 페이지 _PAGE_/_PAGES_, 총 _TOTAL_ 건",
+                    "lengthMenu": "한 페이지 길이 _MENU_",
+                    "emptyTable": "조건에 맞는 데이터가 없습니다",
+                    "infoEmpty" : "표시할 데이터 없음"
+                },
+                "sort": false,
+                "drawCallback": function () {
+                    $('.dataTables_paginate > .pagination').addClass('pagination-rounded');
+                },
+                createdRow: function (row, data) {
+                    $(row).attr("data-id", data.id);
+                    $(row).attr("data-loginId", data.strID);
+                    // if (data.eStatus == "QUIT")
+                    //     $(row).addClass("table-dark");
+
+                    if (data.iClass == 1) {
+                        $(row).css('background-color', '#a0f0f0'); // 연한 회색
+                    } else if (data.iClass == 2) {
+                        $(row).css('background-color', '#FFFFCC'); // 연한 노란색
+                    } else if (data.iClass == 3) {
+                        $(row).css('background-color', '#FFCCFF'); // 연한 자주색
+                    } else if (data.iClass == 4) {
+                        $(row).css('background-color', '#CCFFCC'); // 연한 민트색
+                    } else if (data.iClass == 5) {
+                        $(row).css('background-color', '#FFCCCC'); // 연한 분홍색
+                    }
+                }
+            });
+        });
+</script>

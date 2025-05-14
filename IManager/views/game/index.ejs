@@ -1,0 +1,458 @@
+
+<head>
+    
+</head>
+
+
+<!-- start page title -->
+<div class="row">
+    <div class="col-12">
+        <div class="page-title-box">
+            <div class="page-title-right">
+                <ol class="breadcrumb m-0">
+                    <li class="breadcrumb-item"><a href="javascript: void(0);">게임 관리</a></li>
+                    <li class="breadcrumb-item active">게임</li>
+                </ol>
+            </div>
+            <h4 class="page-title">전체 게임 목록</h4>
+        </div>
+    </div>
+</div>
+<!-- end page title -->
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <div class="row mb-2">
+                    <div class="col-sm-2">
+                        <a href="javascript:void(0);" class="btn btn-danger mb-2 CreateUserButton" style="color: white;"><i class="mdi mdi-plus-circle mr-2"></i> 게임 등록</a>
+                    </div>
+                    <div class="col-sm-3">
+                        <div class="btn-group btn-group-toggle" data-toggle="buttons">
+                            <label class="btn btn-secondary active text-nowrap">
+                                <input type="radio" name="UserTypeFilter" value="" checked />전체
+                            </label>
+                            <label class="btn btn-secondary text-nowrap">
+                                <input type="radio" name="UserTypeFilter" value="LOTO6" />로또6
+                            </label>
+                            <label class="btn btn-secondary text-nowrap">
+                                <input type="radio" name="UserTypeFilter" value="MINILOTO" />미니로또
+                            </label>
+                            <label class="btn btn-secondary text-nowrap">
+                                <input type="radio" name="UserTypeFilter" value="BINGO5" />빙고5
+                            </label>
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <div class="input-group mb-3">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text" for="searchText">
+                                    ID/이름
+                                </span>
+                            </div>
+                            <input type="text" id="searchText" name="searchText" maxlength="20" class="form-control" />
+                            <div class="input-group-append">
+                                <button class="form-control" id="SearchTextFindButton">검색</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-7">
+                        <div class="text-sm-right">
+                            <!--
+                            <button type="button" class="btn btn-success mb-2 mr-1"><i class="mdi mdi-settings"></i></button>
+                            <button type="button" class="btn btn-light mb-2">Export</button>
+                                -->
+                        </div>
+                    </div><!-- end col-->
+                </div>
+
+                <div class="table-responsive">
+                    <table id="user-datatable" class="table table-sm table-hover dt-responsive nowrap w-100">
+                        <thead>
+                            <tr>
+                                <th>순번</th>
+                                <th>당첨 숫자</th>
+                                <th>당첨 금액</th>
+                                <th>회차</th>
+                                <th>회차 정보</th>
+                                <th>게임 종류</th>
+                                <th>당첨 상태</th>
+                                <th>추첨일</th>
+                                <th>등록일</th>
+                            </tr>
+                        </thead>
+                    </table>
+                </div>
+            </div> <!-- end card-body-->
+        </div> <!-- end card-->
+    </div> <!-- end col -->
+
+    <div class="modal fade task-modal-content" id="UserEditDialog" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" id="NewTaskModalLabel">사용자 등록</h4>
+                    <button type="button" class="close" data-bs-dismiss="modal" aria-hidden="true">×</button>
+                </div>
+                <div class="modal-body">
+                        <form class="p-2" id="UserForm" method="POST" action="/game/update">
+                        <input type="hidden" name="id" id="uid" value="" />
+                        <div class="form-group">
+                            <label>게임 유형</label>
+                            <select class="form-control form-control-light" name="eGameType" id="eGameType">
+                                <option value="LOTO6">로또6</option>
+                                <option value="MINILOTO">미니로또</option>
+                                <option value="BINGO5">빙고5</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>결과 유형</label>
+                            <select class="form-control form-control-light" name="eGameState" id="eGameState">
+                                <option value="WIN" selected>승리</option>
+                                <option value="CARRIEDFORWARD">이월</option>
+                                <option value="STAY">진행중</option>
+                            </select>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="task-title">라운드</label>
+                                    <input type="text" class="form-control form-control-light" id="iRound" name="iRound" placeholder="회차">
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="task-priority2">당첨 금액</label>
+                                    <input type="text" class="form-control form-control-light" id="iWin" name="iWin" placeholder="당첨금">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="task-title">추첨일</label>
+                                    <input type="text" class="form-control form-control-light" id="dateDraw" name="dateDraw" placeholder="추첨일">
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="task-priority2">추첨 숫자</label>
+                                    <input type="text" class="form-control form-control-light" id="strWinNumbers" name="strWinNumbers" placeholder="추첨 숫자">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="task-title">회차 상세 정보</label>
+                                    <input type="text" class="form-control form-control-light" id="strRoundInfo" name="strRoundInfo" placeholder="회차 상세 정보">
+                                </div>
+                            </div>
+
+                        </div>
+
+
+                        <div class="text-right">
+                            <button type="button" class="btn btn-primary" id="UserFormSubmitButton">저장</button>
+                            <button type="button" class="btn btn-light" data-bs-dismiss="modal">취소</button>
+                        </div>
+                    </form>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+
+</div>
+<!-- end row -->
+
+<script type="text/javascript">
+
+    function clearForm() {
+        $("#uid").val("");
+        $("#eGameType").val("LOTO6");
+        $("#eGameState").val("WIN");
+        $("#iRound").val("");
+        $("#iWin").val("");
+        $("#dateDraw").val("");
+        $("#strWinNumbers").val("");
+        $("#strRoundInfo").val("");
+    }
+
+    var dataTableInstance;
+
+    $(document).ready(function(){
+
+        $("#birthdate").datepicker({
+            format: 'yyyy-mm-dd',
+            language: 'kr'
+        });
+
+        // 새 계정 생성
+        $(".CreateUserButton").click(function (e) {
+            e.preventDefault();
+
+            clearForm();
+            $("#UserEditDialog").modal("show");
+        });
+
+        // 테이블의 login id 컬럼 클릭 처리
+        $(document).on("click", ".UserIdPopup", function (e) {
+            e.preventDefault();
+
+            $.ajax({
+                //url: "@Url.Action("QueryUser")",
+                url:"/game/detail",
+                type:"POST",
+                data: {
+                    uid : $(this).attr("data-id")
+                },
+                dataType: "json",
+                success: function (obj) {
+                    if (obj.result == "OK") {
+
+                        $("#uid").val(obj.data.id);
+                        $("#eGameType").val(obj.data.eGameType);
+                        $("#eGameState").val(obj.data.eWinType);
+                        $("#iRound").val(obj.data.iRound);
+                        $("#iWin").val(obj.data.iScore);
+                        $("#dateDraw").val(obj.data.dateDraw);
+                        $("#strWinNumbers").val(obj.data.strWinNumbers);
+                        $("#strRoundInfo").val(obj.data.strRoundInfo);
+                        
+                        $("#UserEditDialog").modal("show");
+                    } else {
+                        alert(obj.reason);
+                    }
+                }, error: function () {
+                    alert("조회 중 오류 발생");
+                }
+            });
+        });
+
+        // 결제 내역 팝업
+        $("#user-datatable").on("click", ".PayHistoryButton", function (e) {
+            e.preventDefault();
+
+            var loginId = $(this).parent().parent().attr("data-loginId");
+
+            //window.open("@Url.Action("PaymentHistory")?loginId=" + loginId, "_blank", "width = 700, height = 500");
+
+            window.open("/account/history_cash/" + loginId, "_blank", "width = 700, height = 400");
+        });
+
+        // 포인트 내역 팝업
+        $("#user-datatable").on("click", ".PointHistoryButton", function (e) {
+            e.preventDefault();
+
+            var loginId = $(this).parent().parent().attr("data-loginId");
+
+            window.open("/account/history_point/" + loginId, "_blank", "width = 700, height = 400");
+        });
+        // EXP 내역 팝업
+        $("#user-datatable").on("click", ".ExpHistoryButton", function (e) {
+            e.preventDefault();
+
+            var loginId = $(this).parent().parent().attr("data-loginId");
+            //window.open("@Url.Action("ExpHistory")?loginId=" + loginId, "_blank", "width = 700, height = 400");
+            
+            window.open("/account/history_exp/" + loginId, "_blank", "width = 700, height = 400");
+        });
+        // 아이템 내역 팝업
+        $("#user-datatable").on("click", ".ItemHistoryButton", function (e) {
+            e.preventDefault();
+
+            var loginId = $(this).parent().parent().attr("data-loginId");
+            //window.open("@Url.Action("ItemHistory")?loginId=" + loginId, "_blank", "width = 700, height = 400");
+
+            console.log(loginId);
+            
+        });
+        // 게시글 내역 팝업
+        $("#user-datatable").on("click", ".ArticlesButton", function (e) {
+            e.preventDefault();
+
+            var loginId = $(this).parent().parent().attr("data-loginId");
+
+            console.log(loginId);
+            //location.href="@Url.Action("Index", "Bulletin")?author=" + loginId;
+            
+        });
+
+        // 탈퇴 버튼 클릭
+        $("#user-datatable").on("click", ".QuitButton", function (e) {
+            e.preventDefault();
+
+            var id = $(this).parent().parent().attr("data-id");
+            var loginId = $(this).parent().parent().attr("data-loginId");
+
+            console.log(loginId);
+            // var id = $(this).parent().attr("data-id");
+            // var loginId = $(this).parent().attr("data-loginId");
+
+            // console.log($(this).parent().parent());
+
+            // //alert(id);
+
+            //if (!confirm(loginId + "계정을 탈퇴 처리 하시겠습니까?"))
+            if (!confirm(loginId + "계정을 탈퇴 처리 하시겠습니까?"))
+                return;
+
+            $.ajax({
+                //url: "@Url.Action("QuitUser")",
+                type:"POST",
+                url:"/account/leave",
+                data: {
+                    "id": id,
+                    "loginId": loginId
+                },
+                dataType: "json",
+                type: "POST",
+                success: function (obj) {
+                    if (obj.result == "OK") {
+                        alert("탈퇴 처리되었습니다");
+                        dataTableInstance.ajax.reload();
+                        return;
+                    } else {
+                        alert(obj.reason);
+                    }
+                },
+                error: function () {
+                    alert("탈퇴 처리 요청 중 오류");
+                }
+            });
+            
+        });
+
+        // 사용자 구분
+        $("input[name='UserTypeFilter']").change(function () {
+            dataTableInstance.ajax.reload();
+        });
+
+        $("#SearchTextFindButton").click(function (e) {
+            e.preventDefault();
+
+            dataTableInstance.ajax.reload();
+        });
+
+        // 정보 수정 완료
+        $("#UserFormSubmitButton").click(function (e) {
+            e.preventDefault();
+
+            $("#UserForm").ajaxSubmit({
+                //url:"/account/user",
+                dataType: "json",
+                type : "POST",
+                beforeSubmit: function () {
+
+                },
+                success: function (obj) {
+                    if (obj.result == "OK") {
+                        $("#UserEditDialog").modal("hide");
+                        dataTableInstance.ajax.reload();
+                        return;
+                    }
+                    alert(obj.reason);
+                },
+                error: function () {
+                    alert("서버 오류");
+                }
+            });
+        });
+
+        dataTableInstance = $('#user-datatable').DataTable({
+            "serverSide": true,
+            "searching": false,
+            "ajax": {
+                //url: "@Url.Action("UserList")",
+                url:"/game/list",
+                "type": "POST",
+                "data": function (d) {
+                    return $.extend({}, d, {
+                        "userTypeFilter": $("input[name='UserTypeFilter']:checked").val(),
+                        "search" : $("#searchText").val()
+                    });
+                }
+            },
+            responsive : false,
+            order: [[ 1, 'asc' ]],
+            columns: [
+
+                {
+                    data: "id",
+                    render: function (d) {
+                        //return d;// return "<input type='checkbox' name='chk' id='chk" + d + "' value='" + d + "' /><label for='chk" + d + "'>" + d + "</label>";
+                        return "<a href='#' class='UserIdPopup' data-id='" + d + "'>" + d + "</a>";
+                    }
+                },
+                {
+                    data: "strWinNumbers",
+                    // render: function (d) {
+                    //     return "<a href='#' class='UserIdPopup' data-id='" + d + "'>" + d + "</a>";
+                    // }
+                },
+                {
+                    data: "iScore", render: function (d, t, row) {
+                        var label = d;
+                        if (row.userType == "TEST")
+                            label = label + '<i class="far fa-grimace"></i>';
+                        else if (row.userType == "ADMIN")
+                            label += '<i class="fas fa-users-cog"></i>';
+                        return label;
+                    }
+                },
+                { data: "iRound" },
+                { data: "strRoundInfo" },
+                {
+                     data: "eGameType",
+                    // render: function (d, t, s, m) {
+                    //     var text = "";
+                    //     if (d == "FORBIDDEN")
+                    //         text = "차단";
+                    //     else if (d == "LOCKED")
+                    //         text = "잠김";
+                    //     else if (d == "QUIT")
+                    //         text = "탈퇴";
+                    //     else
+                    //         text = "정상";
+                    //     return text;
+                    // }
+                },
+                { data : "eWinType"},
+                {
+                    data: "dateDraw"
+                },
+
+
+                { data: "createdAt" },
+            ],
+            keys: true,
+            "language": {
+                "paginate": {
+                    "previous": "<i class='mdi mdi-chevron-left'>",
+                    "next": "<i class='mdi mdi-chevron-right'>"
+                },
+                "info": "현재 페이지 _PAGE_/_PAGES_, 총 _TOTAL_ 건",
+                "lengthMenu": "한 페이지 길이 _MENU_",
+                "emptyTable": "조건에 맞는 데이터가 없습니다",
+                "infoEmpty" : "표시할 데이터 없음"
+            },
+            "sort": false,
+            "drawCallback": function () {
+                $('.dataTables_paginate > .pagination').addClass('pagination-rounded');
+            },
+            createdRow: function (row, data) {
+                $(row).attr("data-id", data.id);
+                $(row).attr("data-loginId", data.strLoginID);
+                if (data.eStatus == "QUIT")
+                    $(row).addClass("table-dark");
+
+            }
+        });
+
+
+    });
+</script>

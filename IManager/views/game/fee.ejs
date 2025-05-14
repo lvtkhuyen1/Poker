@@ -1,0 +1,275 @@
+
+<head>
+    
+</head>
+
+
+<!-- start page title -->
+<div class="row">
+    <div class="col-12">
+        <div class="page-title-box">
+            <div class="page-title-right">
+                <ol class="breadcrumb m-0">
+                    <li class="breadcrumb-item"><a href="javascript: void(0);">게임관리</a></li>
+                    <li class="breadcrumb-item active">게임 설정</li>
+                </ol>
+            </div>
+            <h4 class="page-title">게임 설정</h4>
+        </div>
+    </div>
+</div>
+<!-- end page title -->
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                   <div class="table-responsive">
+                    <table id="user-datatable" class="table table-sm table-hover dt-responsive nowrap w-100">
+                        <thead>
+                            <tr>
+                                <th>색인</th>
+                                <th>홀덤</th>
+                                <th>싯고</th>
+                                <th>빅투</th>
+                                <th>오마하</th>
+                                <th>바카라</th>
+                            </tr>
+                        </thead>
+                    </table>
+                </div>
+            </div> <!-- end card-body-->
+        </div> <!-- end card-->
+    </div> <!-- end col -->
+
+    <div class="modal fade task-modal-content" id="BuildAgentDialog" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" id="NewTaskModalLabel">수정</h4>
+                    <button type="button" class="close" data-bs-dismiss="modal" aria-hidden="true">×</button>
+                </div>
+                <div class="modal-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="birthdatepicker">홀덤</label>
+                                    <input type="text" class="form-control date" id="fHoldem" name="fHoldem" placeholder="">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="birthdatepicker">빅투</label>
+                                    <input type="text" class="form-control date" id="fBig2" name="fBig2" placeholder="">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="birthdatepicker">싯고</label>
+                                    <input type="text" class="form-control date" id="fSitgo" name="fSitgo" placeholder="">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="birthdatepicker"> 오마하</label>
+                                    <input type="text" class="form-control date" id="fOmaha" name="fOmaha" placeholder="">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="birthdatepicker">바카라</label>
+                                    <input type="text" class="form-control date" id="fBaccarat" name="fBaccarat" placeholder="">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="text-right">
+                            <button type="button" class="btn btn-primary" onclick="RequestRegister();">저장</button>
+                            <button type="button" class="btn btn-light" data-bs-dismiss="modal">취소</button>
+                        </div>
+                    <!-- </form> -->
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+
+</div>
+<!-- end row -->
+<script type="text/javascript" src="js/time.js"></script>
+<script type="text/javascript">
+
+    var dataTableInstance;
+
+    $(document).ready(function(){
+
+        // 테이블의 login id 컬럼 클릭 처리
+        $(document).on("click", ".UserIdPopup", function (e) {
+            e.preventDefault();
+
+            $.ajax({
+                url:"/game/request_feedetail",
+                type:"POST",
+                dataType: "json",
+                success: function (obj) {
+                    if (obj.result == "OK") {
+
+                        console.log(obj.data);
+
+                        const data = obj.data;
+
+                        $('#fHoldem').val(data.fHoldem);
+                        $('#fSitgo').val(data.fSitgo);
+                        $('#fBig2').val(data.fBig2);
+                        $('#fOmaha').val(data.fOmaha);
+                        $('#fBaccarat').val(data.fBaccarat);
+                        
+                        $("#BuildAgentDialog").modal("show");
+                    } else {
+                        alert(obj.reason);
+                    }
+                }, error: function () {
+                    alert("조회 중 오류 발생");
+                }
+            });
+        });
+
+        // 정보 수정 완료
+        $("#UserFormSubmitButton").click(function (e) {
+            e.preventDefault();
+
+            $("#UserForm").ajaxSubmit({
+                //url:"/account/user",
+                dataType: "json",
+                type : "POST",
+                beforeSubmit: function () {
+
+                },
+                success: function (obj) {
+                    if (obj.result == "OK") {
+                        $("#UserEditDialog").modal("hide");
+                        dataTableInstance.ajax.reload();
+                        return;
+                    }
+                    alert(obj.reason);
+                },
+                error: function () {
+                    alert("서버 오류");
+                }
+            });
+        });
+
+        dataTableInstance = $('#user-datatable').DataTable({
+            "serverSide": true,
+            "searching": false,
+            "ajax": {
+                //url: "@Url.Action("UserList")",
+                url:"/game/request_fee",
+                "type": "POST",
+            },
+            responsive : false,
+            order: [[ 1, 'asc' ]],
+            columns: [
+
+                {
+                    data: "id",
+                    // render: function (d, t) {
+                    //     return d;// return "<input type='checkbox' name='chk' id='chk" + d + "' value='" + d + "' /><label for='chk" + d + "'>" + d + "</label>";
+                    // }
+                    render: function (d) {
+                        return "<a href='#' class='UserIdPopup' data-id='" + d + "'>" + d + "</a>";
+                    }
+                },
+                {
+                    data: "fHoldem",
+                    render: function (d) {
+                        return "<a href='#' class='UserIdPopup' data-id='" + d + "'>" + d + "</a>";
+                    }
+                },
+                {
+                    data: "fSitGo",
+                    render: function (d) {
+                        return "<a href='#' class='UserIdPopup' data-id='" + d + "'>" + d + "</a>";
+                    }
+                },
+                {
+                    data: "fBig2",
+                    render: function (d) {
+                        return "<a href='#' class='UserIdPopup' data-id='" + d + "'>" + d + "</a>";
+                    }
+                },
+                {
+                    data: "fOmaha",
+                    render: function (d) {
+                        return "<a href='#' class='UserIdPopup' data-id='" + d + "'>" + d + "</a>";
+                    }
+                },
+                {
+                    data: "fBaccarat",
+                    render: function (d) {
+                        return "<a href='#' class='UserIdPopup' data-id='" + d + "'>" + d + "</a>";
+                    }
+                },
+              
+            ],
+            keys: true,
+            "language": {
+                "paginate": {
+                    "previous": "<i class='mdi mdi-chevron-left'>",
+                    "next": "<i class='mdi mdi-chevron-right'>"
+                },
+                "info": "현재 페이지 _PAGE_/_PAGES_, 총 _TOTAL_ 건",
+                "lengthMenu": "한 페이지 길이 _MENU_",
+                "emptyTable": "조건에 맞는 데이터가 없습니다",
+                "infoEmpty" : "표시할 데이터 없음"
+            },
+            "sort": false,
+            "drawCallback": function () {
+                $('.dataTables_paginate > .pagination').addClass('pagination-rounded');
+            },
+            createdRow: function (row, data) {
+                $(row).attr("data-id", data.id);
+                $(row).attr("data-loginId", data.strID);
+            }
+        });
+    });
+
+    let RequestRegister = () => {
+        event.preventDefault();
+        const fHoldem = $('#fHoldem').val();
+        const fSitgo = $('#fSitgo').val();
+        const fBig2 = $('#fBig2').val();
+        const fOmaha = $('#fOmaha').val();
+        const fBaccarat = $('#fBaccarat').val();
+
+        let object = ({fHoldem:fHoldem, fSitgo:fSitgo, fBig2:fBig2, fOmaha:fOmaha, fBaccarat:fBaccarat});
+
+        $.ajax({
+            url:"/game/request_modifyfee",
+            type:"POST",
+            data: object,
+            dataType: "json",
+            success: function (obj) {
+                console.log(obj);
+
+                if ( obj.result == 'OK' )
+                {
+                    alert('완료 되었습니다.');
+                    location.reload();
+                }
+                else
+                {
+                }
+            }, 
+            error: function () {
+                alert("조회 중 오류 발생");
+            }
+        });
+    }
+
+</script>

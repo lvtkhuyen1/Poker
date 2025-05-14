@@ -1,0 +1,107 @@
+<html>
+<title>공지사항</title>
+<body>
+
+    <!-- sub_content -->
+    <div class="sub_content_arr_bg">
+        <div class="sub_content_arr">
+            <div>
+                    <h2><em class="ic"></em> 공지사항 <small>notice</small></h2>
+                    <!-- 서브타이틀 -->
+                    
+                    <table width="100%" border="0" cellpadding="0" cellspacing="0" class="topth">
+                        <thead>
+                            <tr align="center">
+                                <th height="30">번호</th>
+                                <th>제목</th>
+                                <th>작성일</th>
+                            </tr>
+                        </thead>
+                    </table>            
+                    <table width="100%" border="0" cellpadding="0" cellspacing="0" class="bbs-list">
+                        <tbody id = "noticelist">
+
+                        </tbody>        
+                    </table>
+                    <!-- 페이징 시작 -->
+                    <div class="clear"> </div>
+                    <div class="paging_list"> 
+                        <div class="tf_pagination_notice">
+                            <ul>
+                                <li>
+                                    <a id="pre-btn" href="javascript:void(0);">
+                                        <i class="fa fa-chevron-left" aria-hidden="true"></i>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="active">1</a>
+                                </li>
+                                <li>
+                                    <a id="next-btn" href="javascript:void(0);">
+                                        <i class="fa fa-chevron-right" aria-hidden="true"></i>
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+
+<script>
+    
+    $(document).on('ready', ()=> {
+        this.announcementlist();
+    });
+    function announcementlist()
+    {
+        $.ajax({
+        url:"/announcement/request_announcementlist",
+            type:"POST",
+            data: {},
+            dataType: "json",
+            success: function (ret) {
+                if (ret.result == "OK") {
+                    $('#noticelist').empty();
+                    console.log(ret);
+                    for ( let i in ret.data )
+                    {
+                        let strBoardId = `board_${ret.data[i].id}`;
+                            let tag = `
+                            <tr class="notice memo_view" height="30">
+                                <th height="30" align="center" class="num">
+                                    <img src="images/icon_notice.gif"> ${ret.data[i].id}
+                                </th>                            
+                                <th class="subject" align="center">
+                                    <div class="message">  
+                                        <a href="#" onclick="showBoard('${strBoardId}')" style="display:contents;">
+                                            <div class="message">${ret.data[i].strSubject}</div>
+                                        </a>
+                                    </div> 
+                                </th>                            
+                                <th>${ret.data[i].createdAt}</th>
+                            </tr>
+                            <tr class="auto" id="${strBoardId}" style="display:none;">
+                                <td colspan="8">${ret.data[i].strContents ? ret.data[i].strContents.replace(/\n/g, '<br>') : ''}</td>
+                            </tr>
+                            `;
+                            $('#noticelist').append(tag);
+                    }
+                }
+                else
+                {
+                    alert(ret.reason);
+                }
+            }, error: function () {
+                alert("조회 중 오류 발생");
+            }
+        });
+    }
+    function showBoard(objId) {
+            console.log(objId);
+            const dis = document.getElementById(objId).style.display == "none" ? "contents" : "none";
+            document.getElementById(objId).style.display = dis;
+    }
+</script>

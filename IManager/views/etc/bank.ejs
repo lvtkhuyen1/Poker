@@ -1,0 +1,154 @@
+
+<head>
+    
+</head>
+
+<!-- start page title -->
+<div class="row">
+    <div class="col-12">
+        <div class="page-title-box">
+            <div class="page-title-right">
+                <ol class="breadcrumb m-0">
+                    <li class="breadcrumb-item"><a href="javascript: void(0);">은행코드 관리</a></li>
+                    <li class="breadcrumb-item active">은행코드 관리</li>
+                </ol>
+            </div>
+            <h4 class="page-title">은행코드 관리</h4>
+        </div>
+    </div>
+</div>
+<!-- end page title -->
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <div class="row mb-2">
+                    <!-- <div class="col-sm-2">
+                        <a href="javascript:void(0);" class="btn btn-danger mb-2 CreateAnnouncement" style="color: white;"><i class="mdi mdi-plus-circle mr-2"></i> 팝업 작성</a>
+                    </div> -->
+                    
+                    <div class="col-sm-7">
+                        <div class="text-sm-right">
+                            <!--
+                            <button type="button" class="btn btn-success mb-2 mr-1"><i class="mdi mdi-settings"></i></button>
+                            <button type="button" class="btn btn-light mb-2">Export</button>
+                                -->
+                        </div>
+                    </div><!-- end col-->
+                </div>
+
+                <div class="table-responsive">
+                    <table id="user-datatable" class="table table-sm table-hover dt-responsive nowrap w-100">
+                        <thead>
+                            <tr>
+                                <th>순번</th>
+                                <th>은행코드</th>
+                                <th>은행이름</th>
+                                <th>상태</th>
+                            </tr>
+                        </thead>
+                    </table>
+                </div>
+            </div> <!-- end card-body-->
+        </div> <!-- end card-->
+    </div> <!-- end col -->
+</div>
+<!-- end row -->
+
+<script type="text/javascript">
+
+    var dataTableInstance;
+
+    $(document).ready(function(){
+        // eState 드롭다운 변경 이벤트 핸들링
+        $('#user-datatable').on('change', '.eState-dropdown', function() {
+            var id = $(this).data('id');
+            var newState = $(this).val();
+
+            $.ajax({
+                url: '/etc/bankregister_setting',
+                type: 'POST',
+                data: {
+                    id: id,
+                    eState: newState
+                },
+                success: function (obj) {
+                    if (obj.result == "OK") {
+                        dataTableInstance.ajax.reload();
+                        return;
+                    }
+                    else
+                    {
+                        alert(obj.reason);
+                    }
+                },
+                error: function () {
+                    alert("조회 중 오류가 생겼습니다.");
+                }
+            });
+        });
+
+        dataTableInstance = $('#user-datatable').DataTable({
+            "serverSide": true,
+            "searching": false,
+            "ajax": {
+                //url: "@Url.Action("UserList")",
+                url:"/etc/request_banklist",
+                "type": "POST",
+                "data": function (d) {
+                    return $.extend({}, d, {
+                        // "userTypeFilter": $("input[name='UserTypeFilter']:checked").val(),
+                        // "search" : $("#searchText").val(),
+                        // "iClass" : 1,
+                    });
+                }
+            },
+            responsive : false,
+            order: [[ 1, 'desc' ]],
+            columns: [
+                {
+                    data: "id"
+                },
+                {
+                    data: "iBankCode"
+                },
+                { 
+                    data: "strBankName"
+                },
+                {
+                    data: "eState",
+                    render: function (data, type, row) {
+                        var selectedEnable = data === 'ENABLE' ? 'selected' : '';
+                        var selectedDisable = data === 'DISABLE' ? 'selected' : '';
+
+                        return `
+                            <select class="eState-dropdown" data-id="${row.id}">
+                                <option value="ENABLE" ${selectedEnable}>보이기</option>
+                                <option value="DISABLE" ${selectedDisable}>숨기기</option>
+                            </select>`;
+                    }
+                }
+            ],
+            keys: true,
+            "language": {
+                "paginate": {
+                    "previous": "<i class='mdi mdi-chevron-left'>",
+                    "next": "<i class='mdi mdi-chevron-right'>"
+                },
+                "info": "현재 페이지 _PAGE_/_PAGES_, 총 _TOTAL_ 건",
+                "lengthMenu": "한 페이지 길이 _MENU_",
+                "emptyTable": "조건에 맞는 데이터가 없습니다",
+                "infoEmpty" : "표시할 데이터 없음"
+            },
+            "sort": false,
+            "drawCallback": function () {
+                $('.dataTables_paginate > .pagination').addClass('pagination-rounded');
+            },
+            createdRow: function (row, data) {
+                $(row).attr("data-id", data.id);
+                $(row).attr("data-loginId", data.strLoginID);
+            }
+        });
+    });
+</script>

@@ -1,0 +1,198 @@
+
+<head>
+    
+</head>
+
+
+<!-- start page title -->
+<div class="row">
+    <div class="col-12">
+        <div class="page-title-box">
+            <div class="page-title-right">
+                <ol class="breadcrumb m-0">
+                    <li class="breadcrumb-item"><a href="javascript: void(0);">게임관리</a></li>
+                    <li class="breadcrumb-item active">점검 설정</li>
+                </ol>
+            </div>
+            <h4 class="page-title">점검 설정</h4>
+        </div>
+    </div>
+</div>
+<!-- end page title -->
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                   <div class="table-responsive">
+                    <table id="user-datatable" class="table table-sm table-hover dt-responsive nowrap w-100">
+                        <thead>
+                            <tr>
+                                <th>서버 이름</th>
+                                <th>점검내용</th>
+                                <th>점검</th>
+                            </tr>
+                        </thead>
+                    </table>
+                </div>
+            </div> <!-- end card-body-->
+        </div> <!-- end card-->
+    </div> <!-- end col -->
+
+    <div class="modal fade task-modal-content" id="RegisterDialog" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" id="NewTaskModalLabel" >점검 내용 수정</h4>
+                    <button type="button" class="close" data-bs-dismiss="modal" aria-hidden="true">×</button>
+                </div>
+                <div class="modal-body">
+                        <form class="p-2" id="UserForm" method="POST" action="/game/inspectionregister">
+                        <input type="hidden" name="id" id="uid" value="" />
+                        <label>점검</label>
+                        <select class="form-control form-control-light" name="iOnOff" id="iOnOff">
+                            <option value="1">점검ON</option>
+                            <option value="2">점검OFF</option>
+                        </select>
+
+                        <div class="form-group">
+                            <label for="task-description">점검 내용</label>
+                            <textarea class="form-control form-control-light" id="strContents" name="strContents" rows="3" maxlength="210"></textarea>
+                        </div>
+
+                        <div class="text-right">
+                            <button type="button" class="btn btn-primary" id="UserFormSubmitButton">저장</button>
+                            <button type="button" class="btn btn-light" data-bs-dismiss="modal">취소</button>
+                        </div>
+                    </form>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+</div>
+<!-- end row -->
+<script type="text/javascript" src="js/time.js"></script>
+<script type="text/javascript">
+
+    var dataTableInstance;
+
+    // 정보 수정 완료
+    $("#UserFormSubmitButton").click(function (e) {
+            e.preventDefault();
+
+            $("#UserForm").ajaxSubmit({
+                dataType: "json",
+                type : "POST",
+                beforeSubmit: function () {
+                },
+                success: function (obj) {
+                    if (obj.result == "OK") {
+                        $("#RegisterDialog").modal("hide");
+                        dataTableInstance.ajax.reload();
+                        return;
+                    }
+                    alert(obj.reason);
+                },
+                error: function () {
+                    alert("서버 오류");
+                }
+            });
+        });
+
+    $(document).ready(function(){
+        // 내용 수정 버튼
+        $(document).on("click", ".noticeText", function (e) {
+            e.preventDefault();
+
+            var id = $(this).parent().parent().attr("data-id");
+            console.log(id);
+
+            $.ajax({
+                //url: "@Url.Action("QueryUser")",
+                url:"/game/request_inspectiondetail",
+                type:"POST",
+                data: {
+                    id : id
+                },
+                dataType: "json",
+                success: function (obj) {
+                    if (obj.result == "OK") {
+
+                        console.log(obj.data);
+
+                        $("#uid").val(obj.data.id);
+                        $("#strContents").val(obj.data.strContents);
+                        $("#iOnOff").val(obj.data.iOnOff);
+
+                        $("#RegisterDialog").modal("show");
+                    } else {
+                        alert(obj.reason);
+                    }
+                }, error: function () {
+                    alert("조회 중 오류 발생");
+                }
+            });
+        });
+
+        dataTableInstance = $('#user-datatable').DataTable({
+            "serverSide": true,
+            "searching": false,
+            "ajax": {
+                //url: "@Url.Action("UserList")",
+                url:"/game/request_inspectionlist",
+                "type": "POST",
+                "data": function (d) {
+                    return $.extend({}, d, {
+                        // "userTypeFilter": $("input[name='UserTypeFilter']:checked").val(),
+                        // "search" : $("#searchText").val(),
+                        // "iClass" : 1,
+                    });
+                }
+            },
+            responsive : false,
+            order: [[ 1, 'desc' ]],
+            columns: [
+
+                {
+                    data: "strName"
+                },
+                {
+                    data: "strContents",
+                    render: function (d) {
+                        return "<a href='#' class='noticeText' data-id='" + d + "'>" + d + "</a>";
+                    } 
+                },
+                { 
+                    data: "iOnOff",
+                    render: function (d) {
+                        var text = "";
+                        if (d == 1)
+                            text = "점검On";
+                        else if (d == 2)
+                            text = "점검Off";
+                        return "<a href='#' class='noticeText' data-id='" + d + "'>" + text + "</a>";;
+                    }
+                }
+            ],
+            keys: true,
+            "language": {
+                "paginate": {
+                    "previous": "<i class='mdi mdi-chevron-left'>",
+                    "next": "<i class='mdi mdi-chevron-right'>"
+                },
+                "info": "현재 페이지 _PAGE_/_PAGES_, 총 _TOTAL_ 건",
+                "lengthMenu": "한 페이지 길이 _MENU_",
+                "emptyTable": "조건에 맞는 데이터가 없습니다",
+                "infoEmpty" : "표시할 데이터 없음"
+            },
+            "sort": false,
+            "drawCallback": function () {
+                $('.dataTables_paginate > .pagination').addClass('pagination-rounded');
+            },
+            createdRow: function (row, data) {
+                $(row).attr("data-id", data.id);
+            }
+        });
+    });
+
+</script>

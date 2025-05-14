@@ -1,0 +1,79 @@
+<title>공지사항</title>
+<body>
+    <header class="w-screen">
+        <div class="inner w-3/5 mx-auto">
+            <a href="#">
+            <div class="logo mt-20">
+                <img src="images/logo_big.png" alt="logo" class="mx-auto">
+            </div>
+            </a>
+            <div class="mt-10 text-white text-center">
+                <h1 class="font-bold text-4xl mb-2">공지사항</h1>
+                <p>주요 소식들을 전달해 드립니다.</p>
+            </div>
+        </div>
+    </header>
+
+    <section class="mt-20">
+        <div class="relative p-5 w-4/5 mx-auto text-white border-solid border-white border-2 rounded-lg box-border bg-zinc-800">
+            <div class="absolute top-[-25px] 2xl:w-1/4 w-2/4 text-center text-xl bg-[#a11f30] px-2 py-2 box-border rounded-full text-white">공지사항</div>
+            <div class="w-full mx-auto ">
+                <ul class="mx-auto mt-8 w-full box-border" id="noticelist">
+                </ul> 
+            </div>
+            <div class="flex justify-center text-white mt-10 text-center">
+                <div class="material-icons bg-zinc-600 p-2 rounded-full cursor-pointer" >keyboard_arrow_left</div> 
+                <div class="bg-zinc-600 mx-3 py-2 px-4 rounded-full cursor-pointer leading-6">1</div> 
+                <div class="material-icons bg-zinc-600 p-2 rounded-full cursor-pointer" >keyboard_arrow_right</div>
+            </div>
+        </div>
+    </section>
+    
+</body>
+<script type="text/javascript">  
+    function showBoard(objId) {
+        console.log(objId);
+        const dis = document.getElementById(objId).style.display == "none" ? "block" : "none";
+        document.getElementById(objId).style.display = dis;
+    }
+    $(document).ready(function(){
+
+    var counter = 0;
+    var REFRESH_INTERVAL = 2000;
+    var timerId;
+
+    $.ajax({
+            type:'post',
+            url: "/announcement/request_announcementlist",
+            data:{
+            },
+            success:function(ret) {
+                console.log(ret);
+                 $('#noticelist').empty();
+                 for ( let i in ret.data )
+                 {
+                    //console.log(ret[i]);
+                        let strBoardId = `board_${ret.data[i].id}`;
+                        let tag = `
+                        <li class="liclass flex w-full pt-3 pb-5 border-b border-solid border-zinc-200 hover:bg-stone-400/50 duration-200">
+                        <a href="#" onclick="showBoard('${strBoardId}')" class="w-8/12 one">
+                            <p>
+                                ${ret.data[i].strSubject}
+                            </p>
+                        </a>
+                        <p class="two w-1/6 text-center">관리자</p>
+                        <p class="three w-1/6 text-center">${ret.data[i].createdAt}</p>
+                        <p>
+                            <div class="four material-icons w-1/12 text-center">visibility</div>
+                        </p>
+                        <div class="five material-icons mr-2">expand_more</div>
+                        </li>
+                        <div id="${strBoardId}" class="bg-stone-500 overflow-scroll py-10 px-40 w-11/12 mx-auto border-solid border-2 border-white border-t-0 scroll-auto font-semibold text-base" style="display:none;">${ret.data[i].strContents.replace(/\n/g, '<br>')}
+                        </div>
+                        `;
+                        $('#noticelist').append(tag);
+                    }                        
+            }
+        });
+    });
+</script>

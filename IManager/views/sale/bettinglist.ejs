@@ -1,0 +1,401 @@
+
+<!-- start page title -->
+<div class="row">
+    <div class="col-12">
+        <div class="page-title-box">
+            <div class="page-title-right">
+                <ol class="breadcrumb m-0">
+                    <li class="breadcrumb-item"><a href="javascript: void(0);">베팅 관리</a></li>
+                    <li class="breadcrumb-item active">베팅 목록</li>
+                </ol>
+            </div>
+            <h4 class="page-title">베팅 현황</h4>
+        </div>
+    </div>
+</div>
+<!-- end page title -->
+<div class="row">
+    <div class="card col-12">
+        <div class="card-body">
+            <!-- 기준 시각 <label id="lastRefreshTime">00:00</label> <a href="#" id="RefreshButton" alt="새로고침"><i class="fas fa-sync-alt"></i></a> -->
+                <div class="form-row  align-items-center">
+                    <div class="col-auto">
+                        <label class="col-form-label">검색 날짜 범위</label>
+                    </div>
+                    <div class="col-auto">
+                        <label class="sr-only">시작 날짜</label>
+                        <input type="text" class="form-control mb-2" id="startDate" data-provide="datepicker" placeholder="">
+                    </div>
+                    <div class="col-auto">
+                        <label class="sr-only">마지막 날짜</label>
+                        <input type="text" class="form-control mb-2" id="endDate" data-provide="datepicker" placeholder="">
+                    </div>
+                    <div class="col-auto">
+                        <button type="button" class="btn btn-primary mb-2" id="FindButton">검색</button>
+                    </div>
+                </div>
+        </div>
+    </div>
+</div>
+<div id= "bettinglist" class="row">
+    <div class="card col-12">
+        <div class="card-body">
+            <h5 class="card-title mb-0">
+                베팅 상세 내역
+            </h5>
+            <div class="collapse pt-3 show">
+                <table id="dataTable" class="table table-sm dt-responsive nowrap w-100">
+                    <thead>
+                        <tr>
+                            <th>ID / 닉네임</th>
+                            <th>딜비 요율</th>
+                            <th>딜비 합계</th>
+                            <th>총 베팅 금액</th>
+                            <!-- <th>지급 금액</th> -->
+                        </tr>
+                    </thead>
+                    <tbody id="listObjects">
+
+                        
+                    </tbody>
+                </table>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+ <div id= "SettlementDialog" class="row">
+    <div class="card col-12">
+        <div class="card-body">
+            <h5 class="card-title mb-0">
+                하부 딜비 목록
+            </h5>
+            <button id = "dialogCloseButton" class="close-button" style="float: right; margin-right: 20px; margin-bottom: 10px;">닫기</button>
+            <div class="collapse pt-3 show">
+                <table id="dataTable" class="table table-sm dt-responsive nowrap w-100">
+                    <thead>
+                        <tr>
+                            <th>ID / 닉네임</th>
+                            <th>딜비 요율</th>
+                            <th>딜비 합계</th>
+                            <th>총 베팅 금액</th>
+                            <!-- <th>지급 금액</th> -->
+                        </tr>
+                    </thead>
+                    <tbody id="listSettlement">
+                        
+                    </tbody>
+                </table>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    $("#startDate").datepicker({
+            format: 'yyyy-mm-dd',
+            language : 'kr'
+        });
+        $("#endDate").datepicker({
+            format: 'yyyy-mm-dd',
+            language: 'kr'
+        });
+
+        var leadingZeros = (n, digits) => {
+            var zero = '';
+            n = n.toString();
+
+            if (n.length < digits) {
+                for (var i = 0; i < digits - n.length; i++)
+                    zero += '0';
+            }
+            return zero + n;
+        }
+        let getTimeStartStamp = ()=> {
+            var now = new Date();
+
+            var d = new Date(now.setDate(now.getDate()));
+            var s =
+                leadingZeros(d.getFullYear(), 4) + '-' +
+                leadingZeros(d.getMonth() + 1, 2) + '-' +
+                leadingZeros(d.getDate(), 2);
+
+            return s;
+        }
+        let getTimeEndStamp = ()=> {
+            var now = new Date();
+
+            var d = new Date(now.setDate(now.getDate() - 1));
+            var s =
+                leadingZeros(d.getFullYear(), 4) + '-' +
+                leadingZeros(d.getMonth() + 1, 2) + '-' +
+                leadingZeros(d.getDate(), 2);
+
+            return s;
+        }
+        let today = getTimeStartStamp();
+        let yesterday = getTimeEndStamp();
+        $('#startDate').val(yesterday);
+        $('#endDate').val(today);
+
+        //하부 보여주기 모달
+        function openDialog(event){
+            event.preventDefault();
+            const id = event.target.text;
+            const dialog = document.querySelector('#SettlementDialog');
+            const closeButton = document.querySelector('#dialogCloseButton');
+            const bettinglist = document.querySelector('#bettinglist');
+        
+            closeButton.addEventListener('click', () => {
+                dialog.style.display = 'none';
+                bettinglist.style.display = 'block';
+            });
+            $.ajax({
+                url:"/inout/bettingdetail",
+                type:"POST",
+                data: {
+                    id : id,
+                    startDate:$('#startDate').val(),
+                    endDate:$('#endDate').val()
+                },
+                dataType: "json",
+                success: function (obj) {
+                    if (obj.result == "OK") {
+                    //console.log(obj);
+                    $('#listSettlement').empty();
+
+                    for ( let i in obj.data )
+                    {
+                        console.log(obj.data[i]);
+                        const formattedAmount = Number(obj.data[i].iAmount).toLocaleString();
+                        const formattedRolling = Number(obj.data[i].iRolling).toLocaleString();
+                            tag = `
+                            <tr>
+                                <td><a href="#" onclick="openDialog(event)">${obj.data[i].strID}</a> / ${obj.data[i].strName}</td>
+                                <td>${obj.data[i].fHoldemR}</td>
+                                <td>${formattedRolling}</td>
+                                <td>${formattedAmount}</td>
+                            </tr>
+                            `;                   
+                        $('#listSettlement').append(tag);
+                    }
+                    // show dialog
+                    bettinglist.style.display = 'none';
+                    dialog.style.display = 'block';
+                    } else {
+                        alert(obj.reason);
+                    }
+                }, error: function () {
+                    alert("조회 중 오류 발생");
+                }
+            });
+    }
+    
+ $(document).on('click', '#FindButton', (e) => {
+
+        var counter = 0;
+        var REFRESH_INTERVAL = 2000;
+        var timerId;
+
+        $.ajax({
+                type:'post',
+                url: "/inout/findbettinglist",
+                data:{startDate:$('#startDate').val(),
+                        endDate:$('#endDate').val()},
+                success:function(ret) {
+                    console.log(ret);
+
+                    $('#listObjects').empty();
+                    for ( let i in ret )
+                    {
+                        console.log(ret[i]);
+                        for ( let j in ret[i].datas)
+                        {
+                            console.log(ret[i].datas[j]);
+                            const formattedAmount = Number(ret[i].datas[j].total_iAmount).toLocaleString();
+                            const formattedRolling = Number(ret[i].datas[j].total_iRollingPAdmin).toLocaleString();
+                            tag = `
+                            <tr>
+                                <td><a href="#" onclick="openDialog(event)">${ret[i].strID}</a> / ${ret[i].strName}</td>
+                                <td>${ret[i].fHoldemR}</td>
+                                <td>${formattedRolling}</td>
+                                <td>${formattedAmount}</td>
+                            </tr>
+                            `;
+                        }                        
+                        $('#listObjects').append(tag);
+                    }
+                }
+            });
+    });
+    $(document).ready(function () {
+
+        var counter = 0;
+        var REFRESH_INTERVAL = 2000;
+        var timerId;
+        document.querySelector('#SettlementDialog').style.display = 'none';
+
+        $.ajax({
+                type:'post',
+                url: "/inout/findbettinglist",
+                data:{startDate:$('#startDate').val(),
+                        endDate:$('#endDate').val()},
+                success:function(ret) {
+                    console.log(ret);
+
+                    $('#listObjects').empty();
+                    for ( let i in ret )
+                    {
+                        console.log(ret[i]);
+
+                        for ( let j in ret[i].datas)
+                        {
+                            console.log(ret[i].datas[j]);
+                            const formattedAmount = Number(ret[i].datas[j].total_iAmount).toLocaleString();
+                            const formattedRolling = Number(ret[i].datas[j].total_iRollingPAdmin).toLocaleString();
+                            tag = `
+                            <tr>
+                                <td><a href="#" onclick="openDialog(event)">${ret[i].strID}</a> / ${ret[i].strName}</td>
+                                <td>${ret[i].fHoldemR}</td>
+                                <td>${formattedRolling}</td>
+                                <td>${formattedAmount}</td>
+                            </tr>
+                            `;
+                        }
+                        $('#listObjects').append(tag);
+                    }
+                }
+            });
+
+    });
+
+        // $("#startDate").datepicker({
+        //     format: 'yyyy-mm-dd',
+        //     language : 'kr'
+        // });
+        // $("#endDate").datepicker({
+        //     format: 'yyyy-mm-dd',
+        //     language: 'kr'
+        // });
+
+
+        // $("#FindButton").click(function (e) {
+        //     e.preventDefault();
+
+        //     dataTableInstance.ajax.reload();
+        // });
+
+        // var leadingZeros = (n, digits) => {
+        //     var zero = '';
+        //     n = n.toString();
+
+        //     if (n.length < digits) {
+        //         for (var i = 0; i < digits - n.length; i++)
+        //             zero += '0';
+        //     }
+        //     return zero + n;
+        // }
+        // let getTimeStamp = ()=> {
+        //     var now = new Date();
+
+        //     var d = new Date(now.setDate(now.getDate()));
+        //     var s =
+        //         leadingZeros(d.getFullYear(), 4) + '-' +
+        //         leadingZeros(d.getMonth() + 1, 2) + '-' +
+        //         leadingZeros(d.getDate(), 2);
+
+        //     return s;
+        // }
+        // let today = getTimeStamp();
+        // $('#startDate').val(today);
+        // $('#endDate').val(today);
+
+        // function refreshData() {
+        //     dataTableInstance.ajax.reload();
+        // }
+
+
+
+    //     // 리스트
+    //     dataTableInstance = $('#dataTable').DataTable({
+    //         "serverSide": true,
+    //         "searching": false,
+    //         //paging : false,
+    //         //lengthChange : false,
+    //         "ajax": {
+    //             url:"/inout/findbettinglist",
+    //             "type": "POST",
+    //             "data": function (d) {
+    //                 return $.extend({}, d, {
+    //                     //strGroupID:
+    //                     startDate:$('#startDate').val(),
+    //                     endDate:$('#endDate').val(),
+    //                     // extra data
+    //                 });
+    //             }
+    //         },
+    //         columns: [
+    //             {
+    //                 data: "strID",render: function (d) {
+    //                     //return "<a href='#' class='ChangeStateButton' data-id='" + d + "'>" + d + "</a>";
+    //                     return "<a href='#' class='AddSettlementlist' data-id='" + d + "'>" + d + "</a>";
+    //                 }
+    //             },
+    //             {
+    //                 data: "fHoldemR"
+    //             },
+    //             {
+    //                 data: "datas[total_iAmount]"
+    //             },
+    //             {
+    //                 data: "total_iAmount"
+    //             },
+    //             {
+    //                 data: ""
+    //             },
+    //         ],
+    //         //order: [[0, "desc"]],
+    //         keys: true,
+    //         "language": {
+    //             "paginate": {
+    //                 "previous": "<i class='mdi mdi-chevron-left'>",
+    //                 "next": "<i class='mdi mdi-chevron-right'>"
+    //             },
+    //             "info": "현재 페이지 _PAGE_/_PAGES_, 총 _TOTAL_ 건",
+    //             "lengthMenu" : "한 페이지 길이 _MENU_",
+    //             "emptyTable": "조건에 맞는 데이터가 없습니다",
+    //             "infoEmpty" : "표시할 데이터 없음"
+    //         },
+    //         "sort": false,
+    //         "drawCallback": function () {
+    //             $('.dataTables_paginate > .pagination').addClass('pagination-rounded');
+    //         },
+    //     });
+
+    //     //$("#AddSettlementlist").click(function (e) {
+    //     $('#dataTable').on('click', 'td', function() {
+    //         console.log("aaa");
+    //         // 현재 선택된 셀의 행 인덱스와 데이터 가져오기
+    //         var cell = dataTableInstance.cell(this);
+    //         var row = cell.index().row;
+    //         var data = dataTableInstance.row(row).data();
+
+    //         // 새로운 행에 추가할 데이터 구성
+    //         var newData = {
+    //         id: 'new ID',
+    //         name: 'new Name',
+    //         phone: 'new Phone'
+    //         };
+
+    //         // 선택된 행 다음에 새로운 행 추가
+    //         dataTableInstance.row.add(['','','']).draw();
+    //         //dataTableInstance.row.add(newData).draw(false);
+    //     });
+    //     $("#RefreshButton").click(function (e) {
+    //         e.preventDefault();
+    //         refreshData();
+    //     });
+    // });
+</script>

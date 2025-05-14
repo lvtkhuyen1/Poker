@@ -1,0 +1,462 @@
+<!-- 메인 컨텐츠 -->
+<div id="layoutSidenav_content">
+    <main>
+        <div class="container-fluid px-4">
+            <h1 class="mt-4">홈</h1>
+            <ol class="breadcrumb mb-4">
+                <li class="breadcrumb-item active">home</li>
+            </ol>
+            <!-- 테이블1번 -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <i class="fas fa-table me-1"></i>
+                    머니 및 포인트 현황
+                </div>
+                <div class="card-body table-responsive">
+                    <table id="dataTable3" class="table table-hover dt-responsive table-bordered text-center nowrap w-100 num_1_table">
+                        <thead>
+                            <tr>
+                                <% if (user.iClass == 0) { %>
+                                <th>낙전</th>
+                                <% } %>
+                                <th>보유머니</th>
+                                <th>보유포인트</th>
+                                <% if (user.iClass <= 0) { %>
+                                <th>본사보유머니</th>
+                                <th>본사보유포인트</th>
+                                <% } %>
+                                <% if ( user.iClass <= 1 ) { %>
+                                <th>지사보유머니</th>
+                                <th>지사보유포인트</th>
+                                <% } %>
+                                <% if (user.iClass <= 2) { %>
+                                <th>총판보유머니</th>
+                                <th>총판보유포인트</th>
+                                <% } %>
+                                <% if (user.iClass <= 3) { %>
+                                <th>매장보유머니</th>
+                                <th>매장보유포인트</th>
+                                <% } %>
+                                <% if (user.iClass <= 4) { %>
+                                <th>유저보유머니</th>
+                                <th>유저보유포인트</th>
+                                <% } %>
+                                <th>총보유머니</th>
+                                <th>총보유포인트</th>
+                                <% if (user.iClass == 0) { %>
+                                <th>잭팟</th>
+                                <% } %>
+                            </tr>
+                        </thead>
+                        <tbody>
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <!-- 테이블1번 끝 -->
+            <!-- 테이블2번 -->
+            <% if (user.iClass == 0) { %>
+            <div class="card mb-4">
+                <div class="card-header">
+                    <i class="fas fa-table me-1"></i>
+                    일일 충환전
+                </div>
+                <div class="card-body table-responsive">
+                    <table id="dataTable" class="table table-hover table-bordered text-center">
+                        <thead>
+                            <tr>
+                                <th>포인트지급 횟수</th>
+                                <th>총 포인트지급</th>
+                                <th>머니회수 횟수</th>
+                                <th>총 머니회수</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <!-- 테이블2번 끝 -->
+
+            <!-- 테이블 3번 -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <i class="fas fa-table me-1"></i>
+                    일일 충환전(온라인)
+                </div>
+                <div class="card-body table-responsive">
+                    <table id="dataTable2" class="table table-hover table-bordered text-center">
+                        <thead>
+                            <tr>
+                                <th>충전 수</th>
+                                <th>충전 합계</th> 
+                                <th>환전 수</th>
+                                <th>환전 합계</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <% } %>
+            <!-- 테이블 3번 끝 -->
+            <!-- 테이블4번 -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <i class="fas fa-table me-1"></i>
+                    공지사항
+                </div>
+                <div class="card-body table-responsive">
+                    <table class="table table-hover table-bordered text-center">
+                        <thead>
+                            <tr>
+                                <th>순번</th>
+                                <th>제목</th>
+                                <th>내용</th>
+                                <th>등록일</th>
+                            </tr>
+                        </thead>
+                        <tbody id="noticelist">
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <!-- 테이블4번 끝 -->
+        </div>
+    </main>
+</div>
+<!-- 메인 컨텐츠 끝 -->
+<div class="modal fade task-modal-content" id="Dialog" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="NewTaskModalLabel" >공지사항 </h4>
+                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close" aria-hidden="true">×</button>
+            </div>
+            <div class="modal-body">
+                    <input type="hidden" name="id" id="uid" value="" />
+                    <div class="form-group">
+                        <label for="task-description">제목</label>
+                        <textarea class="form-control form-control-light" id="strSubject" name="strSubject" rows="1" maxlength="100" readonly></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="task-description">공지사항 내용</label>
+                        <textarea class="form-control form-control-light" id="strContents" name="strContents" rows="20" maxlength="510" readonly></textarea>
+                    </div>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+<script type="text/javascript">
+    var dataTableInstance;
+    var dataTableInstance2;
+    var dataTableInstance3;
+    var user = JSON.parse('<%-JSON.stringify(user)%>');
+    $(document).ready(function () {
+        $.ajax({
+                //url: "@Url.Action("QueryUser")",
+                url: "/announcement/request_main_announcementlist",
+                type: "POST",
+                data: {},
+                dataType: "json",
+                success: function (obj) {
+                    if (obj.result == "OK") {
+                        $("#noticelist").empty();
+                        for(let i in obj.data)
+                        {
+                            let tag = `
+                            <tr>
+                                <td>${obj.data[i].id}</td>
+                                <td>${obj.data[i].strSubject}</td>
+                                <td><a href='#' class='noticeText' data-id='${obj.data[i].id}'>${obj.data[i].strContents}</a></td>
+                                <td>${obj.data[i].createdAt}</td>
+                            </tr>
+                            `;
+                            console.log(obj.data[i]);
+                            $("#noticelist").append(tag);
+                        }
+                    } else {
+                        alert(obj.reason);
+                    }
+                }, error: function () {
+                    alert("조회 중 오류 발생");
+                }
+            });
+
+        // 내용 수정 버튼
+        $(document).on("click", ".noticeText", function (e) {
+            e.preventDefault();
+            var id = $(this).attr("data-id");
+            console.log(id);
+
+            $.ajax({
+                //url: "@Url.Action("QueryUser")",
+                url: "/announcement/request_announcementdetail",
+                type: "POST",
+                data: {
+                    id: id
+                },
+                dataType: "json",
+                success: function (obj) {
+                    if (obj.result == "OK") {
+
+                        console.log(obj.data);
+
+                        $("#uid").val(obj.data.id);
+                        $("#strSubject").val(obj.data.strSubject);
+                        $("#strContents").val(obj.data.strContents);
+
+                        $("#Dialog").modal("show");
+                    } else {
+                        alert(obj.reason);
+                    }
+                }, error: function () {
+                    alert("조회 중 오류 발생");
+                }
+            });
+        });
+        if(user.iClass == 0)
+        {
+            dataTableInstance = $('#dataTable').DataTable({
+                "serverSide": true,
+                "searching": false,
+                paging : false,
+                responsive : false,
+                //lengthChange : false,
+                //processing: true,
+                "ajax": {
+                    url: "/inout/cashpointlistgrouptoday",
+                    "type": "POST",
+                    "data": function (d) {
+                        return $.extend({}, d, {
+                            //strMonth: $('#startMonth').val()
+                            // 데이타 넘겨주기
+                        });
+                    }
+                },
+                columns: [
+                    {
+                        data: "pgive_count", 
+                        render: function (d, type, row) {
+                            if (row.d === '') {
+                                return '0개';
+                            }
+                            return `${d || 0}개`; // 데이터가 없는 경우 0으로 대체
+                        }
+                    },
+                    {
+                        data: "pgive_amount", 
+                        render: function (data, type, row) {
+                            if (row.dates === '') {
+                                return '0원';
+                            }
+                            return `${parseInt(data).toLocaleString()}원`;
+                        }
+                    },
+                    {
+                        data: "take_count", 
+                        render: function (d, type, row) {
+                            if (row.d === '') {
+                                return '0개';
+                            }
+                            return `${d || 0}개`; // 데이터가 없는 경우 0으로 대체
+                        }
+                    },
+                    {
+                        data: "take_amount", 
+                        render: function (data, type, row) {
+                            if (row.dates === '') {
+                                return '0원';
+                            }
+                            return `${parseInt(data).toLocaleString()}원`;
+                        }
+                    }
+                ],
+                order: [[0, "desc"]],
+                keys: true,
+                "language": {
+                    "info": "현재 페이지 총 _TOTAL_ 건",
+                    "emptyTable": "조건에 맞는 데이터가 없습니다",
+                    "infoEmpty": "표시할 데이터 없음"
+                },
+                "sort": false,
+                "drawCallback": function () {
+                    $('.dataTables_paginate > .pagination').addClass('pagination-rounded');
+                },
+                createdRow: function (row, data) {
+                    $(row).attr("data-id", data.id);
+                }
+            });
+            dataTableInstance2 = $('#dataTable2').DataTable({
+                "serverSide": true,
+                "searching": false,
+                paging : false,
+                responsive : false,
+                //lengthChange : false,
+                //processing: true,
+                "ajax": {
+                    url: "/inout/inoutlistgrouptoday",
+                    "type": "POST",
+                    "data": function (d) {
+                        return $.extend({}, d, {
+                            // 데이타 넘겨주기
+                        });
+                    }
+                },
+                columns: [
+                    
+                    {
+                        data: "input_count", 
+                        render: function (d, type, row) {
+                            if (row.d === '') {
+                                return '0개';
+                            }
+                            return `${d || 0}개`; // 데이터가 없는 경우 0으로 대체
+                        }
+                    },
+                    {
+                        data: "input_amount", 
+                        render: function (data, type, row) {
+                            if (row.dates === '') {
+                                return '0원';
+                            }
+                            return `${parseInt(data).toLocaleString()}원`;
+                        }
+                    },
+                    {
+                        data: "output_count", 
+                        render: function (d, type, row) {
+                            if (row.d === '') {
+                                return '0개';
+                            }
+                            return `${d || 0}개`; // 데이터가 없는 경우 0으로 대체
+                        }
+                    },
+                    {
+                        data: "output_amount", 
+                        render: function (data, type, row) {
+                            if (row.dates === '') {
+                                return '0원';
+                            }
+                            return `${parseInt(data).toLocaleString()}원`;
+                        }
+                    }
+                ],
+                order: [[0, "desc"]],
+                keys: true,
+                "language": {
+                    "info": "현재 페이지 총 _TOTAL_ 건",
+                    "emptyTable": "조건에 맞는 데이터가 없습니다",
+                    "infoEmpty": "표시할 데이터 없음"
+                },
+                "sort": false,
+                "drawCallback": function () {
+                    $('.dataTables_paginate > .pagination').addClass('pagination-rounded');
+                },
+                createdRow: function (row, data) {
+                    $(row).attr("data-id", data.id);
+                }
+            });
+        }
+
+        let iClass = user.iClass;
+        let columns = [];
+        if (iClass == 0) {
+            columns.push({ data: "fBreakage", title: "낙전", render: formatCurrency });
+        }
+        columns.push( { data: "iMyMoney", title: "보유머니", render: formatCurrency });
+        columns.push( { data: "iMyRolling", title: "보유포인트", render: formatCurrency });
+        if (iClass <= 0) {
+            columns.push({ data: "iTotalPAdminMoney", title: "본사보유머니", render: formatCurrency });
+            columns.push({ data: "iTotalPAdminPoint", title: "본사보유포인트", render: formatCurrency });
+        }
+
+        if (iClass <= 1) {
+            columns.push({ data: "iTotalVAdminMoney", title: "지사보유머니", render: formatCurrency });
+            columns.push({ data: "iTotalVAdminPoint", title: "지사보유포인트", render: formatCurrency });
+        }
+
+        if (iClass <= 2) {
+            columns.push({ data: "iTotalAgentMoney", title: "총판보유머니", render: formatCurrency });
+            columns.push({ data: "iTotalAgentPoint", title: "총판보유포인트", render: formatCurrency });
+        }
+
+        if (iClass <= 3) {
+            columns.push({ data: "iTotalShopMoney", title: "매장보유머니", render: formatCurrency });
+            columns.push({ data: "iTotalShopPoint", title: "매장보유포인트", render: formatCurrency });
+        }
+
+        if (iClass <= 4) {
+            columns.push({ data: "iTotalUserMoney", title: "유저보유머니", render: formatCurrency });
+            columns.push({ data: "iTotalUserPoint", title: "유저보유포인트", render: formatCurrency });
+        }
+
+        columns.push({ data: "total_amount", title: "총보유머니", render: formatCurrency }); // Adjust 'data' as per your server response
+        columns.push({ data: "total_point", title: "총보유포인트", render: formatCurrency }); // Adjust 'data' as per your server response
+        if (iClass == 0) {
+            columns.push({ data: "TotalJackpot", title: "잭팟", render: formatCurrency });
+        }
+        dataTableInstance3 = $('#dataTable3').DataTable({
+            "serverSide": true,
+            "searching": false,
+            paging : false,
+            responsive : false,
+            //lengthChange : false,
+		    //processing: true,
+            "ajax": {
+                url: "/inout/saleslistgrouptoday",
+                "type": "POST",
+                "data": function (d) {
+                    return $.extend({}, d, {
+                        strMonth: $('#startMonth').val()
+                        // 데이타 넘겨주기
+                    });
+                }
+            },
+            columns: columns,
+            order: [[0, "desc"]],
+            keys: true,
+            "language": {
+                "info": "현재 페이지 총 _TOTAL_ 건",
+                "emptyTable": "조건에 맞는 데이터가 없습니다",
+                "infoEmpty": "표시할 데이터 없음"
+            },
+            "sort": false,
+            "drawCallback": function () {
+                $('.dataTables_paginate > .pagination').addClass('pagination-rounded');
+            },
+            createdRow: function (row, data) {
+                $(row).attr("data-id", data.id);
+            }
+        });
+        function formatCurrency(data, type, row) {
+            return (parseInt(data) || 0).toLocaleString() + '원';
+        }
+    });
+
+
+    $(document).ready(function() {
+    // 화면 크기가 변경될 때 실행되는 이벤트 핸들러
+    $(window).resize(function() {
+      // 데이터테이블의 모든 열을 보이게 만듭니다.
+        $("#dataTable3").find('tr').each(function() {
+             $(this).find('td').show(); // 각 행의 데이터 셀 보이게 하기
+         });
+        });
+    });
+    $(document).ready(function() {
+    // 화면 크기가 변경될 때 실행되는 이벤트 핸들러
+    $(window).resize(function() {
+      // 데이터테이블의 모든 열을 보이게 만듭니다.
+        $("#dataTable3").find('tr').each(function() {
+             $(this).find('th').show(); // 각 행의 데이터 셀 보이게 하기
+         });
+        });
+    });
+</script>

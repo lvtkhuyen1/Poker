@@ -1,0 +1,17 @@
+#ProgressBar
+img/game/bg00.jpg, BG01
+img/game/bg01.jpg, BG02
+img/game/bg02.jpg, BG03
+img/game/bg03.jpg, BG04
+img/game/bgtext00.png, BGText01
+img/game/bgtext01.png, BGText02
+img/game/bgtext02.png, BGText03
+img/game/tabletotalpanel.png, BGTableTotalPanel
+img/game/deck00.png, BGTableDeck01
+img/game/deck01.png, BGTableDeck02
+img/game/deck02.png, BGTableDeck03
+img/game/deck03.png, BGTableDeck04
+img/game/deck04.png, BGTableDeck05
+#Button
+#Slider
+#Label

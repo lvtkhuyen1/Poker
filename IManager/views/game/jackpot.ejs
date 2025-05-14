@@ -1,0 +1,287 @@
+
+<head>
+    
+</head>
+
+
+<!-- start page title -->
+<div class="row">
+    <div class="col-12">
+        <div class="page-title-box">
+            <div class="page-title-right">
+                <ol class="breadcrumb m-0">
+                    <li class="breadcrumb-item"><a href="javascript: void(0);">게임관리</a></li>
+                    <li class="breadcrumb-item active">잭팟 설정</li>
+                </ol>
+            </div>
+            <h4 class="page-title">잭팟 설정</h4>
+        </div>
+    </div>
+</div>
+<!-- end page title -->
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                   <div class="table-responsive">
+                    <table id="user-datatable" class="table table-sm table-hover dt-responsive nowrap w-100">
+                        <thead>
+                            <tr>
+                                <th>색인</th>
+                                <th>게임</th>
+                                <th>상금레벨1</th>
+                                <th>상금레벨2</th>
+                                <th>상금레벨3</th>
+                                <th>라운드레벨1</th>
+                                <th>라운드레벨2</th>
+                                <th>라운드레벨3</th>
+                            </tr>
+                        </thead>
+                    </table>
+                </div>
+            </div> <!-- end card-body-->
+        </div> <!-- end card-->
+    </div> <!-- end col -->
+
+    <div class="modal fade task-modal-content" id="BuildAgentDialog" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" id="NewTaskModalLabel">수정</h4>
+                    <button type="button" class="close" data-bs-dismiss="modal" aria-hidden="true">×</button>
+                </div>
+                <div class="modal-body">
+                        <input type="hidden" name="id" id="uid" value="" />
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="birthdatepicker">상금레벨1</label>
+                                    <input type="text" class="form-control date" id="iLevel1Amount" name="iLevel1Amount" placeholder="">
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="birthdatepicker">상금레벨2</label>
+                                    <input type="text" class="form-control date" id="iLevel2Amount" name="iLevel2Amount" placeholder="">
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="birthdatepicker">상금레벨3</label>
+                                    <input type="text" class="form-control date" id="iLevel3Amount" name="iLevel3Amount" placeholder="">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="birthdatepicker">라운드레벨1</label>
+                                    <input type="text" class="form-control date" id="iLevel1Round" name="iLevel1Round" placeholder="">
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="birthdatepicker">라운드레벨2</label>
+                                    <input type="text" class="form-control date" id="iLevel2Round" name="iLevel2Round" placeholder="">
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="birthdatepicker">라운드레벨3</label>
+                                    <input type="text" class="form-control date" id="iLevel3Round" name="iLevel3Round" placeholder="">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="text-right">
+                            <button type="button" class="btn btn-primary" onclick="RequestRegister();">저장</button>
+                            <button type="button" class="btn btn-light" data-bs-dismiss="modal">취소</button>
+                        </div>
+                    <!-- </form> -->
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+
+</div>
+<!-- end row -->
+<script type="text/javascript" src="js/time.js"></script>
+<script type="text/javascript">
+
+    var dataTableInstance;
+
+    $(document).ready(function(){
+
+        // 테이블의 login id 컬럼 클릭 처리
+        $(document).on("click", ".UserIdPopup", function (e) {
+            e.preventDefault();
+
+            console.log();
+
+            const value = $(this).attr("data-id");
+
+            let object = {id:value};
+
+            $.ajax({
+                url:"/game/request_jackpotdetail",
+                type:"POST",
+                dataType: "json",
+                data:object,
+                success: function (obj) {
+                    if (obj.result == "OK") {
+
+                        console.log(obj.data);
+
+                        const data = obj.data;
+
+                        $('#uid').val(data.id);
+                        $('#iLevel1Amount').val(data.iLevel1Amount);
+                        $('#iLevel2Amount').val(data.iLevel2Amount);
+                        $('#iLevel3Amount').val(data.iLevel3Amount);
+                        $('#iLevel1Round').val(data.iLevel1Round);
+                        $('#iLevel2Round').val(data.iLevel2Round);
+                        $('#iLevel3Round').val(data.iLevel3Round);
+                        $("#BuildAgentDialog").modal("show");
+                    } else {
+                        alert(obj.reason);
+                    }
+                }, error: function () {
+                    alert("조회 중 오류 발생");
+                }
+            });
+        });
+
+        // 정보 수정 완료
+        $("#UserFormSubmitButton").click(function (e) {
+            e.preventDefault();
+
+            $("#UserForm").ajaxSubmit({
+                //url:"/account/user",
+                dataType: "json",
+                type : "POST",
+                beforeSubmit: function () {
+
+                },
+                success: function (obj) {
+                    if (obj.result == "OK") {
+                        $("#UserEditDialog").modal("hide");
+                        dataTableInstance.ajax.reload();
+                        return;
+                    }
+                    alert(obj.reason);
+                },
+                error: function () {
+                    alert("서버 오류");
+                }
+            });
+        });
+
+        dataTableInstance = $('#user-datatable').DataTable({
+            "serverSide": true,
+            "searching": false,
+            "ajax": {
+                //url: "@Url.Action("UserList")",
+                url:"/game/request_jackpot",
+                "type": "POST",
+            },
+            responsive : false,
+            order: [[ 1, 'asc' ]],
+            columns: [
+
+                {
+                    data: "id",
+                    // render: function (d, t) {
+                    //     return d;// return "<input type='checkbox' name='chk' id='chk" + d + "' value='" + d + "' /><label for='chk" + d + "'>" + d + "</label>";
+                    // }
+                    render: function (d) {
+                        return "<a href='#' class='UserIdPopup' data-id='" + d + "'>" + d + "</a>";
+                    }
+                },
+                {
+                    data: "strGame",
+                    
+                },
+                {
+                    data: "iLevel1Amount",
+                    
+                },
+                {
+                    data: "iLevel2Amount",
+                   
+                },
+                {
+                    data: "iLevel3Amount",
+                    
+                },
+                {
+                    data: "iLevel1Round",
+                    
+                },
+                {
+                    data: "iLevel2Round",
+                   
+                },
+                {
+                    data: "iLevel3Round",
+                    
+                }
+            ],
+            keys: true,
+            "language": {
+                "paginate": {
+                    "previous": "<i class='mdi mdi-chevron-left'>",
+                    "next": "<i class='mdi mdi-chevron-right'>"
+                },
+                "info": "현재 페이지 _PAGE_/_PAGES_, 총 _TOTAL_ 건",
+                "lengthMenu": "한 페이지 길이 _MENU_",
+                "emptyTable": "조건에 맞는 데이터가 없습니다",
+                "infoEmpty" : "표시할 데이터 없음"
+            },
+            "sort": false,
+            "drawCallback": function () {
+                $('.dataTables_paginate > .pagination').addClass('pagination-rounded');
+            },
+            createdRow: function (row, data) {
+                $(row).attr("data-id", data.id);
+            }
+        });
+    });
+
+    let RequestRegister = () => {
+        event.preventDefault();
+        const id = $('#uid').val();
+        const iLevel1Amount = $('#iLevel1Amount').val();
+        const iLevel2Amount = $('#iLevel2Amount').val();
+        const iLevel3Amount = $('#iLevel3Amount').val();
+        const iLevel1Round = $('#iLevel1Round').val();
+        const iLevel2Round = $('#iLevel2Round').val();
+        const iLevel3Round = $('#iLevel3Round').val();
+
+        let object = ({id:id, iLevel1Amount:iLevel1Amount, iLevel2Amount:iLevel2Amount, iLevel3Amount:iLevel3Amount, iLevel1Round:iLevel1Round, iLevel2Round:iLevel2Round, iLevel3Round:iLevel3Round});
+
+        $.ajax({
+            url:"/game/request_modifyjackpot",
+            type:"POST",
+            data: object,
+            dataType: "json",
+            success: function (obj) {
+                console.log(obj);
+
+                if ( obj.result == 'OK' )
+                {
+                    alert('완료 되었습니다.');
+                    location.reload();
+                }
+                else
+                {
+                }
+            }, 
+            error: function () {
+                alert("조회 중 오류 발생");
+            }
+        });
+    }
+
+</script>

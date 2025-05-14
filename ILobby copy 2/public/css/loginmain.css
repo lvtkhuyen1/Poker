@@ -1,0 +1,158 @@
+/* input */
+
+.gamebox_text{
+    font-size:32px;
+    text-align:right;
+    font-family: Arial, Helvetica, sans-serif;
+    font-weight:bold;
+    letter-spacing: 2px;
+    font-style: italic;
+    color:transparent;
+    background: linear-gradient(to bottom right, #fe9130, #ffff84);
+    background-clip: text;
+    -webkit-background-clip: text;
+}
+
+
+
+.background-body{
+    background-image: url("../images/bgimg.jpg");
+    background-repeat:no-repeat;
+    background-size:cover;
+    background-position:center;
+    background-attachment: fixed;
+}
+
+
+.logo{
+    margin-top:20px;
+}
+
+.logo img{
+    width:400px;
+    text-align:center;
+    clear:both;
+    margin:0 auto;
+}
+
+.joker{
+    text-align:center;
+    display:flex;
+    justify-content: center;
+    margin-bottom:20px;
+    margin-top:40px;
+}
+.joker img{
+    width:600px;    
+}
+.main-box{
+    width:500px;
+    margin:0 auto;
+}
+
+.icon_line{
+    position:absolute;
+    right:1px;
+    top:8px;
+}
+
+
+/* input */
+.input-box{
+    width:300px;
+    padding-right:30px;
+    height:40px;
+}
+
+.input-text{
+    width:300px;
+    margin:0 auto;
+}
+
+.input_opacity{
+    color:#000;
+    background-color:#000;
+}
+
+
+
+
+/* 로그인버튼 */
+.login-btn{
+    width:300px;
+    margin:0 auto;
+}
+.login-btn button{
+    width:300px;
+}
+
+/* 애플 페이스북 버튼 */
+.button-top{
+    width:300px;
+    margin:0 auto;
+}
+.button-top button{
+    width:300px;
+}
+
+.button-top .apple i{
+    position:absolute;
+    top:8px;
+    font-size:20px;
+    left:10px;
+}
+.button-top .face-book i{
+    position:absolute;
+    top:8px;
+    font-size:20px;
+    left:10px;
+}
+
+
+
+@media (max-width:900px) {
+    .main-box{
+        width:250px;
+        margin:0 auto;
+        text-align:center;
+    }
+    .icon_line{
+        padding-top:2px;
+        position:absolute;
+        top:6px;
+        right:2px;
+    }
+    .input-box{
+        padding-right:40px;
+        width:250px;
+        height:40px;
+    }
+    .input-text{
+        width:250px;
+        margin-bottom:15px;
+    }
+/* 로그인버튼 */
+    .login-btn{
+        width:250px;
+        margin:0 auto;
+    }
+    .login-btn button{
+        width:250px;
+    }
+    
+    /* 애플 페이스북 버튼 */
+    .button-top{
+        width:250px;
+        margin:0 auto;
+    }
+    .button-box{
+        max-width:250px;
+    }
+
+    .button-top i{
+        font-size:23px;
+        position:absolute;
+        top:8px;
+    }
+    
+}

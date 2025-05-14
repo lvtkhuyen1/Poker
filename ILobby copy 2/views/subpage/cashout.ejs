@@ -1,0 +1,166 @@
+<title>출금</title>
+<body>
+    
+    <!-- sub_content -->
+    <div class="sub_content_arr_bg">
+        <div class="sub_content_arr">
+            <div>
+                <div class="subTitle_arr">
+                    <h2>환전하기 <small>exchange</small></h2>
+                </div>
+                
+                <div class="cont_back_arr01">
+                    <div class="cash_notice_zone">
+                        <div class="title">환전방법</div>
+                        <ul>
+                            <li>24시간 자유롭게 입/출금이 가능하시며 순차대로 처리가 되십니다.<br>
+                                <br>
+                                <font color="#ff0000"> ※(단 23:30분부터 24시까지는 타행이체가 불가능합니다.)<br>
+                                <br>
+                                이 시간이내 신청즉시 아이디에서 차감처리가 되십니다.</font><br>
+                                <br>
+                                30분이상 입금이 지연될시에는 회원님 계좌정보를 잘못 기입한 경우가 많습니다.<br>
+                                <br>
+                                그럴경우,상단메뉴 고객센터로 계좌정보를 정확히 보내주시기 바랍니다.
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="cashzone_talbe_arr">
+                        <table border="0" cellspacing="0" cellpadding="0" width="100%" class="cash_zone_table bbs-list">
+                            <tbody>
+                                <tr>
+                                    <th>보유금액</th>
+                                    <td align="left" style="padding:10px; ">&nbsp;&nbsp;<b>
+                                        <font color="#f22200" size="3">0 원</font></b>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th>환전금액</th>
+                                    <td style="padding:10px; ">
+                                        <input name="outputAmount" style="text-align: right;" type="text" maxlength="12" class="exchangeInput money bg_input" id="money" onkeypress="if(event.keyCode < 45 || event.keyCode > 57) event.returnValue = false;">
+                                        &nbsp;&nbsp; 
+                                        <a href="#" class="ui_btn_gray" onclick="SELECT_MONEY(10000)" style="cursor:pointer;">1만원</a> 
+                                        <a href="#" class="ui_btn_gray" onclick="SELECT_MONEY(30000)" style="cursor:pointer;">3만원</a> 
+                                        <a href="#" class="ui_btn_gray" onclick="SELECT_MONEY(50000)" style="cursor:pointer;">5만원</a> 
+                                        <a href="#" class="ui_btn_gray" onclick="SELECT_MONEY(100000)" style="cursor:pointer;">10만원</a> 
+                                        <a href="#" class="ui_btn_gray" onclick="SELECT_MONEY(200000)" style="cursor:pointer;">20만원</a> 
+                                        <a href="#" class="ui_btn_gray" onclick="SELECT_MONEY(300000)" style="cursor:pointer;">30만원</a> 
+                                        <a href="#" class="ui_btn_gray" onclick="SELECT_MONEY(500000)" style="cursor:pointer;">50만원</a> 
+                                        <a href="#" class="ui_btn_gray" onclick="SELECT_MONEY(1000000)" style="cursor:pointer;">100만원</a> 
+                                        <a href="#" class="ui_btn_blue" onclick="RESET_MONEY()" style="cursor:pointer;">정정</a>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td align="left" colspan="2" style="padding:10px; ">
+                                        <span style="color: #ff3434;font-size: 12px;font-weight: normal;">최소 
+                                            <span class="money" style="text-align: right; padding-right: 5px; font-weight: bold;">10,000원</span>이상, <span class="money" style="text-align: right; padding-right: 5px; font-weight: bold;">10,000원</span> 단위로 환전 가능합니다.
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td align="left" colspan="2" style="padding:10px; ">
+                                        <ul>
+                                            <li style="margin: 4px 0;"><strong>거래은행</strong> : <%=user.strBank%></li>
+                                            <li style="margin: 4px 0;"><strong>계좌번호</strong> : <%=user.strAccount%></li>
+                                            <li style="margin: 4px 0;"><strong>예금주</strong> : <%=user.strName%></li>
+                                        </ul>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="cash_bottom_btn" id="sendoutput">
+                        <button class="ui-button_red" type="image">환전신청</button>
+                    </div>
+                        <div class="tab-pane fade" id="cash0202">
+                            <div class="">
+                                <div class="">
+                                    <table border="0" cellpadding="0" cellspacing="0" class="topth cash-list0021" width="100%">
+                                        <tbody>
+                                            <tr class="info betting_th">
+                                                <th class="hidden-xs">번호</th>
+                                                <th>신청날짜</th>
+                                                <th>환전금액</th>
+                                                <th>계좌번호</th>
+                                                <th class="hidden-xs">예금주</th>
+                                                <th class="hidden-xs">환전날짜</th>
+                                                <th>상태</th>
+                                                <th>삭제</th>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                    <div class="text-center"> 
+                                        <div class="tf_pagination">
+                                            <ul>
+                                                <li>
+                                                    <a id="pre-btn" href="javascript:void(0);"><i class="fa fa-chevron-left" aria-hidden="true"></i></a>
+                                                </li>
+                                                <li>
+                                                    <a class="active">1</a>
+                                                </li>
+                                                <li>
+                                                    <a id="next-btn" href="javascript:void(0);"><i class="fa fa-chevron-right" aria-hidden="true"></i></a>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                        <!-- 실제 레이아웃 --> 
+                                </div>
+                            </div>
+                        </div>
+                </div>
+            </div>
+                <div class="clear"></div>
+        </div>
+        <div class="clear"></div>
+    </div>
+</body>
+<script>
+    var user = JSON.parse('<%-JSON.stringify(user)%>');
+    $(document).on('click', '#sendoutput', (e) => {
+        e.preventDefault();
+        let iAmount = $('input[name=outputAmount]').val();
+        console.log(`iAmount : ${iAmount} iCash : ${user.iCash}`);
+
+        if ( parseInt(iAmount) > parseInt(user.iCash) )
+        {
+            alert('출금금액이 보유금액보다 큽니다.');
+            return;
+        }
+
+        $.ajax({
+            type:'post',
+            url: "/account/request_output",
+            data: {
+                iAmount:iAmount,
+            },
+            success:function(ret) {
+                
+                console.log(ret);
+
+                if ( ret.result == 'OK' )
+                {
+                    location.reload();
+                }
+            }
+        });
+    });
+    function SELECT_MONEY(amount) {
+        var moneyInput = document.getElementById('money');
+        var currentAmount = parseInt(moneyInput.value.replace(/,/g, '')) || 0;
+
+        // 선택한 금액을 현재 입력된 금액에 더해서 업데이트
+        var newAmount = currentAmount + amount;
+
+        // 금액 포맷팅 (3자리마다 쉼표 추가)
+        var formattedAmount = newAmount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+
+        moneyInput.value = formattedAmount;
+    }
+
+    function RESET_MONEY() {
+        var moneyInput = document.getElementById('money');
+        moneyInput.value = '0';
+    }
+
+</script>

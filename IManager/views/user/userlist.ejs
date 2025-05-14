@@ -1,0 +1,1805 @@
+
+<head>
+    
+</head>
+
+
+<!-- start page title -->
+<div class="row">
+    <div class="col-12">
+        <div class="page-title-box">
+            <div class="page-title-right">
+                <ol class="breadcrumb m-0">
+                    <li class="breadcrumb-item"><a href="javascript: void(0);">회원 관리</a></li>
+                    <li class="breadcrumb-item active">회원 리스트</li>
+                </ol>
+            </div>
+            <h4 class="page-title">회원 리스트</h4>
+        </div>
+    </div>
+</div>
+<!-- end page title -->
+
+<div class="row" id="userlist">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <div class="row mb-2">
+                    <div class="col-sm-2">
+                        <a href="javascript:void(0);" class="btn btn-danger mb-2 CreateUserButton" style="color: white;"><i class="mdi mdi-plus-circle mr-2"></i> 회원 등록</a>
+                    </div>
+                    <div class="col-sm-3">
+                        <div class="btn-group btn-group-toggle" data-toggle="buttons">
+                            <label class="btn btn-secondary active text-nowrap">
+                                <input type="radio" name="UserTypeFilter" value="" checked />전체
+                            </label>
+                            <label class="btn btn-secondary text-nowrap">
+                                <input type="radio" name="UserTypeFilter" value="NORMAL" />정상
+                            </label>
+                            <label class="btn btn-secondary text-nowrap">
+                                <input type="radio" name="UserTypeFilter" value="BLOCK" />정지
+                            </label>
+                            <label class="btn btn-secondary text-nowrap">
+                                <input type="radio" name="UserTypeFilter" value="QUIT" />탈퇴
+                            </label>
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <div class="input-group mb-3">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text" for="searchText">
+                                    ID/이름
+                                </span>
+                            </div>
+                            <input type="text" id="searchText" name="searchText" maxlength="20" class="form-control" />
+                            <div class="input-group-append">
+                                <button class="form-control" id="SearchTextFindButton">검색</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-7">
+                        <div class="text-sm-right">
+                            <!--
+                            <button type="button" class="btn btn-success mb-2 mr-1"><i class="mdi mdi-settings"></i></button>
+                            <button type="button" class="btn btn-light mb-2">Export</button>
+                                -->
+                        </div>
+                    </div><!-- end col-->
+                </div>
+
+                <div class="table-responsive">
+                    <table id="user-datatable" class="table table-sm table-hover nowrap w-100">
+                        <thead>
+                            <tr>
+                                <th>색인</th>
+                                <th>분류</th>
+                                <th>아이디</th>
+                                <th>닉네임</th>
+                                <th>이름</th>
+                                <th>상태</th>
+                                <th>매장 ID</th>
+                                <th>총판 ID</th>
+                                <th>지사 ID</th>
+                                <th>본사 ID</th>
+                                <th>대본사 ID</th>
+                                <th>보유포인트</th>
+                                <th>보유머니</th>
+                                <th>계좌번호</th>
+                                <th>전화번호</th>
+                                <% if(user.iClass == 0){ %>
+                                <th>메모</th>
+                                <% } %>
+                                <th>최근접속IP</th>
+                                <th>접속일</th>
+                                <th>등록일</th>
+                                <th>동작</th>
+                            </tr>
+                        </thead>
+                    </table>
+                </div>
+            </div> <!-- end card-body-->
+        </div> <!-- end card-->
+    </div> <!-- end col -->
+
+    <!-- Modal -->
+    <div class="modal fade" id="UserDialog" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog custom-modal-width custom-modal-main">
+          <div class="modal-content custom-modal-width">
+            <div class="modal-header">
+              <h4 class="name-text">회원 등록</h1>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body container-fluid mainfluid px-2">
+                <div id="layoutSidenav_content" >
+                    <main>
+                        <div class="card mb-4">
+                            <div class="card-header">
+                                <i class="fas fa-table me-1"></i>
+                                회원 등록
+                            </div>
+                            <input type="hidden" name="id" id="uid" value="" />
+                            <table class="table card-body" style="margin-bottom:0;">
+                                <tbody>
+                                    <tr style="text-align:center;">
+                                        <th style="border:1px solid #ccc; vertical-align: middle;">매장 아이디</th>
+                                        <td style="border:1px solid #ccc; vertical-align: middle;">
+                                            <input type="text" id="strShopID" name="strShopID">
+                                            <button style="height: fit-content; margin-left: 5px;" onclick="RequestCheckRolling();">check</button>
+                                                <!-- <input type="text" disabled value="아이디">  -->
+                                        </td>
+                                    </tr>
+                                </tbody>
+                                <tbody id="userbuild" style="display:none">
+                                    <tr style="text-align:center;">
+                                        <th style="vertical-align: middle; border:1px solid #ccc;">ID</th>
+                                        <td style="border:1px solid #ccc;">
+                                            <div style="display: flex;">
+                                                <input type="text" id="strID" name="strID" maxlength="20"/>
+                                                <button style="height: fit-content; margin-left: 5px;" onclick="RequestCheckID();">check</button>
+                                            </div>
+                                        </td>
+                                        <th style="vertical-align: middle; border:1px solid #ccc;">Nickname</th>
+                                        <td style="border:1px solid #ccc;">
+                                            <div style="display: flex;">
+                                                <input type="text" id="strNickname" name="strNickname" maxlength="20"/>
+                                                <button style="margin-left: 5px;" onclick="RequestCheckNickname();">check</button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                          
+                                    <tr style="text-align:center;">
+                                        <th style="vertical-align: middle; border:1px solid #ccc;">PASSWORD</th>
+                                        <td style="border:1px solid #ccc;">
+                                            <input type="password" id="strPassword" name="strPassword" placeholder="password">
+                                        </td>
+                                        <th style="border:1px solid #ccc; vertical-align: middle;">비밀번호 변경</th>
+                                        <td style="border:1px solid #ccc; vertical-align: middle;">
+                                            <input type="password" id="strPasswordCheck" name="strPasswordCheck" placeholder="password Check">
+                                        </td>
+                                    </tr>
+                                        
+                                    <tr style="text-align:center;">
+                                        <th style="vertical-align: middle; border:1px solid #ccc;">예금주명</th>
+                                        <td style="border:1px solid #ccc;">
+                                            <input type="text" id="strName" name="strName" placeholder="">
+                                        </td>
+                                        <th style="border:1px solid #ccc; vertical-align: middle;">은행명</th>
+                                        <td style="border:1px solid #ccc; vertical-align: middle;"> 
+                                            <select id="strBank" name="strBank"></select>
+                                            <!-- <input type="text" id="strBank" name="strBank" placeholder=""> -->
+                                        </td>
+                                    </tr>
+    
+                                    <tr style="text-align:center;">
+                                        <th style="vertical-align: middle; border:1px solid #ccc;">계좌번호</th>
+                                        <td colspan="3" style="border:1px solid #ccc;">
+                                            <input style="width:90%" type="text" id="strAccount" name="strAccount" placeholder="">
+                                        </td>
+                                    </tr>
+
+                                    <tr style="text-align:center;">
+                                        <th style="vertical-align: middle; border:1px solid #ccc;">전화번호</th>
+                                        <td style="border:1px solid #ccc;">
+                                            <input type="text" id="strMobileNo" name="strMobileNo" placeholder="">
+                                        </td>
+                                    </tr>
+
+                                    <tr style="text-align:center;">
+                                        <th style="vertical-align: middle; border:1px solid #ccc;">홀덤딜비</th>
+                                        <td style="border:1px solid #ccc;">
+                                            <input type="text" id="fHoldemR" name="fHoldemR" placeholder="">
+                                            <small class="form-text text-muted" id = "fHoldemdeal"></small>
+                                        </td>
+                                        <th style="border:1px solid #ccc; vertical-align: middle;">싯고딜비</th>
+                                        <td style="border:1px solid #ccc; vertical-align: middle;"> 
+                                            <input type="text" id="fSitgoR" name="fSitgoR" placeholder="">
+                                            <small class="form-text text-muted" id = "fSitgodeal"></small>
+                                        </td>
+                                    </tr>
+
+                                    <tr style="text-align:center;">
+                                        <th style="vertical-align: middle; border:1px solid #ccc;">빅투딜비</th>
+                                        <td style="border:1px solid #ccc;">
+                                            <input type="text" id="fBig2R" name="fBig2R" placeholder="0">
+                                            <small class="form-text text-muted" id = "fBig2deal"></small>
+                                        </td>
+                                        <th style="border:1px solid #ccc; vertical-align: middle;">오바하딜비</th>
+                                        <td style="border:1px solid #ccc; vertical-align: middle;"> 
+                                            <input type="text" id="fOmahaR" name="fOmahaR" placeholder="0">
+                                            <small class="form-text text-muted" id = "fOmahadeal"></small>
+                                        </td>
+                                    </tr>
+
+                                    <tr style="text-align:center;">
+                                        <th style="vertical-align: middle; border:1px solid #ccc;">바카라딜비</th>
+                                        <td style="border:1px solid #ccc;">
+                                            <input type="text" id="fBaccaratR" name="fBaccaratR" placeholder="0">
+                                            <small class="form-text text-muted" id = "fBaccaratdeal"></small>
+                                        </td>
+                                    </tr>
+                                          <!-- <tr style="text-align:center;">
+                                            <th style="vertical-align: middle; border:1px solid #ccc;">뷰어 기능</th>
+                                            <td style="border:1px solid #ccc; vertical-align: middle;">
+                                                <input type="checkbox" style="vertical-align: middle;">
+                                            </td>
+                                            <th style="vertical-align: middle; border:1px solid #ccc;">뷰어 비밀번호</th>
+                                            <td style="border:1px solid #ccc; vertical-align: middle;">
+                                                <input type="text">
+                                            </td>
+                                          </tr> -->
+                                </tbody>
+                            </table>
+                        </div>
+                        <div style="text-align:center">
+                            <button type="button" class="btn btn-warning btn-sm" onclick="RequestRegister();">저장</button>
+                            <button type="button" class="btn btn-danger btn-sm" data-bs-dismiss="modal">취소</button>
+                        </div>
+                    </main>
+                </div>
+            </div>
+          </div>
+        </div>
+     </div>
+     <!-- Modal End-->
+</div>
+<!-- end row -->
+<!-- userinfo -->
+<div id="userinfo">
+    <main>
+        <div class="container-fluid px-4">
+            <h1 class="mt-4">회원정보</h1>
+            <ol class="breadcrumb mb-4">
+                <li class="breadcrumb-item active">User Info</li>
+            </ol>
+            <div class="btn-group btn-group-sm mb-3" role="group" aria-label="Basic radio toggle button group ">
+                <label class="btn btn-primary btn-outline-primary text-white userinfolog" for="userinfolog">회원정보</label>
+              
+                <!-- <input type="radio" class="btn-check" name="btnradio" id="btnradio2" autocomplete="off">
+                <label class="btn btn-outline-primary" for="btnradio2">게임로그</label> -->
+              
+                <!-- <input type="radio" class="btn-check" name="btnradio" id="btnradio3" autocomplete="off">
+                <label class="btn btn-outline-primary" for="btnradio3">활동로그</label> -->
+
+                <label class="btn btn-outline-primary userbetlog" for="userbetlog">배팅로그</label>
+
+                <!-- <input type="radio" class="btn-check" name="btnradio" id="btnradio5" autocomplete="off">
+                <label class="btn btn-outline-primary" for="btnradio5">머니변동로그</label> -->
+            </div>
+            <div class="card mb-4" id="userinfotab">
+                <div class="card-header">
+                    <i class="fas fa-table me-1"></i>
+                    기본 정보
+                </div>
+                <!-- <input type="hidden" name="id" id="uid_info" value="" /> -->
+                    <table class="table card-body table-fixed-layout" style="margin-bottom:0;">
+                        <tbody>
+                          <tr style="text-align:center;">
+                            <th style="vertical-align: middle; border:1px solid #ccc;">아이디</th>
+                            <td style="border:1px solid #ccc; vertical-align: middle;" class="gameinfo">
+                                <span style="vertical-align: middle;" id="strID_info"></span>
+                                <!-- <button type="button" class="btn btn-secondary btn-sm">중복IPx</button>
+                                <button type="button" class="btn btn-secondary btn-sm">중복매장x</button>
+                                <button type="button" class="btn btn-danger btn-sm">접속끊기</button> -->
+                            </td>
+                            <th style="border:1px solid #ccc; vertical-align: middle;">닉네임</th>
+                            <td style="border:1px solid #ccc; vertical-align: middle;"> <span id="strNickname_info"></span> </td>
+                          </tr>
+                          
+                          <tr style="text-align:center;">
+                            <th style="vertical-align: middle; border:1px solid #ccc;">게임머니</th>
+                            <td style="border:1px solid #ccc;"> <span id="iCash_info"></span>원 </td>
+                            <th style="border:1px solid #ccc; vertical-align: middle;">마일리지</th>
+                            <td style="border:1px solid #ccc; vertical-align: middle;"> <span id="iRolling_info"></span>원 </td>
+                          </tr>
+                        
+                          <tr style="text-align:center;">
+                            <th style="vertical-align: middle; border:1px solid #ccc;">추천인</th>
+                            <td style="border:1px solid #ccc; vertical-align: middle;"> <span id="strParentID_info"></span> </td>
+                            <th style="border:1px solid #ccc; vertical-align: middle;">계좌번호</th>
+                            <td style="border:1px solid #ccc; vertical-align: middle;"> <span id="strAccount_info"></span> </td>
+                          </tr>
+
+                          <tr style="text-align:center;">
+                            <th style="vertical-align: middle; border:1px solid #ccc;">은행명</th>
+                            <td style="border:1px solid #ccc;"> <span id="strBank_info"></span> </td>
+                            <th style="border:1px solid #ccc; vertical-align: middle;">입금자명</th>
+                            <td style="border:1px solid #ccc; vertical-align: middle;"> <span id="strName_info"></span> </td>
+                          </tr>
+                          <% if(user.iClass == 0){ %>
+                          <tr style="text-align:center;">
+                            <th style="vertical-align: middle; border:1px solid #ccc;">메모</th>
+                            <td style="border:1px solid #ccc;" class="word-wrap-cell">
+                                <span id="strDesc_info"></span>
+                            </td>
+                          </tr>
+                          <% } %>
+                        </tbody>
+                    </table>
+            </div>
+
+            <div class="card mb-4">
+                <div class="card-header">
+                    <i class="fas fa-table me-1"></i>
+                    계정 정보
+                </div>
+                    <table class="table card-body" style="margin-bottom:0;">
+                        <tbody>
+                          <tr style="text-align:center;">
+                            <th style="vertical-align: middle; border:1px solid #ccc;">가입날짜</th>
+                            <td style="border:1px solid #ccc;" class="gameinfo"> <span id="createdAt_info"></span></td>
+                            <th style="border:1px solid #ccc; vertical-align: middle;">가입IP</th>
+                            <td style="border:1px solid #ccc; vertical-align: middle;"> <span id="strIP_info"></span> </td>
+                          </tr>
+                          
+                          <tr style="text-align:center;">
+                            <th style="vertical-align: middle; border:1px solid #ccc;">최근 접속날짜</th>
+                            <td style="border:1px solid #ccc;"> <span id="loginedAt_info"></span></td>
+                            <th style="border:1px solid #ccc; vertical-align: middle;">최근 접속IP</th>
+                            <td style="border:1px solid #ccc; vertical-align: middle;"> <span id="strIPlogin_info"></span> </td>
+                          </tr>
+                        </tbody>
+                    </table>
+            </div>
+
+            <!-- <div class="card mb-4">
+                <div class="card-header">
+                    <i class="fas fa-table me-1"></i>
+                    게임 정보
+                </div>
+                    <table class="table card-body" style="margin-bottom:0;">
+                        <tbody>
+                          <tr style="text-align:center;">
+                            <th style="vertical-align: middle; border:1px solid #ccc;">맞고 승패</th>
+                            <td style="border:1px solid #ccc;" class="gameinfo"> <span>0</span>승 <span>0</span>패 </td>
+                            <th style="border:1px solid #ccc; vertical-align: middle;">일일 맞고 승패</th>
+                            <td style="border:1px solid #ccc; vertical-align: middle;"> <span>0</span>승 <span>0</span>패 </td>
+                          </tr>
+                          
+                          <tr style="text-align:center;">
+                            <th style="vertical-align: middle; border:1px solid #ccc;">일일 맞고 변동머니</th>
+                            <td style="border:1px solid #ccc;"> <span>0</span> 원</td>
+                            <th style="border:1px solid #ccc; vertical-align: middle;">일일 맞고 배팅머니</th>
+                            <td style="border:1px solid #ccc; vertical-align: middle;"> <span>0</span> 원</td>
+                          </tr>
+                        
+                          <tr style="text-align:center;">
+                            <th style="vertical-align: middle; border:1px solid #ccc;">맞고 바둑이</th>
+                            <td style="border:1px solid #ccc;" class="gameinfo"> <span>0</span>승 <span>0</span>패 </td>
+                            <th style="border:1px solid #ccc; vertical-align: middle;">일일 바둑이 승패</th>
+                            <td style="border:1px solid #ccc; vertical-align: middle;"> <span>0</span>승 <span>0</span>패 </td>
+                          </tr>
+                          
+                          <tr style="text-align:center;">
+                            <th style="vertical-align: middle; border:1px solid #ccc;">일일 바둑이 변동머니</th>
+                            <td style="border:1px solid #ccc;"> <span>0</span> 원</td>
+                            <th style="border:1px solid #ccc; vertical-align: middle;">일일 바둑이 배팅머니</th>
+                            <td style="border:1px solid #ccc; vertical-align: middle;"> <span>0</span> 원</td>
+                          </tr>
+
+                          <tr style="text-align:center;">
+                            <th style="vertical-align: middle; border:1px solid #ccc;">홀덤 승패</th>
+                            <td style="border:1px solid #ccc;" class="gameinfo"> <span>0</span>승 <span>0</span>패 </td>
+                            <th style="border:1px solid #ccc; vertical-align: middle;">일일 홀덤 승패</th>
+                            <td style="border:1px solid #ccc; vertical-align: middle;"> <span>0</span>승 <span>0</span>패 </td>
+                          </tr>
+                          
+                          <tr style="text-align:center;">
+                            <th style="vertical-align: middle; border:1px solid #ccc;">일일 홀덤 변동머니</th>
+                            <td style="border:1px solid #ccc;"> <span>0</span> 원</td>
+                            <th style="border:1px solid #ccc; vertical-align: middle;">일일 홀덤 배팅머니</th>
+                            <td style="border:1px solid #ccc; vertical-align: middle;"> <span>0</span> 원</td>
+                          </tr>
+
+                          <tr style="text-align:center;">
+                            <th style="vertical-align: middle; border:1px solid #ccc;">일일 총 변동머니</th>
+                            <td style="border:1px solid #ccc;"> <span>0</span> 원</td>
+                            <th style="border:1px solid #ccc; vertical-align: middle;">일일 총 배팅머니</th>
+                            <td style="border:1px solid #ccc; vertical-align: middle;"> <span>0</span> 원</td>
+                          </tr>
+
+                        </tbody>
+                    </table>
+            </div> -->
+
+            <div class="card mb-4">
+                <div class="card-header">
+                    <i class="fas fa-table me-1"></i>
+                    추천인 정보
+                </div>
+                    <table class="table card-body" style="margin-bottom:0;">
+                        <tbody>
+                          <tr style="text-align:center;">
+                            <th style="vertical-align: middle; border:1px solid #ccc;">추천인</th>
+                            <td style="border:1px solid #ccc;" class="gameinfo"> <span id="strParentID_info2"></span> </td>
+                            <th style="border:1px solid #ccc; vertical-align: middle;">본사</th>
+                            <td style="border:1px solid #ccc; vertical-align: middle;"> <span id="agentID_info"></span> </td>
+                          </tr>
+                          
+                          <tr style="text-align:center;">
+                            <th style="vertical-align: middle; border:1px solid #ccc;">딜비-홀덤</th>
+                            <td style="border:1px solid #ccc;"> <span id="fHoldemR_info"></span>% </td>
+                            <th style="vertical-align: middle; border:1px solid #ccc;">딜비-싯고</th>
+                            <td style="border:1px solid #ccc;"> <span id="fSitgoR_info"></span>% </td>
+                          </tr>
+
+                          <tr style="text-align:center;">
+                            <th style="border:1px solid #ccc; vertical-align: middle;">딜비-오마하</th>
+                            <td style="border:1px solid #ccc; vertical-align: middle;"> <span id="fOmahaR_info"></span>% </td>
+                            <th style="border:1px solid #ccc; vertical-align: middle;">딜비-빅투</th>
+                            <td style="border:1px solid #ccc; vertical-align: middle;"> <span id="fBig2R_info"></span>% </td>
+                          </tr>
+
+                          <tr style="text-align:center;">
+                            <th style="vertical-align: middle; border:1px solid #ccc;">딜비-바카라</th>
+                            <td style="border:1px solid #ccc;"> <span id="fBaccaratR_info"></span>% </td>
+                             <!-- <th style="border:1px solid #ccc; vertical-align: middle;">죽장</th>
+                            <td style="border:1px solid #ccc; vertical-align: middle;"> <span id="fSettle_info"></span>% </td> -->
+                          </tr>
+                        
+                        </tbody>
+                    </table>
+            </div>
+
+            <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                <% if(user.iClass == 0 || user.iClass == 4){ %>
+                <button type="button" class="btn btn-success btn-sm me-md-2" onclick="RequestFeeUpdate();">딜비 수정</button>
+                <% } %>
+                <button type="button" class="btn btn-success btn-sm me-md-2" onclick="RequestTakeMoney();">머니 회수</button>
+                <button type="button" class="btn btn-success btn-sm me-md-2" onclick="RequsetGivePoint();">포인트 보내기</button>
+                <button type="button" class="btn btn-success btn-sm me-md-2"  onclick="UserChangePassword();">계정비밀번호 변경</button>
+                <button type="button" class="btn btn-danger btn-sm" onclick="UserinfoClose();" type="button">닫기</button>
+                <!-- <button class="btn btn-danger btn-sm" type="button">차단</button> -->
+            </div>
+
+        </div>
+    </main>
+    <!-- modal start -->
+    <div class="modal fade" id="passwordChangeModal" tabindex="-1" role="dialog" aria-labelledby="passwordChangeModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="passwordChangeModalLabel">비밀번호 변경</h5>
+              <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              <form>
+                <div class="form-group">
+                  <label for="newstrPassword">새 비밀번호</label>
+                  <input type="password" class="form-control" id="newstrPassword" placeholder="새 비밀번호를 입력하세요">
+                </div>
+                <div class="form-group">
+                  <label for="newstrPasswordCheck">비밀번호 확인</label>
+                  <input type="password" class="form-control" id="newstrPasswordCheck" placeholder="비밀번호를 다시 한 번 입력하세요">
+                </div>
+                <button type="submit" class="btn btn-primary" onclick="RequestPasswordChange()">변경 저장</button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- modal end -->
+      <div class="modal fade" id="MoneySend" tabindex="-1" role="dialog" aria-labelledby="MoneySendModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="MoneySendModalLabel">보유머니 전달</h5>
+              <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              <form>
+                <div class="form-group">
+                  <label for="CashSend" id="ChildCash">보유 머니</label>
+                  <input type="number" class="form-control" id="CashSend" placeholder="전달할 머니를 적어주세요.">
+                </div>
+                <div class="form-group">
+                  <label for="PointSend" id="ParentPoint">보유 포인트</label>
+                  <input type="number" class="form-control" id="PointSend" placeholder="전달할 포인트를 적어주세요.">
+                </div>
+                <button type="submit" class="btn btn-primary" onclick="RequestMoneySend()" id="btnSend">변경 저장</button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- modal end -->
+      <!-- modal start -->
+      <div class="modal fade" id="userFee" tabindex="-1" role="dialog" aria-labelledby="passwordChangeModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">딜비 수정</h5>
+                    <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <!-- Row 1 -->
+                        <div class="row">
+                            <div class="col">
+                                <div class="form-group">
+                                    <label for="holdemFee">홀덤 딜비</label>
+                                    <input type="text" class="form-control" id="holdemFee" placeholder="홀덤 딜비 입력">
+                                </div>
+                            </div>
+                            <div class="col">
+                                <div class="form-group">
+                                    <label for="sitgoFee">싯고 딜비</label>
+                                    <input type="text" class="form-control" id="sitgoFee" placeholder="싯고 딜비 입력">
+                                </div>
+                            </div>
+                        </div>
+    
+                        <!-- Row 2 -->
+                        <div class="row">
+                            <div class="col">
+                                <div class="form-group">
+                                    <label for="omahaFee">오마하 딜비</label>
+                                    <input type="text" class="form-control" id="omahaFee" placeholder="오마하 딜비 입력">
+                                </div>
+                            </div>
+                            <div class="col">
+                                <div class="form-group">
+                                    <label for="bigTwoFee">빅투 딜비</label>
+                                    <input type="text" class="form-control" id="bigTwoFee" placeholder="빅투 딜비 입력">
+                                </div>
+                            </div>
+                        </div>
+    
+                        <!-- Row 3 -->
+                        <div class="row">
+                            <div class="col-6">
+                                <div class="form-group">
+                                    <label for="baccaratFee">바카라 딜비</label>
+                                    <input type="text" class="form-control" id="baccaratFee" placeholder="바카라 딜비 입력">
+                                </div>
+                            </div>
+                        </div>
+    
+                        <button type="button" class="btn btn-primary" onclick="RequestFeeChange()">수정</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- modal end -->
+</div>
+<!-- userinfo end-->
+
+<!-- userbetting start -->
+<div id="userbetting">
+    <main>
+        <div class="container-fluid px-4">
+            <h1 class="mt-4">베팅로그</h1>
+            <ol class="breadcrumb mb-4">
+                <li class="breadcrumb-item active">Bet Info</li>
+            </ol>
+            
+            <div class="btn-group btn-group-sm mb-3" role="group" aria-label="Basic radio toggle button group ">
+                <label class="btn btn-outline-primary userinfolog" for="userinfolog2">회원정보</label>
+              
+                <!-- <input type="radio" class="btn-check" name="btnradio" id="btnradio2" autocomplete="off">
+                <label class="btn btn-outline-primary" for="btnradio2">게임로그</label> -->
+              
+                <!-- <input type="radio" class="btn-check" name="btnradio" id="btnradio3" autocomplete="off">
+                <label class="btn btn-outline-primary" for="btnradio3">활동로그</label> -->
+
+                <label class="btn btn-primary btn-outline-primary text-white userbetlog" for="userbetlog2">배팅로그</label>
+
+                <!-- <input type="radio" class="btn-check" name="btnradio" id="btnradio5" autocomplete="off">
+                <label class="btn btn-outline-primary" for="btnradio5">머니변동로그</label> -->
+            </div>
+            <div class="card mb-4">
+                <div class="card-header">
+                    <i class="fas fa-table me-1"></i>
+                    기본 정보
+                </div>
+                    <table class="table card-body" style="margin-bottom:0;">
+                        <tbody>
+                          <tr style="text-align:center;">
+                            <th style="vertical-align: middle; border:1px solid #ccc;">아이디</th>
+                            <td style="border:1px solid #ccc; vertical-align: middle;" class="gameinfo">
+                                <span style="vertical-align: middle;" id="strID_bet"></span>
+                                <!-- <button type="button" class="btn btn-secondary btn-sm">중복IPx</button>
+                                <button type="button" class="btn btn-secondary btn-sm">중복매장x</button>
+                                <button type="button" class="btn btn-danger btn-sm">접속끊기</button> -->
+                            </td>
+                            <th style="border:1px solid #ccc; vertical-align: middle;">닉네임</th>
+                            <td style="border:1px solid #ccc; vertical-align: middle;"> <span id="strNickanme_bet"></span> </td>
+                          </tr>
+                          
+                          <tr style="text-align:center;">
+                            <th style="vertical-align: middle; border:1px solid #ccc;">게임머니</th>
+                            <td style="border:1px solid #ccc;"> <span id="iCash_bet"></span>원 </td>
+                            <th style="border:1px solid #ccc; vertical-align: middle;">마일리지</th>
+                            <td style="border:1px solid #ccc; vertical-align: middle;"> <span id="iRolling_bet"></span>원 </td>
+                          </tr>
+                        
+                          <tr style="text-align:center;">
+                            <th style="vertical-align: middle; border:1px solid #ccc;">추천인</th>
+                            <td style="border:1px solid #ccc;"> <span id="strAgentID_bet"></span> </td>
+                          </tr>
+                        </tbody>
+                    </table>
+            </div>
+
+            <div id= "bettinglist" class="row">
+                <div class="card col-12">
+                    <div class="card-body">
+                        <h5 class="card-title mb-0">
+                            베팅 내역
+                        </h5>
+                        <div class="form-row  align-items-center">
+                            <div class="col-auto ml-auto">
+                                <label class="col-form-label">검색 날짜 범위</label>
+                            </div>
+                            <div class="col-auto">
+                                <label class="sr-only">시작 날짜</label>
+                                <input type="text" class="form-control mb-2" id="startDate" data-provide="datepicker" placeholder="">
+                            </div>
+                            <div class="col-auto">
+                                <label class="sr-only">마지막 날짜</label>
+                                <input type="text" class="form-control mb-2" id="endDate" data-provide="datepicker" placeholder="">
+                            </div>
+                            <div class="col-auto">
+                                <button type="button" class="btn btn-primary mb-2" id="FindButton">검색</button>
+                            </div>
+                        </div>
+                        <div class="collapse pt-3 show">
+                            <table id="dataTable" class="table table-sm dt-responsive nowrap w-100">
+                                <thead>
+                                    <tr>
+                                        <th>게임</th>
+                                        <th>베팅 타입</th>
+                                        <th>베팅 금액</th>
+                                        <!-- <th>지급 금액</th> -->
+                                    </tr>
+                                </thead>
+                                <tbody id="listObjects">
+                                    
+                                </tbody>
+                            </table>
+            
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+            <button type="button" class="btn btn-danger btn-sm" onclick="UserinfoClose();" type="button">닫기</button>
+            <!-- <button class="btn btn-danger btn-sm" type="button">차단</button> -->
+        </div>
+    </main>
+</div>
+<!-- userbetting end-->
+<script type="text/javascript">
+
+    var dataTableInstance;
+    var user = JSON.parse('<%-JSON.stringify(user)%>');
+
+    $(document).ready(function(){
+
+        // userinfo 가리기
+        $("#userinfo").hide();
+        $("#userbetting").hide();
+        //$("#SettlementDialog").hide();
+
+        $("#birthdate").datepicker({
+            format: 'yyyy-mm-dd',
+            language: 'kr'
+        });
+
+        $("#startDate").datepicker({
+            format: 'yyyy-mm-dd',
+            language : 'kr'
+        });
+        $("#endDate").datepicker({
+            format: 'yyyy-mm-dd',
+            language: 'kr'
+        });
+
+        var leadingZeros = (n, digits) => {
+            var zero = '';
+            n = n.toString();
+
+            if (n.length < digits) {
+                for (var i = 0; i < digits - n.length; i++)
+                    zero += '0';
+            }
+            return zero + n;
+        }
+        let getTimeStartStamp = ()=> {
+            var now = new Date();
+
+            var d = new Date(now.setDate(now.getDate()));
+            var s =
+                leadingZeros(d.getFullYear(), 4) + '-' +
+                leadingZeros(d.getMonth() + 1, 2) + '-' +
+                leadingZeros(d.getDate(), 2);
+
+            return s;
+        }
+        let getTimeEndStamp = ()=> {
+            var now = new Date();
+
+            var d = new Date(now.setDate(now.getDate() - 1));
+            var s =
+                leadingZeros(d.getFullYear(), 4) + '-' +
+                leadingZeros(d.getMonth() + 1, 2) + '-' +
+                leadingZeros(d.getDate(), 2);
+
+            return s;
+        }
+        let today = getTimeStartStamp();
+        let yesterday = getTimeEndStamp();
+        $('#startDate').val(yesterday);
+        $('#endDate').val(today);
+
+        // 새 계정 생성
+        $(".CreateUserButton").click(function (e) {
+            e.preventDefault();
+            console.log("CreateUserButton");
+            $('#iInputAmount').val(0);
+            if(user.iClass == 4)
+            {
+                $("#strShopID").val(user.strID);
+            }
+            $.ajax({
+                url:"/etc/request_bankenablelist",
+                type:"POST",
+                data: {},
+                dataType: "json",
+                success: function (obj) {
+                    if (obj.result == "OK") {
+                        //console.log(obj.data);
+                        const bankSelect = $("#strBank");
+                        bankSelect.empty(); // Clear existing options
+                        obj.data.forEach(function (bank) {
+                            bankSelect.append($('<option>', {
+                                value: bank.strBankName,
+                                text: `${bank.iBankCode} : ${bank.strBankName}`
+                            }));
+                        });
+                        $("#UserDialog").modal("show");
+                    } else {
+                        alert(obj.reason);
+                    }
+                }, error: function () {
+                    alert("조회 중 오류 발생");
+                }
+            });
+        });
+
+        // 테이블의 login id 컬럼 클릭 처리
+        $(document).on("click", ".UserIdPopup", function (e) {
+            e.preventDefault();
+            
+            $.ajax({
+                //url: "@Url.Action("QueryUser")",
+                url:"/user/request_userdetail",
+                type:"POST",
+                data: {
+                    strID : $(this).attr("data-id")
+                },
+                dataType: "json",
+                success: function (obj) {
+                    if (obj.result == "OK") {
+
+                        console.log(obj.data);
+
+                        //회원 정보 팝업
+                        //$("#uid_info").val(obj.data.id);
+                        $("#strParentID_info").text(obj.data.strShopID);
+                        $("#strID_info").text(obj.data.strID);
+                        //$("#strPassword").val(obj.data.strPassword);
+                        $("#strNickname_info").text(obj.data.strNickname);
+                        //$("#eState").val(obj.data.eStatus);
+                        $("#strBank_info").text(obj.data.strBank);
+                        $("#strName_info").text(obj.data.strName);
+                        $("#strAccount_info").text(obj.data.strAccount);
+                        $("#iRolling_info").text(obj.data.iRolling.toLocaleString());
+                        $("#iCash_info").text(obj.data.iCash.toLocaleString());
+                        if(user.iClass == 0)
+                        {
+                            $("#strDesc_info").text(obj.data.strDesc);
+                        }
+                        
+                        $("#createdAt_info").text(moment(obj.data.createdAt).format('YYYY-MM-DD HH:mm:ss'));
+                        $("#strIP_info").text(obj.data.strIP);
+                        $("#loginedAt_info").text(moment(obj.data.loginedAt).format('YYYY-MM-DD HH:mm:ss'));
+                        $("#strIPlogin_info").text(obj.data.strIPlogin);
+
+                        $("#strParentID_info2").text(obj.data.strShopID);
+                        $("#agentID_info").text(obj.data.strAgentID);
+                        $("#fBaccaratR_info").text(obj.data.fBaccaratR);
+                        $("#fBig2R_info").text(obj.data.fBig2R);
+                        $("#fSitgoR_info").text(obj.data.fSitgoR);
+                        $("#fHoldemR_info").text(obj.data.fHoldemR);
+                        $("#fOmahaR_info").text(obj.data.fOmahaR);
+                        //$("#fSettle_info").text(obj.data.fSettle);
+
+                        //베팅 정보 팝업
+                        $("#strID_bet").text(obj.data.strID);
+                        $("#strNickname_bet").text(obj.data.strNickname);
+                        $("#iCash_bet").text(obj.data.iCash.toLocaleString());
+                        $("#iRolling_bet").text(obj.data.iRolling.toLocaleString());
+                        $("#strAgentID_bet").text(obj.data.strShopID);
+                        //아이디 userlist 숨기기
+                        $("#userlist").hide();
+                        //아이디 userinfo 보이기
+                        $('#userbetting').hide();
+                        $("#userinfo").show();
+                    } else {
+                        alert(obj.reason);
+                    }
+                }, error: function () {
+                    alert("조회 중 오류 발생");
+                }
+            });
+        });
+
+        // 결제 내역 팝업
+        $("#user-datatable").on("click", ".PayHistoryButton", function (e) {
+            e.preventDefault();
+
+            var loginId = $(this).parent().parent().attr("data-loginId");
+
+            //window.open("@Url.Action("PaymentHistory")?loginId=" + loginId, "_blank", "width = 700, height = 500");
+
+            window.open("/account/history_cash/" + loginId, "_blank", "width = 700, height = 400");
+        });
+
+        // 포인트 내역 팝업
+        $("#user-datatable").on("click", ".PointHistoryButton", function (e) {
+            e.preventDefault();
+
+            var loginId = $(this).parent().parent().attr("data-loginId");
+
+            window.open("/account/history_point/" + loginId, "_blank", "width = 700, height = 400");
+        });
+        // EXP 내역 팝업
+        $("#user-datatable").on("click", ".ExpHistoryButton", function (e) {
+            e.preventDefault();
+
+            var loginId = $(this).parent().parent().attr("data-loginId");
+            //window.open("@Url.Action("ExpHistory")?loginId=" + loginId, "_blank", "width = 700, height = 400");
+            
+            window.open("/account/history_exp/" + loginId, "_blank", "width = 700, height = 400");
+        });
+        // 아이템 내역 팝업
+        $("#user-datatable").on("click", ".ItemHistoryButton", function (e) {
+            e.preventDefault();
+
+            var loginId = $(this).parent().parent().attr("data-loginId");
+            //window.open("@Url.Action("ItemHistory")?loginId=" + loginId, "_blank", "width = 700, height = 400");
+
+            console.log(loginId);
+            
+        });
+        // 게시글 내역 팝업
+        $("#user-datatable").on("click", ".ArticlesButton", function (e) {
+            e.preventDefault();
+
+            var loginId = $(this).parent().parent().attr("data-loginId");
+
+            console.log(loginId);
+            //location.href="@Url.Action("Index", "Bulletin")?author=" + loginId;
+        });
+
+        // strDesc 열 클릭 이벤트 핸들러
+        $('#user-datatable').on('click', '.editable-text', function() {
+            var id = $(this).data('id');
+            var currentText = $(this).text() == '수정하기' ? '' : $(this).text();
+            $(this).parent().html(`
+                <input type="text" value="${currentText}" id="desc-${id}" class="editable-desc"/>
+                <button onclick="RequestUpdateDesc(${id})">수정</button>
+            `);
+        });
+
+        // 탈퇴 버튼 클릭
+        $("#user-datatable").on("click", ".QuitButton", function (e) {
+            e.preventDefault();
+
+            var id = $(this).parent().parent().attr("data-id");
+            var strID = $(this).parent().parent().attr("data-loginId");
+
+            console.log(strID);
+            // var id = $(this).parent().attr("data-id");
+            // var loginId = $(this).parent().attr("data-loginId");
+
+            // console.log($(this).parent().parent());
+
+            // //alert(id);
+
+            //if (!confirm(loginId + "계정을 탈퇴 처리 하시겠습니까?"))
+            if (!confirm(strID + "계정을 탈퇴 처리 하시겠습니까?"))
+                return;
+
+            $.ajax({
+                //url: "@Url.Action("QuitUser")",
+                type:"POST",
+                url:"/user/request_userleave",
+                data: {
+                    "id": id,
+                    "strID": strID
+                },
+                dataType: "json",
+                type: "POST",
+                success: function (obj) {
+                    if (obj.result == "OK") {
+                        alert("탈퇴 처리되었습니다");
+                        dataTableInstance.ajax.reload();
+                        return;
+                    } else {
+                        alert(obj.reason);
+                    }
+                },
+                error: function () {
+                    alert("탈퇴 처리 요청 중 오류");
+                }
+            });
+        });
+
+        // 사용자 구분
+        $("input[name='UserTypeFilter']").change(function () {
+            dataTableInstance.ajax.reload();
+        });
+
+        $("#SearchTextFindButton").click(function (e) {
+            e.preventDefault();
+
+            dataTableInstance.ajax.reload();
+        });
+        var columns = [
+        {
+                    data: "id",
+                    render: function (d, t) {
+                        return d;// return "<input type='checkbox' name='chk' id='chk" + d + "' value='" + d + "' /><label for='chk" + d + "'>" + d + "</label>";
+                    }
+                },
+                {
+                    data: "iClass",
+                    render: function (d, t, s, m) {
+                        var text = "";
+                        if (d == 0)
+                            text = "대본사";
+                        else if (d == 1)
+                            text = "본사";
+                        else if (d == 2)
+                            text = "지사";
+                        else if (d == 3)
+                            text = "총판";
+                        else if (d == 4)
+                            text = "매장";
+                        else if (d == 5)
+                            text = "일반회원";
+                        return text;
+                    }
+                },
+                {
+                    data: "strID",
+                    render: function (d) {
+                        return "<a href='#' class='UserIdPopup' data-id='" + d + "'>" + d + "</a>";
+                    }
+                },
+                {
+                    data: "strNickname", render: function (d, t, row) {
+                        var label = d;
+                        if (row.userType == "TEST")
+                            label = label + '<i class="far fa-grimace"></i>';
+                        else if (row.userType == "ADMIN")
+                            label += '<i class="fas fa-users-cog"></i>';
+                        return label;
+                    }
+                },
+                { data: "strName" },
+                {
+                    data: "eStatus",
+                    render: function (d, t, s, m) {
+                        var text = "";
+                        if (d == "BLOCK")
+                            text = "잠김";
+                        else if (d == "QUIT")
+                            text = "탈퇴";
+                        else
+                            text = "정상";
+                        return text;
+                    }
+                },
+                { data:"lev5" },
+                { data:"lev4" },
+                { data:"lev3" },
+                { data:"lev2" },
+                { data:"lev1" },                
+                {
+                    data: "iRolling", render : (d)=> {
+                        let i = parseInt(d);
+                        return i.toLocaleString();
+                    }
+                },
+                { 
+                    data: "iCash", render : (d)=> {
+                        let i = parseInt(d);
+                        return i.toLocaleString();
+                    }
+                },
+                { data: "strAccount" },
+                { data: "strMobileNo" },
+                { data: "strIPlogin" },
+                {
+                    data: "loginedAt", render: function (d) {
+                        let date = moment(d).format('YYYY-MM-DD HH:mm:ss');
+                        return date;
+                    }
+                },
+                {
+                    data: "createdAt", render: function (d) {
+                        let date = moment(d).format('YYYY-MM-DD HH:mm:ss');
+                        return date;
+                    }
+                },
+                {
+                    data: null,
+                    //data:"quit",
+                    render: function (d, t) {
+                        var html = "";
+                        if(d.eStatus != "QUIT")
+                        //if(d.userStatus != "QUIT")
+                            html += "<a href='#' class='QuitButton' title='탈퇴'>X</a>";
+                        return html;
+                    }
+                }
+        ];
+        if (user.iClass == 0) {
+            var strDescColumn = {
+                data: "strDesc",
+                render: function(data, type, row, meta) {
+                    // 빈 데이터에 대해서도 클릭 가능한 영역을 제공
+                    if (!data.trim()) {
+                        return `<span class="editable-text empty" data-id="${row.id}">수정하기</span>`;
+                    } else {
+                        return `<span class="editable-text" data-id="${row.id}">${data}</span>`;
+                    }
+                }
+            };
+
+            // strDesc 열을 인덱스 15에 삽입
+            columns.splice(15, 0, strDescColumn);
+        }
+
+        dataTableInstance = $('#user-datatable').DataTable({
+            "serverSide": true,
+            "searching": false,
+            // "scrollX": true,
+            "ajax": {
+                url:"/user/request_userlist",
+                "type": "POST",
+                "data": function (d) {
+                    return $.extend({}, d, {
+                        "userTypeFilter": $("input[name='UserTypeFilter']:checked").val(),
+                        "search" : $("#searchText").val(),
+                    });
+                }
+            },
+            responsive : false,
+            order: [[ 1, 'asc' ]],
+            columns: columns,
+            keys: true,
+            "language": {
+                "paginate": {
+                    "previous": "<i class='mdi mdi-chevron-left'>",
+                    "next": "<i class='mdi mdi-chevron-right'>"
+                },
+                "info": "현재 페이지 _PAGE_/_PAGES_, 총 _TOTAL_ 건",
+                "lengthMenu": "한 페이지 길이 _MENU_",
+                "emptyTable": "조건에 맞는 데이터가 없습니다",
+                "infoEmpty" : "표시할 데이터 없음"
+            },
+            "sort": false,
+            "drawCallback": function () {
+                $('.dataTables_paginate > .pagination').addClass('pagination-rounded');
+            },
+            createdRow: function (row, data) {
+                $(row).attr("data-id", data.id);
+                $(row).attr("data-loginId", data.strID);
+                if (data.eStatus == "QUIT")
+                    $(row).addClass("table-dark");
+
+            }
+        });
+    });
+    $('.userinfolog').click(function () {
+        $('#userinfo').show();
+        $('#userbetting').hide();
+    });
+    $('.userbetlog').click(function(){
+        $('#userinfo').hide();
+        $('#userbetting').show();
+
+        $.ajax({
+                type:'post',
+                url: "/inout/bettinglog",
+                data:{
+                    strID:$('#strID_bet').text(),
+                    startDate:$('#startDate').val(),
+                    endDate:$('#endDate').val()
+                },
+                success:function(ret) {
+                    console.log(ret);
+
+                    $('#listObjects').empty();
+                    for ( let i in ret )
+                    {
+                        console.log(ret[i]);
+
+                        //console.log(ret[i].datas[j]);
+                        tag = `
+                        <tr>
+                            <td>${ret[i].iGame}</td>
+                            <td>${ret[i].strBet}</td>
+                            <td>${ret[i].iBetting.toLocaleString()}</td>
+                        </tr>
+                        `;
+                        $('#listObjects').append(tag);
+                    }
+                }
+            });
+    });
+
+    $('#FindButton').click(function(){
+        $('#userinfo').hide();
+        $('#userbetting').show();
+
+        $.ajax({
+                type:'post',
+                url: "/inout/bettinglog",
+                data:{
+                    strID:$('#strID_bet').text(),
+                    startDate:$('#startDate').val(),
+                    endDate:$('#endDate').val()
+                },
+                success:function(ret) {
+                    console.log(ret);
+
+                    $('#listObjects').empty();
+                    for ( let i in ret )
+                    {
+                        console.log(ret[i]);
+
+                        //console.log(ret[i].datas[j]);
+                        tag = `
+                        <tr>
+                            <td>${ret[i].iGame}</td>
+                            <td>${ret[i].strBet}</td>
+                            <td>${ret[i].iBetting.toLocaleString()}</td>
+                        </tr>
+                        `;
+                        $('#listObjects').append(tag);
+                    }
+                }
+            });
+    });
+    
+    let RequestRegister = () => {
+        event.preventDefault();
+        const strShopID = $('#strShopID').val();
+        const strID = $('#strID').val();
+        const strNickname = $('#strNickname').val();
+        const strPassword = $('#strPassword').val();
+        const strPasswordCheck = $('#strPasswordCheck').val();
+        const strBank = $('#strBank').val();
+        const strName = $('#strName').val();
+        const strAccount = $('#strAccount').val();
+        const strMobileNo = $('strMobileNo').val();
+        const fHoldemR = $('#fHoldemR').val();
+        const fBig2R = $('#fBig2R').val();
+        const fSitgoR = $('#fSitgoR').val();
+        const fOmahaR = $('#fOmahaR').val();
+        const fBaccaratR = $('#fBaccaratR').val();
+        console.log(strBank);
+        console.log(fBig2R);
+        console.log(fOmahaR);
+        console.log(fBaccaratR);
+        
+        // 정규 표현식을 사용하여 검사
+        let nicknameRegex = /^[A-Za-z가-힣0-9]{2,5}$/;
+        let idRegex = /^[A-Za-z0-9]{3,10}$/;
+
+        if ( strShopID == '' )
+        {
+            alert('매장 아이디를 입력해주세요.');
+            return;
+        }
+        // 닉네임 길이와 사용 가능한 문자를 체크
+        if (!nicknameRegex.test(strNickname)) {
+            alert('닉네임은 2자리에서 5자리 사이이며, 영어, 한글, 숫자만 포함할 수 있습니다.');
+            return;
+        }
+        
+        // 닉네임 길이와 사용 가능한 문자를 체크
+        if (!idRegex.test(strID)) {
+            alert('아이디는  3자리에서 10자리 사이이며, 영어, 숫자만 포함할 수 있습니다.');
+            return;
+        }
+
+        if ( strID == '' )
+        {
+            alert('아이디를 입력해주세요.');
+            return;
+        }
+        if ( strNickname == '' )
+        {
+            alert('닉네임을 입력해주세요.');
+            return;
+        }
+        if(strPassword == '' || strPasswordCheck == '')
+        {
+            alert('비밀번호를 입력해주세요.');
+            return;
+        }
+        if(strPassword != strPasswordCheck)
+        {
+            alert('비밀번호가 일치하지 않습니다.');
+            return; 
+        }
+        if(fHoldemR == '')
+        {
+            alert('홀덤딜비를 입력해주세요.');
+            return;
+        }
+        if(fSitgoR == '')
+        {
+            alert('싯고딜비를 입력해주세요.');
+            return;
+        }
+        if(fOmahaR == '')
+        {
+            alert('오마하딜비를 입력해주세요.');
+            return;
+        }
+        if(fBig2R == '')
+        {
+            alert('빅투딜비를 입력해주세요.');
+            return;
+        }
+        if(fBaccaratR == '')
+        {
+            alert('바카라딜비를 입력해주세요.');
+            return;
+        }
+
+        $.ajax({
+            url:"/user/request_register",
+            type:"POST",
+            data: {
+                strID:strID,
+                strNickname :strNickname,
+                strPassword:strPassword,
+                strBank:strBank,
+                strName:strName,
+                strAccount:strAccount,
+                strMobileNo:strMobileNo,
+                strShopID:strShopID,
+                fHoldemR:fHoldemR,
+                fBig2R:fBig2R,
+                fSitgoR:fSitgoR,
+                fOmahaR:fOmahaR,
+                fBaccaratR:fBaccaratR
+            },
+            dataType: "json",
+            success: function (obj) {
+                console.log(obj);
+
+                if ( obj.result == 'OK' )
+                {
+                    alert('완료 되었습니다.');
+                    location.reload();
+                }
+                else
+                {
+                    if ( obj.error == 'NotExistParent' )
+                    {
+                        alert('에이전트매장이 존재 하지 않습니다. 아이디를 다시 확인해주세요.');
+                    }
+                    else if ( obj.error == 'NotExistUser' )
+                    {
+                        alert('해당 아이디가 존재하니 다른 아이디를 입력해주세요.');
+                    }
+                    else if ( obj.error == 'ExistNickname' )
+                    {
+                        alert('이미 사용중인 닉네임 입니다.');
+                    }
+                    else if ( obj.error == 'ExistHoldemR' )
+                    {
+                        alert(`홀덤 딜비를 최대 ${obj.fHoldemRMax} ~ 최소 ${obj.fHoldemRMin} 사이에서 입력해주세요.`);
+                    }
+                    else if ( obj.error == 'ExistBig2R' )
+                    {
+                        alert(`빅투 딜비를 최대 ${obj.fBig2RMax} ~ 최소 ${obj.fBig2RMin} 사이에서 입력해주세요.`);
+                    }
+                    else if ( obj.error == 'ExistSitgoR' )
+                    {
+                        alert(`싯고 딜비를 최대 ${obj.fSitgoRMax} ~ 최소 ${obj.fSitgoRMin} 사이에서 입력해주세요.`);
+                    }
+                    else if ( obj.error == 'ExistOmahaR' )
+                    {
+                        alert(`오마하 딜비를 최대 ${obj.fOmahaRMax} ~ 최소 ${obj.fOmahaRMin} 사이에서 입력해주세요.`);
+                    }
+                    else if ( obj.error == 'ExistBaccaratR' )
+                    {
+                        alert(`바카라 딜비를 최대 ${obj.fBaccaratRMax} ~ 최소 ${obj.fBaccaratRMin} 사이에서 입력해주세요.`);
+                    }
+                }
+            }, 
+            error: function () {
+                alert("조회 중 오류 발생");
+            }
+        });
+    }
+
+    let RequestCheckRolling = () => {
+
+        //console.log(RequestCheckRolling);
+        const strParentID = $('#strShopID').val();
+        const iClass = 4;
+
+        if ( strParentID == '' )
+        {
+            alert('매장 아이디를 입력해주세요.');
+            return;
+        }
+
+        $.ajax({
+            url:"/user/request_checkrolling",
+            type:"POST",
+            data: {
+                strParentID:strParentID,
+                iClass:iClass
+            },
+            dataType: "json",
+            success: function (obj) {
+                console.log(obj);
+                if ( obj.result == 'OK' )
+                {
+                    $('#fHoldemdeal').empty();
+                    $('#fBig2deal').empty();
+                    $('#fSitgodeal').empty();
+                    $('#fOmahadeal').empty();
+                    $('#fBaccaratdeal').empty();
+                    let tag = `${obj.data.fHoldemRMax}% ~ ${obj.data.fHoldemRMin}%까지만 조절 가능합니다.`;
+                    $('#fHoldemdeal').append(tag);
+                    let tag2 = `${obj.data.fBig2RMax}% ~ ${obj.data.fBig2RMin}%까지만 조절 가능합니다.`;
+                    $('#fBig2deal').append(tag2);
+                    let tag3 = `${obj.data.fSitgoRMax}% ~ ${obj.data.fSitgoRMin}%까지만 조절 가능합니다.`;
+                    $('#fSitgodeal').append(tag3);
+                    let tag4 = `${obj.data.fOmahaRMax}% ~ ${obj.data.fOmahaRMin}%까지만 조절 가능합니다.`;
+                    $('#fOmahadeal').append(tag4);
+                    let tag5 = `${obj.data.fBaccaratRMax}% ~ ${obj.data.fBaccaratRMin}%까지만 조절 가능합니다.`;
+                    $('#fBaccaratdeal').append(tag5);
+                    $('#userbuild').show();
+                }
+                else
+                {
+                    alert('매장 ID를 다시한번 확인해주세요.');
+                }
+            }, 
+            error: function () {
+                alert("조회 중 오류 발생");
+            }
+        });
+    }
+
+    let RequestCheckID = () => {
+
+        const strID = $('#strID').val();
+        // 정규 표현식을 사용하여 검사
+        let idRegex = /^[A-Za-z0-9]{3,10}$/;
+
+        // 닉네임 길이와 사용 가능한 문자를 체크
+        if (!idRegex.test(strID)) {
+            alert('아이디는  3자리에서 10자리 사이이며, 영어, 숫자만 포함할 수 있습니다.');
+            return;
+        }
+        $.ajax({
+            url:"/user/request_checkid",
+            type:"POST",
+            data: {
+                strID :strID
+            },
+            dataType: "json",
+            success: function (obj) {
+                if ( obj.result == 'OK' )
+                {
+                    alert('사용 가능한 아이디 입니다.');
+                }
+                else
+                {
+                    alert('이미 사용중인 아이디 입니다.');
+                }
+            }, 
+            error: function () {
+                alert("조회 중 오류 발생");
+            }
+        });
+    }
+
+    let RequestCheckNickname = () => {
+        let strNickname = $('#strNickname').val();
+
+        // 정규 표현식을 사용하여 검사
+        let nicknameRegex = /^[A-Za-z가-힣0-9]{2,5}$/;
+
+        // 닉네임 길이와 사용 가능한 문자를 체크
+        if (!nicknameRegex.test(strNickname)) {
+            alert('닉네임은 2자리에서 5자리 사이이며, 영어, 한글, 숫자만 포함할 수 있습니다.');
+            $('#strNickname').val('');
+            return; // 조건에 맞지 않으면 여기서 함수 실행을 중단한다.
+        }
+
+        $.ajax({
+            url:"/user/request_checknickname",
+            type:"POST",
+            data: {
+                strNickname :strNickname
+            },
+            dataType: "json",
+            success: function (obj) {
+                if ( obj.result == 'OK' )
+                {
+                    alert('사용 가능한 닉네임 입니다.');
+                }
+                else
+                {
+                    alert('이미 사용중인 닉네임 입니다.');
+                }
+            }, 
+            error: function () {
+                alert("조회 중 오류 발생");
+            }
+        });
+    }
+    
+    let UserChangePassword = () => {
+        console.log("UserChangePassword");
+        $("#passwordChangeModal").modal('show');
+    }
+
+    let RequestFeeUpdate = () =>{
+        let strID = $("#strID_info").text();
+        
+        $.ajax({
+            url:"/agent/request_agentdetail",
+            type:"POST",
+            data: {
+                strID :strID
+            },
+            dataType: "json",
+            success: function (obj) {
+                if ( obj.result == 'OK' )
+                {
+                    console.log(obj.data);
+                    $("#holdemFee").val(`${obj.data.fHoldemR}`);
+                    $("#sitgoFee").val(`${obj.data.fSitgoR}`);
+                    $("#omahaFee").val(`${obj.data.fOmahaR}`);
+                    $("#bigTwoFee").val(`${obj.data.fBig2R}`);
+                    $("#baccaratFee").val(`${obj.data.fBaccaratR}`);
+                    $("#userFee").modal('show');
+                }
+                else
+                {
+                    alert('조회 중 오류 발생 다시 확인해주세요.');
+                }
+            }, 
+            error: function () {
+                alert("조회 중 오류 발생");
+            }
+        });
+    }
+
+    let RequsetGivePoint = () => {
+        // console.log("RequsetGivePoint");
+        // console.log($("#strID_info").text());
+
+        $("#MoneySendModalLabel").text('포인트 보내기');
+        $("#CashSend").parent().hide(); // 머니 입력 필드 숨기기
+        $("#ParentPoint").text(`보유포인트 : ${user.iRolling}`);
+        $("#PointSend").parent().show(); // 포인트 입력 필드 표시
+        $("#btnSend").text('보내기');
+        $("#MoneySend").modal('show');
+    }
+
+    let RequestTakeMoney = () => {
+        console.log("RequestTakeMoney");
+        let strID = $("#strID_info").text();
+        
+        $.ajax({
+            url:"/agent/request_agentdetail",
+            type:"POST",
+            data: {
+                strID :strID
+            },
+            dataType: "json",
+            success: function (obj) {
+                if ( obj.result == 'OK' )
+                {
+                    console.log(obj.data);
+                    $("#MoneySendModalLabel").text('머니 회수');
+                    $("#PointSend").parent().hide(); // 포인트 입력 필드 숨기기
+                    $("#ChildCash").text(`보유머니 : ${obj.data.iCash}`);
+                    $("#CashSend").parent().show(); // 머니 입력 필드 표시
+                    $("#btnSend").text('회수');
+                    $("#MoneySend").modal('show');
+                }
+                else
+                {
+                    alert('조회 중 오류 발생 다시 확인해주세요.');
+                }
+            }, 
+            error: function () {
+                alert("조회 중 오류 발생");
+            }
+        });
+    }
+
+    let UserinfoClose = () => {
+        $('#userinfo').hide();
+        $('#userbetting').hide();
+        $("#userlist").show();
+    }
+    let RequestFeeChange = () =>{
+        event.preventDefault();
+        const strID = $('#strID_info').text();
+        const fHoldemR = $("#holdemFee").val();
+        const fSitgoR = $("#sitgoFee").val();
+        const fOmahaR = $("#omahaFee").val();
+        const fBig2R = $("#bigTwoFee").val();
+        const fBaccaratR = $("#baccaratFee").val();
+
+        if(fHoldemR == '' || fSitgoR == '' || fOmahaR == '' || fBig2R == '' || fBaccaratR == '')
+        {
+            alert('딜비를 다시 입력해주세요.');
+            return;
+        }
+
+        $.ajax({
+            url:"/user/request_fee_change",
+            type:"POST",
+            data: {
+                strID:strID,
+                fHoldemR:fHoldemR,
+                fSitgoR:fSitgoR,
+                fOmahaR:fOmahaR,
+                fBig2R:fBig2R,
+                fBaccaratR:fBaccaratR,
+            },
+            dataType: "json",
+            success: function (obj) {
+                console.log(obj);
+
+                if ( obj.result == 'OK' )
+                {
+                    alert('수정이 완료 되었습니다.');
+                    location.reload();
+                }
+                else
+                {
+                    if ( obj.error == 'NotExistParent' )
+                    {
+                        alert('상위 에이전트가 존재 하지 않습니다.');
+                    }
+                    else if ( obj.error == 'NotExistUser' )
+                    {
+                        alert('해당 아이디가 존재하니 다른 아이디를 입력해주세요.');
+                    }
+                    else if ( obj.error == 'ExistNickname' )
+                    {
+                        alert('이미 사용중인 닉네임 입니다.');
+                    }
+                    else if ( obj.error == 'ExistHoldemR' )
+                    {
+                        alert(`홀덤 딜비를 최대 ${obj.fHoldemRMax} ~ 최소 ${obj.fHoldemRMin} 사이에서 입력해주세요.`);
+                    }
+                    else if ( obj.error == 'ExistBig2R' )
+                    {
+                        alert(`빅투 딜비를 최대 ${obj.fBig2RMax} ~ 최소 ${obj.fBig2RMin} 사이에서 입력해주세요.`);
+                    }
+                    else if ( obj.error == 'ExistSitgoR' )
+                    {
+                        alert(`싯고 딜비를 최대 ${obj.fSitgoRMax} ~ 최소 ${obj.fSitgoRMin} 사이에서 입력해주세요.`);
+                    }
+                    else if ( obj.error == 'ExistOmahaR' )
+                    {
+                        alert(`오마하 딜비를 최대 ${obj.fOmahaRMax} ~ 최소 ${obj.fOmahaRMin} 사이에서 입력해주세요.`);
+                    }
+                    else if ( obj.error == 'ExistBaccaratR' )
+                    {
+                        alert(`바카라 딜비를 최대 ${obj.fBaccaratRMax} ~ 최소 ${obj.fBaccaratRMin} 사이에서 입력해주세요.`);
+                    }
+                    else
+                    {
+                        alert(`오류 발생 1:1문의로 해주세요.`);
+                    }
+                }
+            }, 
+            error: function () {
+                alert("조회 중 오류 발생");
+            }
+        });
+    }
+    let RequestPasswordChange = () => {
+        event.preventDefault();
+        const strPassword = $('#newstrPassword').val();
+        const strPasswordCheck = $('#newstrPasswordCheck').val();
+        const strID = $('#strID_info').text();
+
+        //console.log(strID);
+    
+        if(strPassword != strPasswordCheck)
+        {
+            alert('비밀번호가 일치하지 않습니다.');
+            return;
+        }
+        $.ajax({
+            url:"/user/request_password_change",
+            type:"POST",
+            data: {
+                strID:strID,
+                strPassword:strPassword
+            },
+            dataType: "json",
+            success: function (obj) {
+                console.log(obj);
+
+                if ( obj.result == 'OK' )
+                {
+                    alert('완료 되었습니다.');
+                    location.reload();
+                }
+                else
+                {
+                    if ( obj.error == 'NotExistUser' )
+                    {
+                        alert('해당 아이디가 존재 하지 않습니다.');
+                    }
+                    else
+                    {
+                        alert('오류가 발생 하였습니다.');
+                    }
+                }
+            }, 
+            error: function () {
+                alert("조회 중 오류 발생");
+            }
+        });
+    }
+
+    let RequestMoneySend = () => {
+        event.preventDefault();
+        const strID = $('#strID_info').text();
+
+        if ($("#PointSend").parent().is(":visible")) {
+            // 포인트 보내기 처리
+            let pointAmount = $("#PointSend").val();
+            console.log("Sending Points: " + pointAmount);
+            // 포인트 전송 로직
+            if(pointAmount > user.iRolling)
+            {
+                alert('보유 포인트가 부족 합니다.');
+                return;
+            }
+            $.ajax({
+                url:"/agent/request_pointsend",
+                type:"POST",
+                data: {
+                    strID:strID,
+                    iRolling:pointAmount,
+                },
+                dataType: "json",
+                success: function (obj) {
+                    console.log(obj);
+
+                    if ( obj.result == 'OK' )
+                    {
+                        alert('완료 되었습니다.');
+                        location.reload();
+                    }
+                    else
+                    {
+                        if ( obj.error == 'NotExistParent' )
+                        {
+                            alert('상위 에이전트가 존재 하지 않습니다.');
+                        }
+                        else if ( obj.error == 'Over Point' )
+                        {
+                            alert(`해당 에이전트에 포인트가 부족합니다.`);
+                        }
+                    }
+                }, 
+                error: function () {
+                    alert("조회 중 오류 발생");
+                }
+            });
+        } else if ($("#CashSend").parent().is(":visible")) {
+            // 머니 회수 처리
+            let cashAmount = $("#CashSend").val();
+            console.log("Taking Money: " + cashAmount);
+            // 머니 회수 로직
+            $.ajax({
+                url:"/agent/request_cashtake",
+                type:"POST",
+                data: {
+                    strID:strID,
+                    iCash:cashAmount,
+                },
+                dataType: "json",
+                success: function (obj) {
+                    console.log(obj);
+
+                    if ( obj.result == 'OK' )
+                    {
+                        alert('완료 되었습니다.');
+                        location.reload();
+                    }
+                    else
+                    {
+                        if ( obj.error == 'NotExistParent' )
+                        {
+                            alert('상위 에이전트가 존재 하지 않습니다.');
+                        }
+                        else if ( obj.error == 'OverCash' )
+                        {
+                            alert(`해당 에이전트에 보유머니가 부족합니다.`);
+                        }
+                    }
+                }, 
+                error: function () {
+                    alert("조회 중 오류 발생");
+                }
+            });
+        }
+    }
+
+    let RequestUpdateDesc = (id) => {
+        event.preventDefault();
+        console.log(`RequestUpdateDesc`);
+        let newDesc = document.getElementById(`desc-${id}`).value;
+    
+        $.ajax({
+            url:"/user/register_memo",
+            type:"POST",
+            data: {
+                strDesc:newDesc,
+                id:id
+            },
+            dataType: "json",
+            success: function (obj) {
+                console.log(obj);
+
+                if ( obj.result == 'OK' )
+                {
+                    alert('메모가 수정 되었습니다.');
+                    location.reload();
+                }
+                else
+                {
+                    if ( obj.error == 'NotExistUser' )
+                    {
+                        alert('해당 아이디가 존재 하지 않습니다.');
+                    }
+                    else
+                    {
+                        alert('오류가 발생 하였습니다.');
+                    }
+                }
+            }, 
+            error: function () {
+                alert("조회 중 오류 발생");
+            }
+        });
+    }
+    
+</script>

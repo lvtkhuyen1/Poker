@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head> 
+        <%- include('head') %>
+    </head> 
+    
+    <% if ( type == 0 ) { %>
+        <body class="sb-nav-fixed">
+            <!-- 상단 헤더 메뉴 -->
+                <nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
+                    <!-- Navbar Brand-->
+                    <a class="navbar-brand ps-3" href="/">홈</a>
+                    <!-- <a href="/" style="width:150px;">
+                        <img src="img/logo_main.png" alt="" style="width:150px;">
+                    </a> -->
+                    <a id='alert_input' href='/inout/input' style="position:absolute; top:10px; left:280px; color:rgb(67, 124, 247); font-size:x-large;">충전신청</a>
+                    <a id='alert_output' href='/inout/output' style="position:absolute; top:10px; left:400px; color:rgb(248, 40, 40); font-size:x-large;">환전신청</a>
+                    <a id='alert_letter' href='/etc/consulting' style="position:absolute; top:10px; left:520px; color:rgb(222, 224, 94); font-size:x-large;">1:1 문의</a>
+                    
+                    <!-- Sidebar Toggle-->
+                    <button class="btn btn-link btn-sm order-1 order-lg-0 me-4 me-lg-0" id="sidebarToggle" href="javascript:void(0);"><i class="fas fa-bars"></i></button>
+                    <!-- Navbar Search-->
+                    <form class="d-none d-md-inline-block form-inline ms-auto me-0 me-md-3 my-2 my-md-0">
+                        <div class="input-group mem_info" style="font-size: 18px;">
+                            <p>보유머니 : <span><%=user.iCash.toLocaleString()%></span> </p>
+                            <p>포인트 : <span><%=user.iRolling.toLocaleString()%></span> </p>
+                            <button class="form-control btn-primary" id="rollingChange" style="margin-right: 10px;">&#8596;전환</button>
+                            <p><span><%=user.strID%> / <%=user.strNickname%></span> </p>
+                            <p>
+                                <span>
+                                  <% if (user.iClass === 0) { %>
+                                    대본사
+                                  <% } else if (user.iClass === 1) { %>
+                                    본사
+                                  <% } else if (user.iClass === 2) { %>
+                                    지사
+                                  <% } else if (user.iClass === 3) { %>
+                                    총판
+                                  <% } else if (user.iClass === 4) { %>
+                                    매장
+                                  <% } else { %>
+                                    <%=user.iClass%>
+                                  <% } %>
+                                </span>
+                              </p>
+                            <!-- <p>합계 : <span>0</span> </p> -->
+                        </div>
+                    </form>
+                    <!-- Navbar-->
+                    <ul class="navbar-nav ms-auto ms-md-0 me-3 me-lg-4">
+                        <li class="nav-item dropdown">
+                            <a class="nav-link nav-link-users dropdown-toggle" id="navbarDropdown" href="javascript:void(0);" role="button" data-toggle="dropdown" aria-expanded="false" style="font-size:16px;"><i class="fas fa-user fa-fw"></i></a>
+                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown" style = "transform: translateX(-50px);">
+                                <li><a class="dropdown-item" id="ChangePersonalInfo" href="javascript:void(0);">설정</a></li>
+                                <% if ( user.iClass == 0 ) { %>
+                                <li><a class="dropdown-item" id="ChangeAdminAccount" href="javascript:void(0);">계좌번호 변경</a></li>
+                                <%}%>
+                                <li><hr class="dropdown-divider" /></li>
+                                <li><a class="dropdown-item" href="/account/logout">로그아웃</a></li>
+                            </ul>
+                        </li>
+                    </ul>
+                </nav>
+        <!-- 상단 헤더 메뉴끝 -->
+        
+                <div id="layoutSidenav">
+                <!-- 왼쪽 사이드 메뉴 -->
+                    <div id="layoutSidenav_nav">
+                        <nav class="sb-sidenav accordion sb-sidenav-dark" id="sidenavAccordion">
+                            <div class="sb-sidenav-menu">
+                                <div class="nav">
+                                    <div class="sb-sidenav-menu-heading">회원/접속 관리
+                                        <span class="arrow-downs"></span>
+                                        <span class="arrow-ups"></span>
+                                    </div>
+                                        <div class="submenu" style="display: none;">
+                                            <a class="nav-link" href="/user/userlist">
+                                                회원 목록
+                                            </a>
+                                            <a class="nav-link" href="/user/onlineuserlist">
+                                                접속자 목록
+                                            </a>
+                                        </div>
+                                    <% if (user.iClass <= 3) { %>
+                                    <div class="sb-sidenav-menu-heading">
+                                        에이전트 관리
+                                        <span class="arrow-downs"></span>
+                                        <span class="arrow-ups"></span>
+                                    </div>
+                                        <div class="submenu" style="display: none;">
+                                            <% for (let i = user.iClass + 1; i <= 4; i++) { %>
+                                                <a class="nav-link" href="/agent/agentlist?iclass=<%= i %>">
+                                                    <% if (i === 4) { %>에이전트매<% }
+                                                    else if (i === 3) { %>에이전트총<% }
+                                                    else if (i === 2) { %>에이전트지<% }
+                                                    else if (i === 1) { %>에이전트본<% } %> 목록
+                                                </a>
+                                            <% } %>
+                                        </div>
+                                    <% } %>
+                                    <div class="sb-sidenav-menu-heading">
+                                        충전/환전 관리
+                                        <span class="arrow-downs"></span>
+                                        <span class="arrow-ups"></span>
+                                    </div>
+                                        <div class="submenu" style="display: none;">
+                                        <% if ( user.iClass == 1 ) { %>
+                                            <a class="nav-link" href="/inout/input">
+                                                온라인 충전관리
+                                            </a>
+                                            <a class="nav-link" href="/inout/output">
+                                                온라인 환전관리
+                                            </a>
+                                        <% } else {%>
+                                            <a class="nav-link" href="/inout/inputcharge">
+                                                충전 신청
+                                            </a>
+                                            <a class="nav-link" href="/inout/outputcharge">
+                                                출금 신청
+                                            </a>
+                                        <% } %>
+                                        </div>
+                                    <div class="sb-sidenav-menu-heading">
+                                        매출 관리툴
+                                        <span class="arrow-downs"></span>
+                                        <span class="arrow-ups"></span>
+                                    </div>
+                                    <!-- <a class="nav-link" href="/inout/bettinglist">
+                                        마일리지 전환
+                                    </a> -->
+                                    <!-- <a class="nav-link" href="#">
+                                        정산결과(전체) -->
+                                    <!-- </a>
+                                    <a class="nav-link" href="#">
+                                        정산결과(바둑이)
+                                    </a>
+                                    <a class="nav-link" href="#">
+                                        정산결과(맞고)
+                                    </a>
+                                    <a class="nav-link" href="#">
+                                        정산결과(홀덤)
+                                    </a>
+                                    <a class="nav-link" href="#">
+                                        일일 마일리지 정산
+                                    </a> -->
+                                    <!-- <a class="nav-link" href="/inout/bettinglist">
+                                        베팅 상세 내역
+                                    </a> --> 
+                                    <div class="submenu" style="display: none;">
+                                        <a class="nav-link" href="/inout/saleslist">
+                                            정산 통계
+                                        </a>
+                                        <% if ( user.iClass == 0 || user.iClass ) { %>
+                                        <a class="nav-link" href="/inout/monthlist">
+                                            관리자 정산
+                                        </a>
+                                        <a class="nav-link" href="/inout/jackpotlist">
+                                            잭팟 기록
+                                        </a>
+                                        <%}%>
+                                    </div>
+
+                                    <div class="sb-sidenav-menu-heading">
+                                        머니회수기록 관리
+                                        <span class="arrow-downs"></span>
+                                        <span class="arrow-ups"></span>
+                                    </div>
+                                        <div class="submenu" style="display: none;">
+                                            <a class="nav-link" href="/inout/agentordercash">
+                                                에이전트<>에이전트 머니회수 기록
+                                            </a> 
+                                            <a class="nav-link" href="/inout/userordercash">
+                                                에이전트<>회원 머니회수 기록
+                                            </a>
+                                            <div class="sb-sidenav-menu-heading">포인트지급 기록 관리</div>
+                                            <a class="nav-link" href="/inout/agentorderpoint">
+                                                에이전트<>에이전트 포인트지급 기록
+                                            </a> 
+                                            <a class="nav-link" href="/inout/userorderpoint">
+                                                에이전트<>회원 포인트지급 기록
+                                            </a>
+                                        </div>
+                                    <!-- <div class="sb-sidenav-menu-heading">쿠폰 관리툴</div>
+                                    <a class="nav-link" href="#">
+                                        쿠폰등록 신청
+                                    </a>
+                                    <a class="nav-link" href="#">
+                                        쿠폰 목록
+                                    </a>
+                                    <a class="nav-link" href="#">
+                                        쿠폰 통계
+                                    </a> -->
+                                    <% if ( user.iClass == 0 ) { %>
+                                    <div class="sb-sidenav-menu-heading">
+                                        랭킹
+                                        <span class="arrow-downs"></span>
+                                        <span class="arrow-ups"></span>
+                                    </div>
+                                        <div class="submenu" style="display: none;">
+                                            <a class="nav-link" href="/rank/ranklist">
+                                                게임머니 변동 랭킹
+                                            </a>
+                                        </div>
+                                    <%}%>
+
+                                    <div class="sb-sidenav-menu-heading">
+                                        게임 관리
+                                        <span class="arrow-downs"></span>
+                                        <span class="arrow-ups"></span>
+                                    </div>
+                                        <div class="submenu" style="display: none;">
+                                            <a class="nav-link" href="/game/gamelog">
+                                                게임로그 목록
+                                            </a>
+                                            <a class="nav-link" href="/etc/letter">
+                                                쪽지함
+                                            </a>
+                                            <a class="nav-link" href="/etc/consulting">
+                                                1:1 문의
+                                            </a>
+                                            <% if ( user.iClass == 0 ) { %>
+                                            <a class="nav-link" href="/announcement">
+                                                공지사항/이벤트
+                                            </a>
+                                            <a class="nav-link" href="/announcement/popup">
+                                                팝업 설정
+                                            </a>
+                                            <a class="nav-link" href="/etc/bank">
+                                                은행코드 설정
+                                            </a>
+                                            <a class="nav-link" href="/game/roomlist">
+                                                게임 방목록
+                                            </a>
+                                            <a class="nav-link" href="/game/jackpot">
+                                                잭팟 설정
+                                            </a>
+                                            <a class="nav-link" href="/game/fee">
+                                                딜비 설정
+                                            </a>
+                                            <a class="nav-link" href="/game/inspection">
+                                                점검 설정
+                                            </a>
+                                            <%}%>
+                                        </div>
+                                </div>
+                            </div>
+                            
+                        </nav>
+                    </div>
+                <!-- 왼쪽 사이드 메뉴 끝 -->
+                </div>
+                <div class="content-page">
+                    <div class="content">
+    
+                        <%- body %>
+    
+                    </div> <!-- End Content -->
+    
+                </div> <!-- content-page -->
+                <!-- Footer Start -->
+                <!-- <footer class="footer">
+                    <div class="container-fluid">
+                        <div class="row">
+                            <div class="col-md-6">
+                                2023 Poker
+                            </div> -->
+                            <!-- <div class="col-md-6">
+                                <div class="text-md-right footer-links d-none d-md-block">
+                                    <a href="javascript: void(0);">About</a>
+                                    <a href="javascript: void(0);">Support</a>
+                                    <a href="javascript: void(0);">Contact Us</a>
+                                </div>
+                            </div> -->
+                        <!-- </div>
+                    </div>
+                </footer> -->
+                <!-- end Footer -->
+            <!-- </body> -->
+            <!-- bankcount change -->
+            <div class="modal fade task-modal-content" id="AccountDialog" tabindex="-1" role="dialog">
+                <div class="modal-dialog modal-dialog-centered modal-lg">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h4 class="modal-title" id="NewTaskModalLabel">계좌정보 변경</h4>
+                            <button type="button" class="close" data-bs-dismiss="modal" aria-hidden="true">×</button>
+                        </div>
+                        <div class="modal-body">
+                                <!-- <form class="p-2" id="UserForm" method="POST" action="/agent/register"> -->
+                                <input type="hidden" name="id" id="uid" value="" />
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="birthdatepicker">예금주명</label>
+                                            <input type="text" class="form-control date" id="strAdminName" name="strAdminName" placeholder="">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="birthdatepicker">은행명</label>
+                                            <input type="text" class="form-control date" id="strAdminBank" name="strAdminBank" placeholder="">
+                                        </div>
+                                    </div>
+                                </div>
+        
+                                <div class="row">
+                                    <div class="col-md-10">
+                                        <div class="form-group">
+                                            <label for="birthdatepicker">계좌번호</label>
+                                            <input type="text" class="form-control date" id="strAdminAccount" name="strAdminAccount" placeholder="">
+                                        </div>
+                                    </div>
+                                </div>
+        
+                                <div class="text-right">
+                                    <button type="button" class="btn btn-primary" onclick="RequestAccountChange();">저장</button>
+                                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">취소</button>
+                                </div>
+                            <!-- </form> -->
+                        </div>
+                    </div><!-- /.modal-content -->
+                </div><!-- /.modal-dialog -->
+            </div><!-- /.modal -->
+            <!-- rolling <> cash change -->
+            <div class="modal fade task-modal-content" id="RollingDialog" tabindex="-1" role="dialog">
+                <div class="modal-dialog modal-dialog-centered modal-lg">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h4 class="modal-title" id="NewTaskModalLabel">보유머니 <> 보유포인트 전환</h4>
+                            <button type="button" class="close" data-bs-dismiss="modal" aria-hidden="true">×</button>
+                        </div>
+                        <div class="modal-body">
+                                <!-- <form class="p-2" id="UserForm" method="POST" action="/agent/register"> -->
+                                <input type="hidden" name="id" id="uid" value="" />
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="birthdatepicker">머니 > 포인트 전환</label>
+                                            <input type="text" class="form-control date" id="iCash" name="iCash" placeholder="">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="birthdatepicker">포인트 > 머니 전환</label>
+                                            <input type="text" class="form-control date" id="iRolling" name="iRolling" placeholder="">
+                                        </div>
+                                    </div>
+                                </div>
+        
+                                <div class="text-right">
+                                    <button type="button" class="btn btn-primary" onclick="RequestRollingChange();">전환</button>
+                                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">취소</button>
+                                </div>
+                            <!-- </form> -->
+                        </div>
+                    </div><!-- /.modal-content -->
+                </div><!-- /.modal-dialog -->
+            </div><!-- /.modal -->
+        <!-- bundle -->
+        <script src="./assets/js/vendor.min.js"></script>
+        <script src="./assets/js/app.min.js"></script>
+    
+        <!-- third party js -->
+        <script src="./assets/js/vendor/jquery.dataTables.min.js"></script>
+        <script src="./assets/js/vendor/dataTables.bootstrap4.js"></script>
+        <script src="./assets/js/vendor/dataTables.responsive.min.js"></script>
+        <script src="./assets/js/vendor/responsive.bootstrap4.min.js"></script>
+        <script src="./assets/js/vendor/dataTables.checkboxes.min.js"></script>
+        <!-- third party js ends -->
+        <!-- demo app -->
+        <script src="./assets/js/pages/demo.customers.js"></script>
+        <!-- end demo js-->
+        <!-- include summernote css/js -->
+        <link href="./js/summernote/summernote-bs4.css" rel="stylesheet">
+        <link href="./js/summernote/summernote.css" rel="stylesheet">
+        <script src="./js/summernote/summernote-bs4.min.js"></script>
+        <script src="./js/summernote/summernote.min.js"></script>
+        <script src="./js/summernote/lang/summernote-ko-KR.min.js"></script>
+    
+        <script type="text/javascript" src="./js/jquery.form.min.js"></script>
+        <script type="text/javascript" src="./js/select.dataTables.min.js"></script>
+    
+        <script type="text/javascript">
+
+            var user = JSON.parse('<%-JSON.stringify(user)%>');
+            // console.log(user);
+
+            $.fn.datepicker.dates['kr'] = {
+                days: ["일요일", "월요일", "화요일", "수요일", "목요일", "금요일", "토요일", "일요일"],
+                daysShort: ["일", "월", "화", "수", "목", "금", "토", "일"],
+                daysMin: ["일", "월", "화", "수", "목", "금", "토", "일"],
+                months: ["1월", "2월", "3월", "4월", "5월", "6월", "7월", "8월", "9월", "10월", "11월", "12월"],
+                monthsShort: ["1월", "2월", "3월", "4월", "5월", "6월", "7월", "8월", "9월", "10월", "11월", "12월"]
+            };
+
+            var socket = io('/');
+            var sAlert = new Audio('/sounds/alert.mp3'); // sound.mp3 대신 루프로 재생할 오디오 파일 경로를 입력하세요.
+            sAlert.loop = true; // 오디오를 루프로 재생합니다.
+            socket.on('SM_RequestLogin', ()=> {
+
+                console.log('SM_RequestLogin');
+                socket.emit('CM_Login', {strID:user.strID, strGroupID:user.strGroupID});
+
+            });
+
+            socket.on('SM_Alert', (objectData) => {
+
+                console.log('SM_Alert');
+                console.log(objectData);
+                //objectData.eType = 0 (input), objectData.eType = 1 (output), objectData.eType = 2 (letter)
+                if(user.iClass == 1){
+                    if(objectData.eType == 0)
+                    {
+                        $('#alert_input').show();
+                        sAlert.play();
+                    }
+                    if(objectData.eType == 1)
+                    {
+                        $('#alert_output').show();
+                        sAlert.play();
+                    }
+                    if(objectData.eType == 2)
+                    {
+                        $('#alert_letter').show();
+                        sAlert.play();
+                    }
+                }
+            });
+            let RequestAccountChange = () => {
+                event.preventDefault();
+                const strName = $('#strAdminName').val();
+                const strBank = $('#strAdminBank').val();
+                const strAccount = $('#strAdminAccount').val();
+
+                $.ajax({
+                    url:"/agent/request_accountchange",
+                    type:"POST",
+                    data: {
+                        strID:user.strID,
+                        strName :strName,
+                        strBank:strBank,
+                        strAccount:strAccount,
+                    },
+                    dataType: "json",
+                    success: function (obj) {
+                        console.log(obj);
+
+                        if ( obj.result == 'OK' )
+                        {
+                            alert('완료 되었습니다.');
+                            location.reload();
+                        }
+                        else
+                        {
+                            alert(obj.reason);
+                        }
+                    }, 
+                    error: function () {
+                        alert("조회 중 오류 발생");
+                    }
+                });
+            }
+            let RequestRollingChange = () => {
+                event.preventDefault();
+                const iCash = $('#iCash').val();
+                const iRolling = $('#iRolling').val();
+
+                if(iRolling > user.iRolling)
+                {
+                    alert("보유 포인트 보다 큽니다. 다시 입력해주세요.");
+                    return;
+                }
+                else if(iCash > user.iCash)
+                {
+                    alert("보유 머니 보다 큽니다. 다시 입력해주세요.");
+                    return;
+                }
+                $.ajax({
+                    type:"POST",
+                    url:"/agent/request_rollingchange",
+                    data: {
+                        "iCash":iCash,
+                        "iRolling": iRolling,
+                    },
+                    dataType: "json",
+                    type: "POST",
+                    success: function (obj) {
+                        if (obj.result == "OK") {
+                            alert("정상적으로 전환 되었습니다.");
+                            location.reload();
+                        } else {
+                            alert(obj.reason);
+                        }
+                    },
+                    error: function () {
+                        alert("전환 처리 요청 중 오류");
+                    }
+                });
+            }
+            $(document).ready(function(){
+    
+                $('#alert_input').hide();
+                $('#alert_output').hide();
+                $('#alert_letter').hide();
+
+                $('.arrow-downs').show(); // 화살표 초기 설정
+                $('.arrow-ups').hide(); // 숨겨진 상태로 설정
+
+                $("#ChangePersonalInfo").click(function(e){
+                    e.preventDefault();
+    
+                    var currentPassword = prompt("현재 비밀번호를 입력해 주세요");
+                    if(currentPassword == "" || currentPassword == null)
+                        return;
+                    var newPassword = prompt("새로운 비밀번호를 입력해 주세요");
+                    if(newPassword == "" || newPassword == null)
+                        return;
+    
+                    var confirmPassword = prompt("새로운 비밀번호를 다시 입력해 주세요");
+                    if(confirmPassword == "" || confirmPassword == null)
+                        return;
+                    if(confirmPassword != newPassword){
+                        alert("새로운 비밀번호와 일치 하지 않습니다");
+                        return;
+                    }
+    
+                    $.ajax({
+                        //url : "@Url.Action("ChangeMyPassword")",
+                        url : "/agent/request_passwordchange",
+                        data : {
+                            strID:user.strID,
+                            currentPassword : currentPassword,
+                            newPassword : newPassword
+                        },
+                        dataType : "json",
+                        type : "POST",
+                        success : function(obj){
+                            if(obj.result == "OK"){
+                                alert("변경되었습니다");
+                            }else{
+                                alert(obj.reason);
+                            }
+                        },
+                        error : function(){
+                            alert("서버 오류로 처리 할 수 없습니다");
+                        }
+                    });
+                });
+                $("#ChangeAdminAccount").click(function(e){
+                    console.log("ChangeAdminAccount");
+                    e.preventDefault();
+                    $.ajax({
+                        //url: "@Url.Action("QueryUser")",
+                        url:"/agent/request_accountchangelist",
+                        type:"POST",
+                        data: {
+                            strID:user.strID
+                        },
+                        dataType: "json",
+                        success: function (obj) {
+                            if (obj.result == "OK") {
+
+                                console.log(obj.data);
+
+                                const data = obj.data;
+
+                                $('#strAdminBank').val(data.strBank);
+                                $('#strAdminName').val(data.strName);
+                                $('#strAdminAccount').val(data.strAccount);
+
+                                $('#AccountDialog').modal('show');
+                            } else {
+                                alert(obj.reason);
+                            }
+                        }, error: function () {
+                            alert("조회 중 오류 발생");
+                        }
+                    });
+                });
+                //머니<>포인트 전환
+                $("#rollingChange").click(function (e) {
+                    e.preventDefault();
+
+                    $('#RollingDialog').modal('show');
+                });
+
+                const sidebarToggle = document.body.querySelector('#sidebarToggle');
+                if (sidebarToggle) {
+                    sidebarToggle.addEventListener('click', event => {
+                        event.preventDefault();
+                        document.body.classList.toggle('sb-sidenav-toggled');
+                        localStorage.setItem('sb|sidebar-toggle', document.body.classList.contains('sb-sidenav-toggled'));
+                    });
+                }
+        
+                // $(".menu").click(function(e){
+                //     if ($(".submenu").style.display === "none" || $(".submenu").style.display === "") {
+                //         $(".submenu").style.display = "block";
+                //     } else {
+                //         $(".submenu").style.display = "none";
+                //     }
+                // });
+                $('.sb-sidenav-menu-heading').click(function() {
+                    $(this).next('.submenu').slideToggle(); // 해당 heading의 다음 형제 요소 중 클래스가 submenu인 것을 토글
+                    $(this).find('.arrow-downs, .arrow-ups').toggle(); // 화살표 표시 변경
+                });
+            });
+            
+        </script>    
+        
+        <%- script %>
+    
+    <% } else if ( type == 1 ) { %>
+        <%- body %>
+
+        <%- script %>
+    <% } else if ( type == 2 ) { %>
+
+        <%- body %>
+
+        <%- script %> 
+    <% } %>
+</body>
+</html>

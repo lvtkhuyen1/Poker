@@ -1,0 +1,275 @@
+
+<head>
+    
+</head>
+
+<!-- start page title -->
+<div class="row">
+    <div class="col-12">
+        <div class="page-title-box">
+            <div class="page-title-right">
+                <ol class="breadcrumb m-0">
+                    <li class="breadcrumb-item"><a href="javascript: void(0);">팝업 관리</a></li>
+                    <li class="breadcrumb-item active">팝업 관리</li>
+                </ol>
+            </div>
+            <h4 class="page-title">팝업 관리</h4>
+        </div>
+    </div>
+</div>
+<!-- end page title -->
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <div class="row mb-2">
+                    <!-- <div class="col-sm-2">
+                        <a href="javascript:void(0);" class="btn btn-danger mb-2 CreateAnnouncement" style="color: white;"><i class="mdi mdi-plus-circle mr-2"></i> 팝업 작성</a>
+                    </div> -->
+                    
+                    <div class="col-sm-7">
+                        <div class="text-sm-right">
+                            <!--
+                            <button type="button" class="btn btn-success mb-2 mr-1"><i class="mdi mdi-settings"></i></button>
+                            <button type="button" class="btn btn-light mb-2">Export</button>
+                                -->
+                        </div>
+                    </div><!-- end col-->
+                </div>
+
+                <div class="table-responsive">
+                    <table id="user-datatable" class="table table-sm table-hover dt-responsive nowrap w-100">
+                        <thead>
+                            <tr>
+                                <th>순번</th>
+                                <th>팝업</th>
+                                <th>업로드</th>
+                                <th>상태</th>
+                                <th>업로드시간</th>
+                            </tr>
+                        </thead>
+                    </table>
+                </div>
+            </div> <!-- end card-body-->
+        </div> <!-- end card-->
+    </div> <!-- end col -->
+
+    <!-- <div class="modal fade task-modal-content" id="RegisterDialog" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" id="NewTaskModalLabel" >팝업 작성</h4>
+                    <button type="button" class="close" data-bs-dismiss="modal" aria-hidden="true">×</button>
+                </div>
+                <div class="modal-body">
+                        <form class="p-2" id="UserForm" method="POST" action="/announcement/popupregister">
+                        <input type="hidden" name="id" id="uid" value="" />
+                        <label>권한</label>
+                        <select class="form-control form-control-light" name="iClass" id="iClass">
+                            <option value="1">본사</option>
+                            <option value="2">본사+지사</option>
+                            <option value="3">본사+지사+총판</option>
+                            <option value="4">본사+지사+총판+매장</option>
+                            <option value="5" selected>본사+지사+총판+매장+유저</option>
+                        </select>
+                        <div class="form-group">
+                            <label for="task-description">제목</label>
+                            <textarea class="form-control form-control-light" id="strSubject" name="strSubject" rows="1" maxlength="100"></textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="task-description">팝업 내용</label>
+                            <textarea class="form-control form-control-light" id="strContents" name="strContents" rows="3" maxlength="510"></textarea>
+                        </div>
+
+                        <div class="text-right">
+                            <button type="button" class="btn btn-primary" id="UserFormSubmitButton">저장</button>
+                            <button type="button" class="btn btn-light" data-bs-dismiss="modal">취소</button>
+                        </div>
+                    </form>
+                </div> -->
+            <!--</div> /.modal-content -->
+        <!--</div> /.modal-dialog -->
+    <!--</div> /.modal -->
+    <div class="modal fade task-modal-content" id="RegisterDialog" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" id="NewTaskModalLabel" >팝업 이미지 업로드</h4>
+                    <button type="button" class="close" data-bs-dismiss="modal" aria-hidden="true">×</button>
+                </div>
+                <div class="modal-body">
+                    <form class="p-2" id="PopupForm" method="POST" enctype="multipart/form-data" action="/announcement/popupregister">
+                        
+                        <!-- 숨겨진 입력 필드 추가: 팝업 이름 -->
+                        <input type="hidden" name="popupName" id="popupName">
+                        
+                        <!-- 이미지 업로드 필드 -->
+                        <div class="form-group">
+                            <label for="popupImage">팝업 이미지</label>
+                            <input type="file" class="form-control-file" id="popupImage" name="popupImage">
+                        </div>
+                
+                        <div class="text-right">
+                            <button type="submit" class="btn btn-primary" id="PopupFormSubmitButton">저장</button>
+                            <button type="button" class="btn btn-light" data-bs-dismiss="modal">취소</button>
+                        </div>
+                    </form>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+
+</div>
+<!-- end row -->
+
+<script type="text/javascript">
+
+    var dataTableInstance;
+
+        // 정보 수정 완료
+        $("#UserFormSubmitButton").click(function (e) {
+            e.preventDefault();
+
+            $("#UserForm").ajaxSubmit({
+                dataType: "json",
+                type : "POST",
+                beforeSubmit: function () {
+                },
+                success: function (obj) {
+                    if (obj.result == "OK") {
+                        $("#RegisterDialog").modal("hide");
+                        dataTableInstance.ajax.reload();
+                        return;
+                    }
+                    alert(obj.reason);
+                },
+                error: function () {
+                    alert("조회 중 오류가 생겼습니다.");
+                }
+            });
+        });
+
+    $(document).ready(function(){
+        // 내용 수정 버튼
+        $(document).on("click", ".noticeText", function (e) {
+            e.preventDefault();
+            var id = $(this).parent().parent().attr("data-id");
+            console.log(id);
+            // DataTables의 행 데이터 가져오기
+            var data = dataTableInstance.row($(this).parents('tr')).data();
+            var strSubject = data.strSubject; // 'strSubject' 열의 데이터
+            console.log(strSubject);
+
+            // 숨겨진 입력 필드에 팝업 이름 설정
+            $('#popupName').val(strSubject);
+
+            // 모달 표시
+            $("#RegisterDialog").modal("show");
+        });
+        // eState 드롭다운 변경 이벤트 핸들링
+        $('#user-datatable').on('change', '.eState-dropdown', function() {
+            var id = $(this).data('id');
+            var newState = $(this).val();
+
+            $.ajax({
+                url: '/announcement/popupregister_setting',
+                type: 'POST',
+                data: {
+                    id: id,
+                    eState: newState
+                },
+                success: function (obj) {
+                    if (obj.result == "OK") {
+                        dataTableInstance.ajax.reload();
+                        return;
+                    }
+                    else
+                    {
+                        alert(obj.reason);
+                    }
+                },
+                error: function () {
+                    alert("조회 중 오류가 생겼습니다.");
+                }
+            });
+        });
+        function onEditPopup(popupName) {
+            // 숨겨진 필드에 팝업 이름 설정
+            document.getElementById('popupName').value = popupName;
+            
+            // 모달 열기
+            $('#RegisterDialog').modal('show');
+        }
+
+        dataTableInstance = $('#user-datatable').DataTable({
+            "serverSide": true,
+            "searching": false,
+            "ajax": {
+                //url: "@Url.Action("UserList")",
+                url:"/announcement/request_popuplist",
+                "type": "POST",
+                "data": function (d) {
+                    return $.extend({}, d, {
+                        // "userTypeFilter": $("input[name='UserTypeFilter']:checked").val(),
+                        // "search" : $("#searchText").val(),
+                        // "iClass" : 1,
+                    });
+                }
+            },
+            responsive : false,
+            order: [[ 1, 'desc' ]],
+            columns: [
+
+                {
+                    data: "id"
+                },
+                {
+                    data: "strSubject"
+                },
+                { 
+                    data: "strContents",
+                    render: function (d) {
+                        return "<a href='#' class='noticeText' data-id='" + d + "'>" + d + "</a>";
+                    } 
+                },
+                {
+                    data: "eState",
+                    render: function (data, type, row) {
+                        var selectedEnable = data === 'ENABLE' ? 'selected' : '';
+                        var selectedDisable = data === 'DISABLE' ? 'selected' : '';
+
+                        return `
+                            <select class="eState-dropdown" data-id="${row.id}">
+                                <option value="ENABLE" ${selectedEnable}>보이기</option>
+                                <option value="DISABLE" ${selectedDisable}>숨기기</option>
+                            </select>`;
+                    }
+                },
+                { 
+                    data: "updatedAt" 
+                }
+            ],
+            keys: true,
+            "language": {
+                "paginate": {
+                    "previous": "<i class='mdi mdi-chevron-left'>",
+                    "next": "<i class='mdi mdi-chevron-right'>"
+                },
+                "info": "현재 페이지 _PAGE_/_PAGES_, 총 _TOTAL_ 건",
+                "lengthMenu": "한 페이지 길이 _MENU_",
+                "emptyTable": "조건에 맞는 데이터가 없습니다",
+                "infoEmpty" : "표시할 데이터 없음"
+            },
+            "sort": false,
+            "drawCallback": function () {
+                $('.dataTables_paginate > .pagination').addClass('pagination-rounded');
+            },
+            createdRow: function (row, data) {
+                $(row).attr("data-id", data.id);
+                $(row).attr("data-loginId", data.strLoginID);
+            }
+        });
+    });
+</script>

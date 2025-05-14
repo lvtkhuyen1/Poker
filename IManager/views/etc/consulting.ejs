@@ -1,0 +1,485 @@
+
+<head>
+    
+</head>
+
+
+<!-- start page title -->
+<div class="row">
+    <div class="col-12">
+        <div class="page-title-box">
+            <div class="page-title-right">
+                <ol class="breadcrumb m-0">
+                    <li class="breadcrumb-item"><a href="javascript: void(0);">기타</a></li>
+                    <li class="breadcrumb-item active">1:1 문의</li>
+                </ol>
+            </div>
+            <h4 class="page-title">1:1 문의</h4>
+        </div>
+    </div>
+</div>
+<!-- end page title -->
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <div class="row mb-2">
+                    <!-- <div class="col-sm-2">
+                        <a href="javascript:void(0);" class="btn btn-danger mb-2 buttonWriteLetter" style="color: white;"><i class="mdi mdi-plus-circle mr-2"></i>1:1 문의 전송</a>
+                    </div> -->
+                    <!-- <div class="col-sm-3">
+                        <div class="btn-group btn-group-toggle" data-toggle="buttons">
+                            <label class="btn btn-secondary active">
+                                <input type="radio" name="LetterReadWriteFilter" value="SENT" checked />보낸 1:1 문의함
+                            </label>
+                            <label class="btn btn-secondary">
+                                <input type="radio" name="LetterReadWriteFilter" value="RECEIVED" />받은 1:1 문의함
+                            </label>
+                        </div>
+                    </div> -->
+
+                    <div class="col-sm-3">
+                        <div class="btn-group btn-group-toggle" data-toggle="buttons">
+                            <label class="btn btn-secondary active text-nowrap">
+                                <input type="radio" name="LetterStateFilter" value="" checked />전체
+                            </label>
+                            <label class="btn btn-secondary text-nowrap">
+                                <input type="radio" name="LetterStateFilter" value="READED" />읽음
+                            </label>
+                            <label class="btn btn-secondary text-nowrap">
+                                <input type="radio" name="LetterStateFilter" value="UNREAD" />읽지않음
+                            </label>
+                        </div>
+                    </div>
+                    <% if ( user.iClass == 0 ) { %>
+                    <div class="col-sm-3">
+                        <div class="input-group mb-3">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text" for="searchText">
+                                    ID/닉네임
+                                </span>
+                            </div>                           
+                            <input type="text" id="searchText" name="searchText" maxlength="20" class="form-control" />
+                            <div class="input-group-append">
+                                <button class="form-control" id="SearchTextFindButton">검색</button>
+                            </div>
+                        </div>
+                    </div>
+                    <% } %>
+                    <div class="col-sm-7">
+                        <div class="text-sm-right">
+                            <!--
+                            <button type="button" class="btn btn-success mb-2 mr-1"><i class="mdi mdi-settings"></i></button>
+                            <button type="button" class="btn btn-light mb-2">Export</button>
+                                -->
+                        </div>
+                    </div><!-- end col-->
+                </div>
+
+                <div class="table-responsive">
+                    <table id="user-datatable" class="table table-sm table-hover dt-responsive nowrap w-100">
+                        <thead>
+                            <tr>
+                                <th>순번</th>
+                                <th>발신자 ID</th>
+                                <th>발신자 닉네임</th>
+                                <!-- <th>수신자 ID</th>
+                                <th>수신자 닉네임</th> -->
+                                <th>내용</th>
+                                <th>상태</th>
+                                <th>등록일</th>
+                                <th>삭제</th>
+                            </tr>
+                        </thead>
+                    </table>
+                </div>
+            </div> <!-- end card-body-->
+        </div> <!-- end card-->
+    </div> <!-- end col -->
+
+    <div class="modal fade task-modal-content" id="PopupReader" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" id="NewTaskModalLabel">1:1 문의 보기</h4>
+                    <button type="button" class="close" data-bs-dismiss="modal" aria-hidden="true">×</button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" id="data_id">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="task-title">발신자 ID</label>
+                                <input type="text" class="form-control form-control-light" id="strSender" name="strSender" placeholder="발신자 ID">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="task-description">문의 내용</label>
+                        <textarea class="form-control form-control-light" id="strReadingContents" name="strReadingContents" rows="3" maxlength="510" readonly></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="task-description">문의 답변</label>
+                        <textarea class="form-control form-control-light" id="strReadingAnswer" name="strReadingAnswer" rows="3" maxlength="510"></textarea>
+                    </div>
+
+                    <div class="text-right">
+                        <% if ( user.iClass == 0 ) { %>
+                        <button type="button" class="btn btn-primary" id="UserFormAnswerButton">답장</button>
+                        <% } %>
+                        <button type="button" class="btn btn-light" data-bs-dismiss="modal">취소</button>
+                    </div>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+
+    <div class="modal fade task-modal-content" id="PopupWriter" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" id="NewTaskModalLabel">1:1 문의 </h4>
+                    <button type="button" class="close" data-bs-dismiss="modal" aria-hidden="true">×</button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" id="strTo">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="task-title">수신자 ID</label>
+                                <input type="text" class="form-control form-control-light" id="strReceiver" name="strReceiver" placeholder="수신자 ID">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="task-description">1:1 문의 내용</label>
+                        <textarea class="form-control form-control-light" id="strWritingContents" name="strWritingContents" rows="3" maxlength="510"></textarea>
+                    </div>
+
+                    <div class="text-right">
+                        <% if ( user.iClass == 0 ) { %>
+                        <button type="button" class="btn btn-primary" id="UserFormSubmitButton">전송</button>
+                        <% } %>
+                        <button type="button" class="btn btn-light" data-bs-dismiss="modal">취소</button>
+                    </div>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+
+</div>
+<!-- end row -->
+
+<script type="text/javascript">
+
+    var user = JSON.parse('<%-JSON.stringify(user)%>');
+    console.log(user);
+    var dataTableInstance;
+
+    $(document).ready(function(){
+
+        $("#birthdate").datepicker({
+            format: 'yyyy-mm-dd',
+            language: 'kr'
+        });
+
+        // 새 계정 생성
+        $(".buttonWriteLetter").click(function (e) {
+            e.preventDefault();
+
+            if(user.iClass == 0)
+            {
+                $('#strReceiver').val('');
+                $('#strWritingContents').val('');
+                $("#PopupWriter").modal("show");
+            }
+            else
+            {
+                return;
+            }
+        });
+
+        $('#user-datatable').on('click', '.strAnswerID', (e) => {
+
+            var id = $(e.currentTarget).parent().parent().attr('data-id');
+            console.log(id);
+            var strTo = $(e.currentTarget).attr('strAnswerID');
+            console.log(strTo);
+
+            $('#strWritingContents').text('');
+            $('#strReceiver').val(strTo);
+
+            $("#PopupWriter").modal("show");
+        });
+
+
+        $('#user-datatable').on('click', '.strSubject', (e) => {
+
+            var id = $(e.currentTarget).parent().parent().attr('data-id');
+            console.log(id);
+
+            let objectData = {id:id};
+
+            $.ajax({
+                url:"/etc/request_consultingdetail",
+                type:"POST",
+                data:objectData,
+                dataType: "json",
+                success: function (obj) 
+                {
+                    if (obj.result == "OK") {
+
+                        console.log(obj.data);
+                        $('#strReadingAnswer').val(obj.data.strAnswer);
+                        $('#strSender').val(obj.data.strFrom);
+                        $('#data_id').val(id);
+                        $('#strReadingContents').val(obj.data.strContents);
+                        $("#PopupReader").modal("show");
+                    } 
+                    else 
+                    {
+                    }
+                }, error: function () {
+                    alert("조회 중 오류 발생");
+                }
+            });
+        
+
+            $("#UserEditDialog").modal("show");
+
+        });
+
+        // 삭제 버튼 클릭
+        $("#user-datatable").on("click", ".buttonRemove", function (e) {
+            e.preventDefault();
+
+            if ( confirm('삭제 하시겠습니까?') )
+            {
+                var id = $(e.currentTarget).parent().parent().attr('data-id');
+                console.log(id);
+
+                let objectData = {id:id};
+
+                $.ajax({
+                    type:"POST",
+                    url:"/etc/request_letterremove",
+                    data:objectData,
+                    dataType: "json",
+                    type: "POST",
+                    success: function (obj) {
+                        if (obj.result == "OK") {
+
+                            alert('삭제 되었습니다.');
+                            dataTableInstance.ajax.reload();
+                            return;
+                        } else {
+                            alert(obj.reason);
+                        }
+                    },
+                    error: function () {
+                        alert("삭제 처리 요청 중 오류");
+                    }
+                });
+            }
+
+
+            
+        });
+
+        // 사용자 구분
+        // $("input[name='LetterReadWriteFilter']").change(function () {
+        //     dataTableInstance.ajax.reload();
+        // });
+
+        $("input[name='LetterStateFilter']").change(function () {
+            dataTableInstance.ajax.reload();
+        });
+
+        $("#SearchTextFindButton").click(function (e) {
+            e.preventDefault();
+
+            dataTableInstance.ajax.reload();
+        });
+
+        // 정보 수정 완료
+        $("#UserFormSubmitButton").click(function (e) {
+            e.preventDefault();
+            var id = $(e.currentTarget).parent().parent().attr('data-id');
+            console.log(id);
+
+            let objectData = 
+            {
+                strFrom:$('#strSender').val(),
+                strContents:$('#strWritingContents').val()
+            };
+
+            if ( objectData.strContents == '' )
+            {
+                return;
+            }
+
+            $.ajax({
+                url:"/etc/request_lettersend",
+                dataType: "json",
+                type : "POST",
+                data : objectData,
+                success: function (obj) {
+
+                    if (obj.result == "OK") {
+
+                        $("#PopupWriter").modal("hide");
+                        //dataTableInstance.ajax.reload();
+                        location.reload();
+                    }
+                    else
+                    {
+                        alert(obj.reason);
+                    }
+                },
+                error: function () {
+                    alert("서버 오류");
+                }
+            });
+        });
+
+        $("#UserFormAnswerButton").click(function (e) {
+            e.preventDefault();
+
+            let objectData = 
+            {
+                id:$('#data_id').val(),
+                strAnswer:$('#strReadingAnswer').val()
+            };
+
+            if ( objectData.strAnswer == '' )
+            {
+                alert('답변을 입력 해주세요.');
+                return;
+            }
+
+            $.ajax({
+                url:"/etc/request_consultingsend",
+                dataType: "json",
+                type : "POST",
+                data :objectData,
+                success: function (obj) {
+                    if (obj.result == "OK") {
+                        $("#PopupReader").modal("hide");
+                        dataTableInstance.ajax.reload();
+                        return;
+                    }
+                    alert(obj.reason);
+                },
+                error: function () {
+                    alert("서버 오류");
+                }
+            });
+        });
+
+        dataTableInstance = $('#user-datatable').DataTable({
+            "serverSide": true,
+            "searching": false,
+            "ajax": {
+                //url: "@Url.Action("UserList")",
+                url:"/etc/request_consultinglist",
+                "type": "POST",
+                "data": function (d) {
+                    return $.extend({}, d, {
+                        // "LetterReadWriteFilter": $("input[name='LetterReadWriteFilter']:checked").val(),
+                        "LetterStateFilter": $("input[name='LetterStateFilter']:checked").val(),
+                        "search" : $("#searchText").val()
+                    });
+                }
+            },
+            responsive : false,
+            order: [[ 0, 'DESC']],
+            columns: [
+
+                {
+                    data: "id"
+                },
+                {
+                    data: "strFrom",
+                    render: function (d) {
+                        if(user.iClass == 0)
+                        {
+                            return `<a href='#' class='strAnswerID' strAnswerID='${d}'>${d}</a>`;
+                        }
+                        else
+                        {
+                            return d;
+                        }
+                    }
+                },
+                {
+                    data: "strFromNickname"
+                },
+                // {
+                //     data: "strTo",
+                //     render: function (d) {
+                //         return `<a href='#' class='strAnswerID' strAnswerID='${d}'>${d}</a>`;
+                //     }
+                // },
+                // {
+                //     data: "strToNickname"
+                // },
+                {   data: "strSubject",
+                    render: function (d) {
+                        return "<a href='#' class='strSubject'>" + d + "</a>";
+                    }
+                },
+                {
+                    data: "eState",
+                    render: function (d, t, s, m) {
+                        var text = "";
+                        if (d == "UNREAD")
+                            text = "답변대기";
+                        else if (d == "READED")
+                            text = "답변완료";
+                        else
+                            text = "답변대기";
+                        return text;
+                    }
+                },
+                { data: "createdAt" },
+                {
+                    data: null,
+                    render: function (d, t) {
+                        if(user.iClass == 0)
+                        {
+                            return "<a href='#' class='buttonRemove' title='삭제'>X</a>";
+                        }
+                        else
+                        {
+                            return 'X';
+                        }
+                    }
+                }
+            ],
+            keys: true,
+            "language": {
+                "paginate": {
+                    "previous": "<i class='mdi mdi-chevron-left'>",
+                    "next": "<i class='mdi mdi-chevron-right'>"
+                },
+                "info": "현재 페이지 _PAGE_/_PAGES_, 총 _TOTAL_ 건",
+                "lengthMenu": "한 페이지 길이 _MENU_",
+                "emptyTable": "조건에 맞는 데이터가 없습니다",
+                "infoEmpty" : "표시할 데이터 없음"
+            },
+            "sort": false,
+            "drawCallback": function () {
+                $('.dataTables_paginate > .pagination').addClass('pagination-rounded');
+            },
+            createdRow: function (row, data) {
+
+                console.log(data.id);
+                $(row).attr("data-id", data.id);
+                $(row).attr("data-strTo", data.strTo);
+            }
+        });
+
+
+    });
+</script>

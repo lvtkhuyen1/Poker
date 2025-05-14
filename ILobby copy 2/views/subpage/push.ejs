@@ -1,0 +1,264 @@
+   
+    <!-- sub_content -->
+    <div class="sub_content_arr_bg">
+        <div class="sub_content_arr">
+            <div>
+                <div class="subTitle_arr">
+                    <h2>충전하기 <small>charge</small></h2>
+                </div>
+                
+                <div class="cont_back_arr01">
+                    <div class="cash_notice_zone ">
+                        
+                        <div class="title">충전방법 </div>
+                        <ul>
+                            <li>입금을 먼저 하시고, 충전 신청을 눌러주시기 바랍니다.<br>
+                                <br>
+                                <b>입금 단위는 만원 단위로만 입금 가능하십니다.</b><br>
+                                <br>
+                                <font color="#ff0000">※충전신청하신 후에 2~5분이 지나도 처리가 안되시면 고객센터로 문의주시기 바랍니다.</font><br>
+                                <br>
+                                입금자명/입금액/충전신청 금액이 정확히 일치하셔야 정상 충전처리가 되십니다.<br>
+                                <br>
+                                입금계좌는 수시로 변경되오니 입금하실때 마다 계좌문의 후에 입금해주시기 바랍니다<br>
+                                <br>
+                                <font color="#ff0000">자기앞수표 및 토스입금시에 충전은 불가능하십니다.</font>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="cashzone_talbe_arr">
+                        <table width="100%" cellspacing="0" cellpadding="0" class="cash_zone_table ">
+                            <tbody>
+                                <tr>
+                                    <th>입금하실계좌</th>
+                                    <td id="bank_info" align="left" style="padding:10px; ">
+                                        <span id="btnSubmitZone">
+                                            <input type="button" value="고객센터문의" id="btnCustomer" class="ui_btn_green">
+                                        </span>
+                                    </td>
+                                </tr>
+                                
+                                <tr>
+                                    <th>충전금액</th>
+                                    <td align="left" style="padding:10px; ">
+                                        <input name="amount" type="text" class="bg_input money" id="point" size="25" value="0" style="text-align: right; padding-right: 5px;">
+                                        원 &nbsp;&nbsp;
+                                        &nbsp;&nbsp; 
+                                        <a href="#" class="ui_btn_gray" onclick="SELECT_MONEY(10000)" style="cursor:pointer;">1만원</a> 
+                                        <a href="#" class="ui_btn_gray" onclick="SELECT_MONEY(30000)" style="cursor:pointer;">3만원</a> 
+                                        <a href="#" class="ui_btn_gray" onclick="SELECT_MONEY(50000)" style="cursor:pointer;">5만원</a> 
+                                        <a href="#" class="ui_btn_gray" onclick="SELECT_MONEY(100000)" style="cursor:pointer;">10만원</a> 
+                                        <a href="#" class="ui_btn_gray" onclick="SELECT_MONEY(200000)" style="cursor:pointer;">20만원</a> 
+                                        <a href="#" class="ui_btn_gray" onclick="SELECT_MONEY(300000)" style="cursor:pointer;">30만원</a> 
+                                        <a href="#" class="ui_btn_gray" onclick="SELECT_MONEY(500000)" style="cursor:pointer;">50만원</a> 
+                                        <a href="#" class="ui_btn_gray" onclick="SELECT_MONEY(1000000)" style="cursor:pointer;">100만원</a> 
+                                        <a href="#" class="ui_btn_blue" onclick="SELECT_MONEY(0)" style="cursor:pointer;">정정</a>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th>입금자명</th>
+                                    <td align="left" style="padding:10px; ">
+                                        <input name="name" type="text" class="bg_input" id="name" size="25" value="<%=user.strName%>" readonly="">
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="cash_bottom_btn" id="sendinput">
+                        <button class="ui-button_red" type="image">충전신청</button>
+                    </div>
+                    <div class="tab-pane fade" id="cash0102">
+                        <div class="card-body table-responsive">
+                            <table border="0" cellpadding="0" cellspacing="0" width="100%" class="topth cash-list0021" id="dataTable1">
+                                <thead>
+                                    <tr class="info betting_th">
+                                        <th class="hidden-xs">번호</th>
+                                        <th>신청날짜</th>
+                                        <th>충전금액</th>
+                                        <th class="hidden-xs">입금자명</th>
+                                        <th>충전날짜</th>
+                                        <th class="hidden-xs">충전/환급 포인트</th>
+                                        <th>상태</th>
+                                        <th>삭제</th>
+                                    </tr>
+                                </thead>
+                                <tbody >
+
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="text-center">
+                            <div class="tf_pagination_cash">
+                                <ul>
+                                    <li>
+                                        <a id="pre-btn" href="javascript:void(0);">
+                                            <i class="fa fa-chevron-left" aria-hidden="true"></i>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="active">1</a>
+                                    </li>
+                                    <li>
+                                        <a id="next-btn" href="javascript:void(0);">
+                                            <i class="fa fa-chevron-right" aria-hidden="true"></i>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <table width="100%" border="0" cellspacing="0" cellpadding="0" class="bank-time-table">
+                        <tbody>
+                            <tr>
+                                <th>국민은행</th>
+                                <td>00:00 ~ 00:10</td>
+                                <th>우리은행</th>
+                                <td>00:00 ~ 00:10</td>
+                                <th>신한은행</th>
+                                <td>00:00 ~ 00:10</td>
+                            </tr>
+                            <tr>
+                                <th>농협</th>
+                                <td>23:55 ~ 00:35</td>
+                                <th>축협</th>
+                                <td>00:00 ~ 00:10</td>
+                                <th>기업은행</th>
+                                <td>00:00 ~ 00:30</td>
+                            </tr>
+                            <tr>
+                                <th>하나은행</th>
+                                <td>00:00 ~ 00:10</td>
+                                <th>우체국</th>
+                                <td>04:00 ~ 05:00</td>
+                                <th>SC제일</th>
+                                <td>11:40 ~ 00:40</td>
+                            </tr>
+                            <tr>
+                                <th>외환은행</th>
+                                <td>23:55 ~ 00:05</td>
+                                <th>시티은행</th>
+                                <td>23:40 ~ 00:05</td>
+                                <th>수협</th>
+                                <td>11:50 ~ 00:30</td>
+                            </tr>
+                            <tr>
+                                <th>신협</th>
+                                <td>23:50 ~ 00:10</td>
+                                <th>새마을금고</th>
+                                <td>00:00 ~ 00:30</td>
+                                <th>상호저축은행</th>
+                                <td>23:00 ~ 08:00</td>
+                            </tr>
+                            <tr>
+                                <th>경기은행</th>
+                                <td>23:40 ~ 00:50</td>
+                                <th>경남은행</th>
+                                <td>23:50 ~ 00:00</td>
+                                <th>광주은행</th>
+                                <td>00:00 ~ 00:20</td>
+                            </tr>
+                            <tr>
+                                <th>부산은행</th>
+                                <td>00:00 ~ 00:05</td>
+                                <th>제주은행</th>
+                                <td>00:00 ~ 00:10</td>
+                                <th>전북은행</th>
+                                <td>23:50 ~ 00:05</td>
+                            </tr>
+                            <tr>
+                                <th>대구은행</th>
+                                <td>23:50 ~ 00:50</td>
+                                <th>미래에셋</th>
+                                <td>23:30 ~ 00:30</td>
+                                <th>삼성증권</th>
+                                <td>23:50 ~ 00:10</td>
+                            </tr>
+                            <tr>
+                                <th>한화투자</th>
+                                <td>01:45 ~ 02:15</td>
+                                <th>SK증권</th>
+                                <td>23:50 ~ 06:00</td>
+                                <th>현대증권</th>
+                                <td>23:45 ~ 00:15</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+<script>
+    $(document).on('click', '#btnSubmitZone', (e) => {
+        e.preventDefault();
+        $.ajax({
+            type:'post',
+            url: "/account/request_autoAccount",
+            data: {},
+            success:function(ret) {
+                
+                console.log(ret);
+
+                if ( ret.result == 'OK' )
+                {
+                    alert("계좌문의가 완료되었습니다. 잠시만 기다려 주세요.");
+                    location.reload();
+                }
+                else if(ret.result == "NOTLOGIN"){
+                    alert(ret.reason);
+                }
+                else
+                {
+                    alert(ret.reason);
+                }
+            }
+        });
+    });
+    $(document).on('click', '#sendinput', (e) => {
+        e.preventDefault();
+        //let iAmount = $('#inputAmount').val();
+        let iAmount = $('input[name=amount]').val();
+
+        $.ajax({
+            type:'post',
+            url: "/account/request_input",
+            data: {
+                iAmount:iAmount,
+            },
+            success:function(ret) {
+                
+                console.log(ret);
+
+                if ( ret.result == 'OK' )
+                {
+                    alert("입금신청이 완료 되었습니다.");
+                    location.reload();
+                }
+                else if(ret.result == "NOTLOGIN"){
+                    alert(ret.reason);
+                }
+                else
+                {
+                    alert(ret.reason);
+                }
+            }
+        });
+    });
+
+    // 입금 계산기
+    function SELECT_MONEY(amount) {
+        var inputField = document.getElementById('point');
+        
+        if (amount === 0) {
+            inputField.value = 0;
+        } else {
+            // 쉼표를 제거하고 숫자로 변환
+            var currentVal = parseInt(inputField.value.replace(/,/g, '')) || 0;
+            // 새로운 값 계산
+            var newVal = currentVal + amount;
+            // 쉼표를 포함한 문자열로 변환
+            inputField.value = newVal.toLocaleString();
+        }
+    }
+
+
+</script>

@@ -1,0 +1,93 @@
+<meta charset="utf-8" />
+<title>::: 노다지 Poker :::</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta content="Coderthemes" name="author" />
+<!-- App favicon -->
+
+<% if ( type == 0 ) {%>
+    <!-- jQuery 라이브러리 -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <!-- <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script> -->
+    <!-- 부트스트랩 JavaScript 파일 -->
+    <!-- <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script> -->
+    <!-- <link href="https://maxcdn.bootstrapcdn.com/bootstrap/5.0.0-beta1/css/bootstrap.min.css" rel="stylesheet"> -->
+    <!-- <script src="https://maxcdn.bootstrapcdn.com/bootstrap/5.0.0-beta1/js/bootstrap.bundle.min.js"></script> -->
+
+    <!-- <link rel="shortcut icon" href="../assets/images/favicon.ico"> -->
+    <!-- <link href="../assets/css/vendor/dataTables.bootstrap4.css" rel="stylesheet" type="text/css" />
+    <link href="../assets/css/vendor/responsive.bootstrap4.css" rel="stylesheet" type="text/css" /> -->
+
+    <!-- <link href="../assets/css/icons.min.css" rel="stylesheet" type="text/css" /> -->
+    <!-- <link href="../assets/css/app-modern.min.css" rel="stylesheet" type="text/css" id="light-style" />
+    <link href="../assets/css/app-modern-dark.min.css" rel="stylesheet" type="text/css" id="dark-style" /> -->
+
+    <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"> -->
+
+    <!-- <script src="../assets/js/vendor.min.js"></script>
+    <script src="../assets/js/app.min.js"></script> -->
+
+    <!-- third party js
+    <script src="../assets/js/vendor/jquery.dataTables.min.js"></script>
+    <script src="../assets/js/vendor/dataTables.bootstrap4.js"></script>
+    <script src="../assets/js/vendor/dataTables.responsive.min.js"></script>
+    <script src="../assets/js/vendor/responsive.bootstrap4.min.js"></script>
+    <script src="../assets/js/vendor/dataTables.checkboxes.min.js"></script> -->
+
+    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script> -->
+
+    <script src='/socket.io/socket.io.js'></script>
+
+    <!-- <link href="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/style.min.css" rel="stylesheet" /> -->
+    <link href="css/styles.css" rel="stylesheet" />
+    <link href="css/common.css" rel="stylesheet" />
+    <link href="css/main.css" rel="stylesheet" />
+    <link href="css/media.css" rel="stylesheet" />
+    <link href="css/notice.css" rel="stylesheet" />
+    <link href="css/cash.css" rel="stylesheet" />
+    <link href="css/cashout.css" rel="stylesheet" />
+    <link href="css/customercenter.css" rel="stylesheet" />
+    <link href="css/loginmain.css" rel="stylesheet" />
+    <link href="css/lobby.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reset-css@5.0.1/reset.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nanum+Gothic:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
+    <!-- <link rel="icon" href="./favicon.png"> -->
+    
+    <link href="css/styles.css" rel="stylesheet">
+    <script type="text/javascript" src="http://code.jquery.com/jquery-latest.js"></script>
+
+    <link href="css/slider.css" rel="stylesheet" type="text/css" />
+    <script src="js/jquery.cycle2.js"></script>
+    <script src="js/bxslider.js"></script>
+    <!-- <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script> -->
+    <!-- dataTables 라이브러리 불러오기 -->
+<% } else if(type == 2) { %>
+    <link href="css/lobby.css" rel="stylesheet" />
+    <link href="css/media.css" rel="stylesheet" />
+    <script type="text/javascript" src="http://code.jquery.com/jquery-latest.js"></script>
+<% } else { %>
+    <script src="https://kit.fontawesome.com/510add56c8.js" crossorigin="anonymous"></script>
+    <!-- <script defer src="js/main.js"></script> -->
+    <meta name="mobile-web-app-capable" content="yes">
+    <!-- <link rel="icon" href="/img/favicon.ico"> -->
+    <!-- ios홈화면추가시 상단 주소창 제거 -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <!-- <link rel="apple-touch-icon" href="/img/favicon.ico">  -->
+    <link href="css/loginmain.css" rel="stylesheet" />
+    <link href="css/common.css" rel="stylesheet" />
+    <link href="css/main.css" rel="stylesheet" />
+    
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reset-css@5.0.1/reset.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Nanum+Gothic:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/fontawesome.min.css" integrity="sha512-SgaqKKxJDQ/tAUAAXzvxZz33rmn7leYDYfBP+YoMRSENhf3zJyx3SBASt/OfeQwBHA1nxMis7mM3EV/oYT6Fdw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+    <link href="/css/styles.css" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script type="text/javascript" src="http://code.jquery.com/jquery-latest.js"></script>
+<% } %>
