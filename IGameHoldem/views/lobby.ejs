@@ -1,3 +1,5 @@
+<!-- <%= JSON.stringify(account) %> -->
+ 
 <body class="lobby_page">
     <header>
         <div class="header_section">
@@ -294,17 +296,29 @@
     <!-- 배경 오버레이 -->
     <div class="popup-overlay" id="popupOverlay"></div>
 
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src='/socket.io/socket.io.js'></script>
     <script>
 
         var socket = io('');
 
-        var account = JSON.parse('<%-JSON.stringify(account)%>');
+        // var account = JSON.parse('<%-JSON.stringify(account)%>');
+        
+        var account = JSON.parse('<%- JSON.stringify(account) %>');
+
+        // var lobbyName = JSON.parse('<%-JSON.stringify(lobbyName)%>');
+
         var lobbyName = JSON.parse('<%-JSON.stringify(lobbyName)%>');
+
+
         let targetName = lobbyName;
         console.log(lobbyName);
         console.log(account);
         console.log(targetName);
+
+
+        console.log('Script loaded');
+        console.log(account);
 
         //  HOLDEM, SITGO, TOURNAMENT, BIG2
         
@@ -353,7 +367,8 @@
             $('#avatar_list').append(tagAvatar);
         }
 
-        $(document).on('ready', ()=> {
+        // FIX: Use correct jQuery ready syntax
+        $(document).ready(function() {
             socket.emit('CM_Login', account.strID, account.strNickname ,account.strPassword, account.iCash);
             //eGameType = "ALL";
             
@@ -711,6 +726,7 @@
         socket.on('SM_OpenGame', (objectData) => {
             console.log(`SM_OpenGame`);
             console.log(objectData);
+            
 
             if ( objectData.result == 'OK' ) {
                 const submitForm = () => {

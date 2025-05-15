@@ -96,7 +96,7 @@ if (process.env.NODE_ENV == "production") {
   global.strSitgoAddress = "https://mcholdemgame.com";
   global.strAddress = "http://157.230.38.106:3000";
 } else if (process.env.NODE_ENV == "development") {
-  global.strGameAddress = "http://localhost:5555";
+  global.strGameAddress = "http://192.168.1.10:5555";
   global.strBig2Address = "http://localhost:5556";
   global.strSitgoAddress = "http://localhost:5557";
   global.strAddress = "http://localhost:3000";
@@ -132,9 +132,7 @@ app.get("/", (req, res) => {
 
 //   console.log("user", req.user);
 //   console.log("lobby", req.query.lobbyName);
-  
-  
-  
+
 //   // console.log(/lobby);
 //   // console.log(req.query.lobbyName);
 //   // if (req.user == null) res.redirect("/account/login");
@@ -144,7 +142,7 @@ app.get("/", (req, res) => {
 //   //let account = {strID:req.user.strID, strPassword:req.user.strPassword, iCoin:req.user.iCash, iAvatar};
 //   // const accountParams = req.query.account;
 //   // const parsedAccountParams = JSON.parse(accountParams);
-  
+
 //   // let account = {
 //     //   id: 1,
 //     //   strID: parsedAccountParams.username,
@@ -188,7 +186,7 @@ app.get("/", (req, res) => {
 //   // };
 
 //   let account = req.user;
-  
+
 //   res.render("lobby", {
 //     type: 2,
 //     account: account,
@@ -205,7 +203,7 @@ app.get("/", (req, res) => {
 //     {
 //         case '0':
 //             return '157.230.38.106:5555/game';
-//             //return 'localhost:5555/game';
+//             //return '192.168.1.10:5555/game';
 //     }
 //     return '';
 // }

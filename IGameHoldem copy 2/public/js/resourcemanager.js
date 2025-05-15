@@ -16,7 +16,7 @@ export default class IResourceManager {
   RequestFile(strFilename, callback, listImages, listLoads) {
     console.log(`RequestFile : ${strFilename}`);
 
-    const urlfile = `http://localhost:5555/${strFilename}`;
+    const urlfile = `http://192.168.1.10:5555/${strFilename}`;
     // const urlfile = `https://nodajiholdem00.org/${strFilename}`;
     console.log(`##### ufl = ${urlfile}`);
     var xhr = new XMLHttpRequest();

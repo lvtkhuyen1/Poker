@@ -11,6 +11,21 @@ const server = require("http").Server(app);
 const io = require("socket.io")(server, {});
 const cors = require("cors");
 
+const multer = require("multer");
+const fs = require("fs");
+
+// multer 설정
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, "public/images/pop/");
+  },
+  filename: (req, file, cb) => {
+    cb(null, file.originalname);
+  },
+});
+
+const upload = multer({ storage: storage });
+
 app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "ejs");
 
@@ -55,7 +70,6 @@ let instanceGame = new InstanceHoldem(io, "/game", kGameManager);
 
 instanceGame.OnIO(io);
 
-
 const { get } = require("http");
 //let IGameManager = require('./game/IGameManager');
 
@@ -67,15 +81,12 @@ let instanceApp = new InstanceLobby(io, "/");
 instanceApp.OnIO(io);
 // instanceGame.OnIO(io);
 
-
-
-
 if (process.env.NODE_ENV == "production") {
   global.strLobbyAddress = "https://nodajipoker00.com";
   global.strGameAddress = "https://nodajiholdem00.org";
 } else if (process.env.NODE_ENV == "development") {
   global.strLobbyAddress = "http://localhost:6999";
-  global.strGameAddress = "http://localhost:5555";
+  global.strGameAddress = "http://192.168.1.10:5555";
 }
 
 app.get("/", (req, res) => {
@@ -97,8 +108,6 @@ app.get("/lobby", (req, res) => {
   // let account = req.user;
   const accountParams = req.query.account;
 
-  console.log("1234214332432432423423423423432", accountParams);
-  
   const parsedAccountParams = JSON.parse(accountParams);
 
   let account = {
@@ -151,6 +160,159 @@ app.get("/lobby", (req, res) => {
     lobbyName: req.query.lobbyName,
   });
   // }
+});
+
+// app.get("/lobby", (req, res) => {
+//     // Lấy account từ query hoặc session
+//     let account;
+//     if (req.query.account) {
+//         try {
+//             account = JSON.parse(req.query.account);
+//         } catch (e) {
+//             account = null;
+//         }
+//     }
+//     // Nếu vẫn chưa có account, có thể lấy từ session hoặc trả về lỗi
+//     if (!account) {
+//         return res.status(400).send("Thiếu hoặc sai tham số account!");
+//     }
+//     // Bổ sung các trường cần thiết cho account nếu thiếu
+//     account.strNickname = account.strNickname || account.username || "Guest";
+//     account.iCash = account.iCash || account.balance || 0;
+//     account.strOptionCode = account.strOptionCode || "11110000";
+//     account.iAvatar = account.iAvatar || 0;
+//     account.iClass = account.iClass || 5;
+//     account.strGroupID = account.strGroupID || "1";
+//     account.eUserType = account.eUserType || "NORMAL";
+
+//     res.render("lobby", {
+//         account: account,
+//         lobbyName: req.query.lobbyName || "IHoldemLobby",
+//         rooms: [], // hoặc instanceApp.listRooms nếu có
+//     });
+// });
+
+app.post("/UpdateCoin", async (req, res) => {
+  console.log(
+    "##############################################################updatecoin"
+  );
+  console.log(req.body);
+
+  for (let i in socket_list) {
+    //console.log(socket_list[i].strID);
+    if (socket_list[i].strNickname == req.body.strNickname) {
+      socket_list[i].emit("UpdateCash", parseInt(req.body.iAmount));
+    }
+  }
+
+  res.send("OK");
+});
+
+app.post("/UpdateOption", async (req, res) => {
+  console.log(
+    "##############################################################UpdateOption"
+  );
+  console.log(req.body);
+
+  for (let i in socket_list) {
+    //console.log(socket_list[i].strID);
+    if (socket_list[i].strID == req.body.strID) {
+      socket_list[i].emit("UpdateOption", req.body.strOptionCode);
+    }
+  }
+
+  res.send("OK");
+});
+
+app.post("/removeroom", (req, res) => {
+  console.log(`/removeroom`);
+  console.log(req.body);
+
+  instanceApp.RemoveRoom(req.body.lUnique);
+});
+
+app.post("/leaveroom", (req, res) => {
+  console.log(`/leaveroom`);
+  console.log(req.body);
+
+  instanceApp.LeaveRoom(req.body.lUnique);
+});
+
+app.post("/quitroom", (req, res) => {
+  console.log(`/removeroom`);
+  console.log(req.body);
+
+  instanceApp.LeaveGame(req.body.strID);
+});
+
+app.post("/request_roomlist", async (req, res) => {
+  console.log("/request_roomlist");
+
+  let list = [];
+  for (let i in instanceApp.listRooms) {
+    let objectData = instanceApp.listRooms[i];
+
+    list.push(objectData);
+  }
+  res.send(list);
+});
+
+app.post("/request_onlineuser", async (req, res) => {
+  console.log("/request_onlineuser");
+  console.log(`${instanceApp.listUsers.GetLength()}`);
+  let listUsers = [];
+
+  for (let i = 0; i < instanceApp.listUsers.GetLength(); ++i) {
+    if (instanceApp.listUsers.GetSocket(i).strID != undefined) {
+      listUsers.push(instanceApp.listUsers.GetSocket(i).strID);
+    }
+  }
+
+  console.log(listUsers);
+
+  res.send({ result: "OK", list: listUsers });
+});
+
+app.post("/popup", upload.single("image"), async (req, res) => {
+  console.log("파일이 성공적으로 업로드됨:", req.file);
+  console.log("popupName : ", req.body.popupName);
+
+  const oldImage = await db.Announcements.findOne({
+    where: { strSubject: req.body.popupName },
+  });
+
+  let oldImagePath = `public/images/pop/${oldImage.oldImageName}`;
+
+  console.log(`삭제 경로 : ${oldImagePath}`);
+
+  // 기존 파일 삭제
+  if (oldImagePath && fs.existsSync(oldImagePath)) {
+    fs.unlink(oldImagePath, (err) => {
+      if (err) {
+        console.error("기존 이미지 파일 삭제 실패:", err);
+      } else {
+        console.log("기존 이미지 파일 삭제 성공");
+      }
+    });
+  }
+  res.send("파일 업로드 성공");
+});
+
+app.post("/createroom", async (req, res) => {
+  console.log("/createroom");
+  console.log(req.body.objectData);
+
+  instanceApp.UpdateRoom(req.body.objectData);
+});
+
+app.post("/consultAlert", async (req, res) => {
+  console.log("/createroom");
+  console.log(req.body.objectData);
+
+  for (let i in socket_list) {
+    if (socket_list[i].strID == req.body.strID)
+      socket_list[i].emit("SM_ConsultAlert");
+  }
 });
 
 app.post("/game", (req, res) => {
@@ -671,40 +833,44 @@ setInterval(async () => {
 
 // }, 5000);
 
-
 let socket_list = {};
 
 global.socket_list = socket_list;
 
-io.on("connection", (socket) => {
-  console.log(
-    `# ---------------------------------- Socket Connection : ${socket.id}`
-  );
+// io.on("connection", (socket) => {
+//   console.log(
+//     `# ---------------------------------- Socket Connection : ${socket.id}`
+//   );
 
-  const user = socket.request.user;
-  console.log(user);
+//   socket.on("CM_Login", (id, nickname, password, cash) => {
 
-  // user 객체에서 strID와 strNickname을 가져와 소켓 객체에 저장
-  if (user && user.dataValues) {
-    socket.strID = user.dataValues.strID;
-    socket.strNickname = user.dataValues.strNickname;
-  }
-  console.log(`socket.strID : ${socket.strID}`);
-  console.log(`socket.strNickname : ${socket.strNickname}`);
+//     socket.emit("SM_RequestLogin", { id, nickname, cash });
+//   });
 
-  socket_list[socket.id] = socket;
+//   const user = socket.request.user;
+//   console.log(user);
 
-  if (socket.strID == undefined) {
-    socket.emit("SM_RequestLogin");
-  }
+//   // user 객체에서 strID와 strNickname을 가져와 소켓 객체에 저장
+//   if (user && user.dataValues) {
+//     socket.strID = user.dataValues.strID;
+//     socket.strNickname = user.dataValues.strNickname;
+//   }
+//   console.log(`socket.strID : ${socket.strID}`);
+//   console.log(`socket.strNickname : ${socket.strNickname}`);
 
-  socket.on("disconnect", () => {
-    console.log(
-      `#$ ---------------------------------- Socket Disconnection : ${socket.id}, ${socket.strID}, ${socket.eStage}, ${socket.lUnique}`
-    );
+//   socket_list[socket.id] = socket;
 
-    //this.RemoveUser(socket);
+//   if (socket.strID == undefined) {
+//     socket.emit("SM_RequestLogin");
+//   }
 
-    delete socket_list[socket.id];
-  });
-});
+//   socket.on("disconnect", () => {
+//     console.log(
+//       `#$ ---------------------------------- Socket Disconnection : ${socket.id}, ${socket.strID}, ${socket.eStage}, ${socket.lUnique}`
+//     );
+
+//     //this.RemoveUser(socket);
+
+//     delete socket_list[socket.id];
+//   });
+// });

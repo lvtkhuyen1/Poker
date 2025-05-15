@@ -22,13 +22,13 @@ class ILobby {
 
     //     //const strAddress = 'http://157.230.38.106:5555';
 
-    //     //return 'http://localhost:5555/game';
+    //     //return 'http://192.168.1.10:5555/game';
     //     //return 'http://157.230.38.106:5555/game';
     // }
     let strAddress = "";
     if (eGameType == "HOLDEM") {
       strAddress = global.strGameAddress;
-      //const strAddress = 'http://localhost:5555';
+      //const strAddress = 'http://192.168.1.10:5555';
       //const strAddress = 'http://157.230.38.106:5555';
     } else if (eGameType == "BIG2") {
       strAddress = global.strBig2Address;
@@ -369,7 +369,7 @@ class ILobby {
     console.log(eGameType);
     if (eGameType == "HOLDEM") {
       // strAddress = global.strGameAddress;
-      strAddress = "http://localhost:5555";
+      strAddress = "http://192.168.1.10:5555";
       //const strAddress = 'http://157.230.38.106:5555';
     } else if (eGameType == "BIG2") {
       strAddress = global.strBig2Address;

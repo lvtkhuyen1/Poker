@@ -55,7 +55,6 @@ let instanceGame = new InstanceHoldem(io, "/game", kGameManager);
 
 instanceGame.OnIO(io);
 
-
 const { get } = require("http");
 //let IGameManager = require('./game/IGameManager');
 
@@ -67,15 +66,12 @@ let instanceApp = new InstanceLobby(io, "/");
 instanceApp.OnIO(io);
 // instanceGame.OnIO(io);
 
-
-
-
 if (process.env.NODE_ENV == "production") {
   global.strLobbyAddress = "https://nodajipoker00.com";
   global.strGameAddress = "https://nodajiholdem00.org";
 } else if (process.env.NODE_ENV == "development") {
   global.strLobbyAddress = "http://localhost:6999";
-  global.strGameAddress = "http://localhost:5555";
+  global.strGameAddress = "http://192.168.1.10:5555";
 }
 
 app.get("/", (req, res) => {
@@ -98,7 +94,7 @@ app.get("/lobby", (req, res) => {
   const accountParams = req.query.account;
 
   console.log("1234214332432432423423423423432", accountParams);
-  
+
   const parsedAccountParams = JSON.parse(accountParams);
 
   let account = {
@@ -670,7 +666,6 @@ setInterval(async () => {
 //     await kGameManager.UpdateJackpot();
 
 // }, 5000);
-
 
 let socket_list = {};
 

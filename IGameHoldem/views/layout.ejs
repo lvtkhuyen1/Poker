@@ -1,13 +1,103 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title></title>
-    <!-- <link rel="stylesheet" href="/styles.css"> -->
-     <link href="css/lobby.css" rel="stylesheet" />
-</head>
+  <head>
+    <%- include('head') %>
+  </head>
+
 <body>
-    <%- body %>
+  <%- body %>
+  <script type="text/javascript">
+    // Lấy user từ EJS truyền vào, nếu không có thì là {}
+    var user = <%- JSON.stringify(typeof user !== "undefined" && user ? user : {}) %>;
+
+    var socket = io("/");
+    var sAlert = new Audio("/sounds/alert.mp3");
+    sAlert.loop = true;
+    socket.on("SM_RequestLogin", () => {
+      socket.emit("CM_Login", {
+        strID: user.strID,
+        strGroupID: user.strGroupID,
+      });
+    });
+
+    socket.on("SM_Alert", (objectData) => {
+      if (objectData.eType == 2) {
+        sAlert.play();
+      }
+    });
+
+    $(document).ready(function () {
+      $("#rollingChange").click(function (e) {
+        e.preventDefault();
+        $("#RollingDialog").modal("show");
+      });
+    });
+    let iPointChange = () => {
+      if (!user.iRolling || user.iRolling <= 0) {
+        alert("보유포인트가 0원 입니다.");
+        return;
+      }
+      var userResponse = confirm("포인트로 전환하시겠습니까?");
+      if (userResponse) {
+        $.ajax({
+          url: "/account/request_changepoint",
+          type: "POST",
+          data: {},
+          dataType: "json",
+          success: function (ret) {
+            if (ret.result == "OK") {
+              alert("포인트가 정상적으로 전환되었습니다.");
+              location.reload();
+            } else {
+              alert("정보가 정확하지 않아 1:1문의 해주시기 바랍니다.");
+            }
+          },
+          error: function () {
+            alert("조회 중 오류 발생");
+          },
+        });
+      } else {
+        location.reload();
+      }
+    };
+    document.addEventListener("DOMContentLoaded", function () {
+      var currentPage = window.location.pathname;
+      var listItems = document.querySelectorAll(".main_nav_box ul li");
+      listItems.forEach(function (item) {
+        var link = item.querySelector("a");
+        var href = link.getAttribute("href");
+        if (currentPage.includes(href)) {
+          item.classList.add("active");
+        }
+      });
+      const menuBtn = document.createElement("div");
+      menuBtn.className = "menu-btn";
+      menuBtn.innerHTML = "&#9776; 메뉴";
+      document.body.appendChild(menuBtn);
+      const closeBtn = document.querySelector(".close-btn");
+      const header = document.querySelector("header");
+      let isMenuVisible = false;
+      menuBtn.addEventListener("click", function () {
+        isMenuVisible = !isMenuVisible;
+        header.style.left = isMenuVisible ? "0" : "-250px";
+        menuBtn.style.display = isMenuVisible ? "none" : "block";
+        closeBtn.style.display = isMenuVisible ? "block" : "none";
+      });
+      closeBtn?.addEventListener("click", function () {
+        isMenuVisible = false;
+        header.style.left = "-250px";
+        closeBtn.style.display = "none";
+        menuBtn.style.display = "block";
+      });
+      window.addEventListener("resize", function () {
+        if (window.innerWidth >= 801) {
+          header.style.left = "0";
+        } else {
+          header.style.left = isMenuVisible ? "0" : "-250px";
+        }
+      });
+    });
+  </script>
+  <%- script %>
 </body>
 </html>

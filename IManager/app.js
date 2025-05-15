@@ -64,7 +64,7 @@ if (process.env.NODE_ENV == "production") {
   global.strSitgoAddress = "https://mcholdemgame.com";
 } else if (process.env.NODE_ENV == "development") {
   global.strLobbyAddress = "http://localhost:6999";
-  global.strHoldemAddress = "http://localhost:5555";
+  global.strHoldemAddress = "http://192.168.1.10:5555";
   global.strSitgoAddress = "http://localhost:5556";
 }
 

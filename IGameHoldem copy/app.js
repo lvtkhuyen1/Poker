@@ -54,7 +54,7 @@ if (process.env.NODE_ENV == "production") {
   global.strGameAddress = "https://nodajiholdem00.org";
 } else if (process.env.NODE_ENV == "development") {
   global.strLobbyAddress = "http://localhost:6999";
-  global.strGameAddress = "http://localhost:5555";
+  global.strGameAddress = "http://192.168.1.10:5555";
 }
 
 app.get("/", (req, res) => {

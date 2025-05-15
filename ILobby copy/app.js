@@ -96,7 +96,7 @@ if (process.env.NODE_ENV == "production") {
   global.strSitgoAddress = "https://mcholdemgame.com";
   global.strAddress = "http://157.230.38.106:3000";
 } else if (process.env.NODE_ENV == "development") {
-  global.strGameAddress = "http://localhost:5555";
+  global.strGameAddress = "http://192.168.1.10:5555";
   global.strBig2Address = "http://localhost:5556";
   global.strSitgoAddress = "http://localhost:5557";
   global.strAddress = "http://localhost:3000";
@@ -198,7 +198,7 @@ app.get("/lobby", (req, res) => {
 //     {
 //         case '0':
 //             return '157.230.38.106:5555/game';
-//             //return 'localhost:5555/game';
+//             //return '192.168.1.10:5555/game';
 //     }
 //     return '';
 // }
